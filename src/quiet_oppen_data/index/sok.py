@@ -12,8 +12,6 @@ import logging
 import sqlite3
 import struct
 import time
-from functools import lru_cache
-from typing import Any
 
 import numpy as np
 from sentence_transformers import SentenceTransformer
@@ -75,11 +73,16 @@ def _initiera(konfig: Konfig) -> tuple[SentenceTransformer, sqlite3.Connection]:
 
 
 def _gissa_adapter(titel: str, format_str: str, access_url: str) -> str:
-    """Simpel heuristik för att tipsa planeraren."""
+    """Simpel heuristik för att tipsa planeraren.
+
+    Bara URL och format vägs in. `titel` tas emot för anropssidans skull men
+    används inte — titeln säger sällan något om protokollet, och OGC-tjänster
+    (där titeln vore en signal) filtreras redan bort vid ingest.
+    """
     url = (access_url or "").lower()
     fmt = (format_str or "").lower()
-    t = (titel or "").lower()
-    
+
+
     if "pxweb" in url or "scb" in url:
         return "pxweb"
     if "rowstore" in url or "entryscape" in url:
@@ -97,7 +100,7 @@ def fts5_escape(fraga: str) -> str:
     # Stjärna på slutet av varje ord
     if not rensad:
         return ""
-    return " OR ".join(f"{ord}*" for ord in rensad.split())
+    return " OR ".join(f"{o}*" for o in rensad.split())
 
 
 def sok(fraga: str, max_antal: int = 10) -> list[Sokresultat]:

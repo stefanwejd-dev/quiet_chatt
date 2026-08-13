@@ -15,7 +15,7 @@ from __future__ import annotations
 import sqlite3
 import threading
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 from pathlib import Path
 
 from quiet_oppen_data.konfig import las as las_konfig
@@ -51,7 +51,7 @@ def _koppla() -> sqlite3.Connection:
 
 
 def _dagens_datum() -> str:
-    return datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    return datetime.now(UTC).strftime("%Y-%m-%d")
 
 
 @dataclass(frozen=True)

@@ -21,7 +21,6 @@ from quiet_oppen_data.index.ingest import (
     bygg_manniskolank,
     hamta_entry_och_resurs,
     hamta_text,
-    hamta_utgivare,
 )
 
 # ---------------------------------------------------------------------------

@@ -20,6 +20,22 @@ Instruktion till implementerande kod-AI. Läs `ARKITEKTUR.md` först — den fö
 
 Alla kommandon körs från repots rot: `G:\My Drive\Claude Cowork\quiet_chatt`.
 
+**Lint.** Innan varje steg redovisas som klart:
+
+```
+python -m ruff check .
+python -m pytest -q
+```
+
+Båda ska vara rena. Regeluppsättningen står i `pyproject.toml` och är medvetet
+smal — `F`, `E9`, `B`, `A`, `UP`, alltså regler som fångar defekter, inte stil.
+Formateringsregler är avsiktligt inte med; diskussioner om blanksteg är brus.
+
+Ett undantag får läggas in bara med en kommentar som säger varför. Det finns
+ett i dag: `Faktaregister.hamta(id)` skuggar det inbyggda `id`, men signaturen
+är den publika från steg 1 och att döpa om den vore en API-ändring, inte en
+lint-fix.
+
 ---
 
 ## Kontrakt från och med steg 8
@@ -745,6 +761,7 @@ steg 5, en våning upp) och tar nu `isolerad_cache`.
 
 **Kvar att göra, inte blockerande:** `pyflakes` är inte installerat i miljön, så
 lint har aldrig körts. Lägg till det i dev-beroendena innan steg 9.
+*Åtgärdat 2026-08-13 — se "Lint" i arbetsgången högst upp.*
 
 ---
 

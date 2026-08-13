@@ -13,7 +13,6 @@ kortslutningen sker innan klienten någonsin anropas — se testerna nedan.
 Kriterium 1 och 3 kräver ett riktigt modellsvar och är märkta @pytest.mark.live.
 """
 
-from datetime import datetime, timezone
 
 import pytest
 
@@ -22,7 +21,6 @@ from quiet_oppen_data.motor.syntes import (
     SVARSSCHEMA,
     FasBSyntes,
     Stycke,
-    SyntesSvar,
     _tolka_svar,
 )
 

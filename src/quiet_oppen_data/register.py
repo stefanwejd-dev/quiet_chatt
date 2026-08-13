@@ -15,7 +15,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Union
 
 import yaml
 
@@ -80,7 +79,7 @@ class EjAnvandbar:
 
 
 # Union-typ för en post ur registret
-KallaPost = Union[Kalla, Sparrad, EjAnvandbar]
+KallaPost = Kalla | Sparrad | EjAnvandbar
 
 
 def _tolka_verifierad(v: str | bool | None) -> bool:

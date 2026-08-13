@@ -2,7 +2,7 @@
 
 import pytest
 from quiet_oppen_data import register
-from quiet_oppen_data.register import Kalla, Sparrad, EjAnvandbar
+from quiet_oppen_data.register import Kalla, Sparrad
 
 
 # ---------------------------------------------------------------------------

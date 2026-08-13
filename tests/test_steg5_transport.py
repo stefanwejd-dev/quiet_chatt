@@ -6,7 +6,6 @@ from quiet_oppen_data.adaptrar.transport import (
     SparradKalla,
     hamta_json,
 )
-from quiet_oppen_data.register import Kalla
 
 
 def test_transport_sparrad_kastar_undantag():

@@ -1,6 +1,6 @@
 """Acceptanstester för Steg 1 — Faktapost och Faktaregister."""
 
-from datetime import datetime, timezone
+from datetime import datetime
 
 import pytest
 

@@ -13,6 +13,11 @@ dependencies = [
     "httpx>=0.27",
     "python-dotenv>=1.0",
     "sentence-transformers>=3.0",
+    # Importeras direkt av koden. Drogs tidigare in transitivt via
+    # sentence-transformers, vilket gjorde register.py — systemets kärna —
+    # beroende av ett paket ingen deklarerat.
+    "pyyaml>=6.0",
+    "numpy>=1.26",
 ]
 
 [project.optional-dependencies]
@@ -20,6 +25,7 @@ dev = [
     "pytest>=8.0",
     "pytest-asyncio>=0.24",
     "vcrpy>=6.0",
+    "ruff>=0.6",
 ]
 
 [tool.setuptools.packages.find]
@@ -32,3 +38,28 @@ markers = [
     "live: kräver ANTHROPIC_API_KEY och utgående nätverkstrafik mot riktiga API:er",
 ]
 addopts = "-m 'not live'"
+
+
+[tool.ruff]
+src            = ["src"]
+target-version = "py311"
+line-length    = 100
+
+[tool.ruff.lint]
+# Avsiktligt smal uppsättning: regler som fångar DEFEKTER, inte stil.
+#   F   pyflakes        — oanvänt, odefinierat, dubbelimport
+#   E9  syntaxfel
+#   B   bugbear         — muterbara default-argument, except-fällor
+#   A   builtins        — variabler som skuggar inbyggda namn
+#   UP  pyupgrade       — föråldrade konstruktioner
+# Formateringsregler (E1/E2/E3, W) är medvetet inte med. Diskussioner om
+# blanksteg är brus; det här ska fånga sådant som går sönder.
+select = ["F", "E9", "B", "A", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+# Tester får skugga inbyggda namn i attrapper och fixturer.
+"tests/*" = ["A002", "A003"]
+# Faktaregister.hamta(id) är den publika signaturen enligt PLAN.md steg 1 och
+# anropas på flera ställen. Att döpa om parametern vore en API-ändring, inte en
+# lint-fix — vi accepterar skuggningen här och bara här.
+"src/quiet_oppen_data/modeller.py" = ["A002"]

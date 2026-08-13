@@ -134,7 +134,7 @@ class PxWebAdapter:
         """
         utkast: list[Faktautkast] = []
         for dim_id, data in dimensioner.items():
-            par = [f"{k} ({t})" for k, t in zip(data["codes"], data["texts"])]
+            par = [f"{k} ({t})" for k, t in zip(data["codes"], data["texts"], strict=True)]
             # Långa dimensioner (typiskt Tid) kortas bakifrån — de senaste
             # värdena är nästan alltid de efterfrågade.
             if len(par) > 100:

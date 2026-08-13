@@ -7,8 +7,8 @@ from __future__ import annotations
 
 import dataclasses
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from typing import Iterable, Iterator
+from datetime import datetime, UTC
+from collections.abc import Iterable, Iterator
 
 
 # ---------------------------------------------------------------------------
@@ -126,7 +126,7 @@ class Faktaregister:
             )
 
         if "hamtad" not in falt:
-            falt["hamtad"] = datetime.now(timezone.utc)
+            falt["hamtad"] = datetime.now(UTC)
 
         fid = f"F{self._nasta_nr}"
         self._nasta_nr += 1
@@ -144,7 +144,7 @@ class Faktaregister:
         falt = {
             f.name: getattr(utkast, f.name)
             for f in dataclasses.fields(utkast)
-            if not (f.name == "hamtad" and getattr(utkast, "hamtad") is None)
+            if not (f.name == "hamtad" and utkast.hamtad is None)
         }
         return self.registrera(**falt)
 

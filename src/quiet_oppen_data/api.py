@@ -31,7 +31,8 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import Any, AsyncIterator
+from typing import Any
+from collections.abc import AsyncIterator
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -271,7 +272,11 @@ async def fraga(begaran: FragaBegaran, request: Request):
         # Fail-closed: går kvotkontrollen inte att lita på, avvisas anropet
         # hellre än att kvoten kringgås tyst.
         logger.warning("Kvotkontroll misslyckades — avvisar fail-closed", exc_info=True)
-        raise HTTPException(status_code=503, detail="Tjänsten är tillfälligt otillgänglig.")
+        # from None: internfelet är redan loggat med exc_info och ska inte
+        # läcka till klienten.
+        raise HTTPException(
+            status_code=503, detail="Tjänsten är tillfälligt otillgänglig."
+        ) from None
 
     if not beslut.tillaten:
         raise HTTPException(status_code=429, detail=beslut.meddelande)

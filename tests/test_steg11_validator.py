@@ -15,7 +15,6 @@ from quiet_oppen_data.modeller import Faktaregister
 from quiet_oppen_data.motor.syntes import INGET_HITTAT, Stycke, SyntesSvar
 from quiet_oppen_data.motor.validator import (
     FasCValidator,
-    Valideringsfel,
     validera,
 )
 

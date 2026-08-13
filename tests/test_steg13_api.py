@@ -260,7 +260,6 @@ def test_klient_ip_litar_inte_pa_header_utan_betrodd_proxy(monkeypatch):
     Litar api:et alltid på den blir per-IP-kvoten verkningslös: en ny slumpad
     adress per anrop ger obegränsat antal frågor, bara bromsat av dygnstotalen.
     """
-    import dataclasses
     import quiet_oppen_data.api as api_modul
 
     riktig = api_modul.las_konfig()

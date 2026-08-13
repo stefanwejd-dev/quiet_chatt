@@ -4,7 +4,7 @@ import logging
 import sqlite3
 import threading
 import time
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
@@ -137,7 +137,7 @@ def halsostatistik() -> dict[str, dict[str, Any]]:
         total = traffar + missar
         resultat[kalla_id] = {
             "senaste_lyckade_anrop": (
-                datetime.fromtimestamp(senaste_lyckad, tz=timezone.utc).isoformat()
+                datetime.fromtimestamp(senaste_lyckad, tz=UTC).isoformat()
                 if senaste_lyckad else None
             ),
             "cache_traffar": traffar,

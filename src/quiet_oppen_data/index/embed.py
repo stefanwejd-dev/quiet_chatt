@@ -4,7 +4,6 @@ Använder sentence-transformers. Bygger endast poster som saknas i embedding-tab
 """
 from __future__ import annotations
 
-import argparse
 import logging
 import sqlite3
 import struct
@@ -82,7 +81,7 @@ def generera_embeddings(db_path: Path, modell_namn: str, batch_size: int = 64) -
         
         db_batch = []
         dim = embeddings.shape[1]
-        for d_id, emb in zip(ids, embeddings):
+        for d_id, emb in zip(ids, embeddings, strict=True):
             vektor_bytes = struct.pack(f"{dim}f", *emb.tolist())
             db_batch.append((d_id, vektor_bytes))
             
