@@ -599,7 +599,7 @@ Hela sviten (utom livetester): **160 passed**.
 
 ---
 
-## Steg 14 — Frontend   ← NÄSTA STEG
+## Steg 14 — Frontend ✅ Godkänt 2026-08-14
 
 **Läs "Granskning av steg 10–13" nedan innan du börjar.** Två fält i
 svarsobjektet fick nya regler vid granskningen, och båda rör vad frontend får
@@ -621,9 +621,38 @@ en `<script>`-tagg på quiet.nu.
 - Varje siffra i ett svar går att klicka till sin källa i högst två steg.
 - Sidan scrollar aldrig horisontellt på 360 px bredd.
 
----
+**Utfall 2026-08-14:** Implementerade `frontend/widget.js` (~600 rader), fristående
+utan byggkedja. Inbäddas via `<div id="quiet-widget" data-api="…"></div>` + `<script>`.
+Alla tre acceptanskriterier uppfyllda:
 
-## Steg 15 — Drift och mätning
+* **Inga externa beroenden** — all CSS är inlinad i ett injicerat `<style>`-block.
+  Inga CDN-anrop, inga importerade typsnitt. CSP-tåligt.
+* **Klickbarhet i två steg** — fotnot-knappar `[1]` `[2]` inline i varje stycke;
+  klick öppnar källpanelen och scrollar till rätt källkort med markering.
+  Källkortet visar människo- och maskinlänk direkt.
+* **360 px — ingen horisontal scroll** — flexibel layout; under 420 px bredd
+  övergår källkortets metadata-grid till enkolumnsläge och länkarna staplas vertikalt.
+
+Ytterligare implementerade krav från granskning steg 10–13:
+
+* `forbehall` renderas **avskilt** som "Not:" — aldrig bland citerade stycken.
+* Stycken utan `kallor`-lista renderas inte (arkitekturkravet).
+* Härledda poster (`harledd: true`) har "Beräknat"-badge, ID-chip i avvikande färg
+  och visar `harledd_av`-ingångarna i källkortet.
+* CC-BY-attribution renderas som ett eget block under källpanelen.
+* Ljus/mörk tema via `prefers-color-scheme` — komplett färgpalett i båda.
+
+Testfil `frontend/test.html` skapad: interceptar `fetch` och simulerar SSE-svar
+för sex scenarier (referensränta, beräknad post, CC-BY, tomt register, serverfel,
+förbehåll) utan riktig backend.
+
+`python -m ruff check .` — rent.
+`python -m pytest -q` — **167 passed**, 6 deselected (livetester), 1 warning.
+(Ingen Python-kod tillkom i steg 14; sviten är oförändrad.)
+
+
+
+## Steg 15 — Drift och mätning   ← NÄSTA STEG
 
 **Gör:** nattlig ingest-körning, loggning enligt `ARKITEKTUR.md` §11, och en enkel
 `GET /matning`-vy.
@@ -860,6 +889,133 @@ användares fråga råkar hamna utanför.
 - Ett stickprov på tio författningar: `t.o.m. SFS` i indexet stämmer mot
   Riksdagens aktuella metadata.
 - `python -m ruff check .` och `python -m pytest -q` är rena.
+
+---
+
+## Steg 17 — Utöka Skatteverkets statistik
+
+**Bakgrund.** `skatteverket_rowstore` finns redan i registret som verifierad och
+aktiverad, men med **ett enda** verifierat UUID. Skatteverket publicerar
+**744 datamängder** på samma RowStore. Adaptern finns, avtal krävs inte, ingen ny
+kod behövs — det som saknas är UUID:n i registret.
+
+Det här är den billigaste förbättringen i hela planen.
+
+### Varför just RowStore och inte Skatteverkets API:er
+
+Genomgång av Skatteverkets utvecklarportal 2026-08-14: av 30 API:er är i praktiken
+alla partner- eller riktade API:er som kräver avtal, och de svarar på frågor om en
+**specifik** skattskyldig. Skatteverket skriver själva att deras öppna data alltid
+är aggregerad och att individnivå inte går att få.
+
+Chatten är publik och har ingen inloggning. Den har alltså ingen skattskyldig att
+fråga om. Partner-API:erna (Skattekonto, Inkomstdeklaration, Momsdeklaration,
+Beskattningsengagemang, Arbetsgivardeklaration, Ombudshantering m.fl.) hör hemma i
+sie-mcp, där klientens egna behörigheter finns — inte här. Flera är dessutom
+begränsade till myndigheter, kommuner eller a-kassor och går inte att få alls.
+
+**Gör:** lägg till dataset-UUID:n i `kallor/kallregister.yaml` under
+`skatteverket_rowstore`. Följande elva är hämtade ur katalogindexet och de tre
+markerade är anropade live 2026-08-14:
+
+| UUID | Datamängd | |
+|---|---|---|
+| `f2f815f5-8d12-4d22-9a95-b6fda1a58e42` | Antal momsdeklarationer | ✔ 165 466 rader |
+| `7691bcf3-79be-46fb-a252-8442a8f6415e` | Antal inkomstdeklarationer | ✔ 56 857 rader |
+| `61a28d49-38ca-4686-9a6a-6a9ae4e66d1c` | Antal anmälan för företagsregistrering | ✔ 170 054 rader |
+| `a1866379-6bff-4010-b482-37ce112eeebd` | Antal arbetsgivardeklarationer | |
+| `56173b69-5c31-4c32-92b1-8560ee5f492d` | Antal kassaregisterbesök | |
+| `a57c7163-aef9-4716-91e3-df126db01285` | Antal personalliggarbesök | |
+| `f57fb128-34ac-4f7e-b37f-f4e43f31a4b7` | Antal jämkningar av A-skatt | |
+| `c2f577e7-f4d7-4e41-a6f0-d3364f32e3b7` | Antal periodiska sammanställningar | |
+| `61a59c73-c31f-4c1e-a1d6-23fb018ffcd3` | Antal kontrolluppgifter | |
+| `8546f1b7-7024-48ff-80e8-eed278b93eed` | Antal punktskattedeklarationer | |
+| `8ef49703-f7c2-4055-8903-a3dab876b2e7` | Antal bilagor till inkomstdeklarationer | |
+
+Resterande UUID:n finns i katalogindexet — sök på utgivare `2021005448`.
+Lägg till fler efter behov, men bara sådana som svarar på en fråga någon faktiskt
+ställer. En lång lista är ingen kvalitet i sig.
+
+### Kravet som gör steget värt något
+
+Datamängderna har **kraftigt olika färskhet**. Momsdeklarationerna hade
+`uppdateringsdatum` 2023-10-19 vid kontroll, företagsregistreringarna 2025-12-05.
+Utan att det syns i svaret blir en tre år gammal siffra presenterad som aktuell —
+samma felmod som §5 regel 8 finns för.
+
+Därför: **`uppdateringsdatum` ur raden ska in i `Faktautkast.period`**, eller,
+när raden har en egen period, som en dimension. Ett svar ska aldrig kunna påstå
+"antalet momsdeklarationer är X" utan att visa vilket år uppgiften avser och när
+den senast uppdaterades.
+
+**Acceptans:**
+- Alla tillagda UUID:n svarar 200 och returnerar rader. Ett som inte gör det tas
+  bort ur registret — inte lämnas kvar i hopp om att det ska börja fungera.
+- En Faktapost från en av datamängderna bär `uppdateringsdatum` i `period` eller
+  `dimensioner`.
+- Frågan *"hur många momsdeklarationer lämnas per år?"* ger en Faktapost med
+  källänk, och svaret visar vilket år som avses.
+- `python -m ruff check .` och `python -m pytest -q` är rena.
+
+---
+
+## Steg 18 — VERIFIERINGSGRIND: Skatteverkets rättsliga regelfiler
+
+**Detta steg skriver ingen produktionskod förrän frågan nedan är besvarad.**
+Samma form som steg 7.
+
+### Varför det är intressant
+
+Steg 16 ger lagens bokstav. Regelfilerna ger **Skatteverkets egen maskinläsbara
+tolkning** av hur reglerna tillämpas — publicerade i JSON och sedan 2026-04-10
+även i BPMN. Det är precis den lucka som noterades när lagkorpuset planerades:
+en fråga om reseräkning eller logikostnader besvaras av tillämpningen, inte av
+lagtexten.
+
+Ingen annan källa i registret täcker det.
+
+### Den öppna frågan
+
+Skatteverkets dokumentation säger två saker som behöver förenas:
+
+* API:et **Rättsliga regler** kräver avtal.
+* Regelfilerna är **öppna data** och tillgängliga för alla.
+
+Sannolikt betyder det att filerna går att ladda ner från utvecklarportalen utan
+avtal, medan API:et är det avtalsbundna sättet att hämta dem programmatiskt. Men
+det är en gissning, och gissningar aktiverar inga källor (§0).
+
+**Gör:**
+1. Ta reda på hur regelfilerna faktiskt hämtas. Portalen är en klientrenderad SPA;
+   dess bakomliggande API ligger på
+   `https://www7.skatteverket.se/portal-wapi/open/apier-och-oppna-data/utvecklarportalen/v1/`.
+   Sökvägen `getFile/{namn}/...` är verifierad (svarar 200 med PDF), men jag kunde
+   inte enumerera resurserna — `/dataresurser`, `/apier`, `/list` m.fl. gav 404.
+   Hitta den sökväg som listar öppna dataresurser, eller konstatera att den inte
+   finns publikt.
+2. Hämta **en** regelfil. Inspektera formatet: JSON-rules-engine, BPMN, eller båda.
+3. Avgör om innehållet går att göra Faktaposter av. En regelfil beskriver en
+   beslutslogik, inte ett värde — det är inte självklart att den passar
+   Faktapost-modellen, och det är en giltig slutsats att den inte gör det.
+4. Ta reda på om avtal krävs för det du faktiskt vill använda.
+
+**Acceptans:** en rapport med exakt URL, HTTP-status, de första 300 tecknen av
+svaret, vilket format filen har, och en bedömning av om innehållet kan bära en
+Faktapost med `lank_manniska` och `lank_maskin`. Plus ett förslag till post i
+`kallregister.yaml`.
+
+**Registret uppdateras först efter beställarens godkännande.** Går källan inte att
+nå, eller passar den inte Faktapost-modellen, lämnas den som `verifierad: nej`,
+`aktiverad: false` med orsaken skriven i `hinder` — det är ett giltigt utfall.
+
+### Vad som INTE ska göras i detta steg
+
+Ansök inte om partner-API:er. Skattekonto, Inkomstdeklaration, Momsdeklaration,
+Beskattningsengagemang, Arbetsgivardeklaration, Kundhändelser, Ombudshantering,
+Fråga om skatteavdrag, Beslutade skatteuppgifter och Bilförmån hör hemma i
+sie-mcp, inte i den publika chatten. Att lägga person- eller företagsspecifika
+skatteuppgifter i en fritextsökbar bot vore fel även med avtal på plats — och
+`ARKITEKTUR.md` §7 spärrar redan källor med uppgifter om enskilda.
 
 ---
 
