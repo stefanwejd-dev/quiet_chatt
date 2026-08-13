@@ -636,6 +636,229 @@ en `<script>`-tagg på quiet.nu.
 
 ---
 
+## Steg 16A — Lagkorpus, de fem huvudlagarna
+
+**Bakgrund.** Chattens publik är svenska småföretagare och deras redovisare.
+Lagtexten de faktiskt arbetar mot är ett femtiotal skatte- och
+redovisningsförfattningar. Steg 16A bygger hämtning, parsning och indexering för
+**fem** av dem; steg 16B skalar till resten.
+
+### Källan är redan verifierad — bygg inget nytt
+
+Använd `riksdagen`, som redan finns i registret. Gå **inte** till
+`rkrattsbaser.gov.se`: den saknar API och spec, och att skrapa en regeringssajt
+är utanför vad projektet gör.
+
+Tre saker är utredda och ska inte utredas om:
+
+**1. Riksdagen ger konsoliderad text.** Dokumentets huvud bär
+konsolideringspunkten:
+
+```
+Inkomstskattelag (1999:1229)  t.o.m. SFS 2026:1393
+```
+
+Det är det svåraste i hela uppgiften och det är redan löst. Bygg **ingen** egen
+konsolidering ur ändringsförfattningar — en felkonsoliderad paragraf ser exakt
+lika trovärdig ut som en riktig.
+
+**2. `dok_id` är härledbart.** `1999:1229` → `sfs-1999-1229`. Hämta direkt från
+`https://data.riksdagen.se/dokument/{dok_id}`; ingen sökning behövs. Verifierat
+för samtliga tolv huvudlagar 2026-08-13.
+
+**3. Ändringsdetektering är gratis.** `dokumentlista` returnerar `systemdatum`
+per författning. Jämför den strängen — diffa aldrig text. Metadataanropen är
+små, så kör **nattligt**, inte var fjortonde dag: fjorton dagars fördröjning på
+en skatteregeländring är för mycket för någon som ska deklarera.
+
+### Lagarna i 16A
+
+| SFS | Författning | Varför just denna |
+|---|---|---|
+| 1999:1229 | Inkomstskattelag | 70 kapitel, 2,75 MB — avslöjar varje svaghet i parsningen |
+| 2023:200 | Mervärdesskattelag | ny lag, annan struktur än ISL |
+| 2011:1244 | Skatteförfarandelag | förfarandefrågor är vanligast i praktiken |
+| 1999:1078 | Bokföringslag | kort, tät, många hänvisningar |
+| 1995:1554 | Årsredovisningslag | bilagestruktur |
+
+Urvalet är inte de fem största utan de fem mest *olika* — parsningen ska bevisas
+mot verklig strukturvariation, inte mot volym.
+
+**Gör:**
+
+* `lagar/lagregister.yaml` — SFS-nummer, namn, kortnamn. Samma deklarativa
+  mönster som `kallor/kallregister.yaml`. Ingen SFS-lista i Python-kod.
+* `index/lag_ingest.py` — hämtar via `riksdagen`-adapterns transportlager (kö,
+  cache, omförsök gäller även här), lagrar råtext lokalt, och skriver
+  `t.o.m. SFS`, `systemdatum` och hämtningstidpunkt per författning.
+* `index/lag_parser.py` — konsoliderad text → kapitel, paragrafer,
+  ändringsmarkeringar (`Lag (ÅÅÅÅ:NNN)`), övergångsbestämmelser.
+* Chunkning in i **det befintliga** hybridindexet. Bygg ingen ny sökmotor —
+  FTS5 + embeddings + RRF finns redan i `index/sok.py`.
+* `adaptrar/lagtext.py` — adapter mot det lokala indexet, returnerar
+  `Faktautkast` som alla andra.
+
+**Chunkens innehåll.** En paragraf står sällan ensam: *"Bestämmelser om
+skattskyldighet finns i 3–7 kap."* betyder ingenting utan sammanhang. Varje
+chunk ska bära kapitelrubrik, paragrafrubrik, paragraftext och
+ändringsmarkeringen.
+
+### Den nya regeln: konsolideringspunkten måste bäras hela vägen
+
+Det här är **systemets första kopia**. Allt annat hämtas live; en lagtext på
+disk kan bli inaktuell. En inaktuell SCB-siffra är pinsam, en inaktuell
+skatteparagraf leder till en felaktig deklaration.
+
+Därför, som hårt krav:
+
+* `Faktautkast.period` = konsolideringspunkten, t.ex. `"t.o.m. SFS 2026:1393"`.
+* `Faktautkast.dataset` = SFS-numret.
+* `Faktautkast.lank_manniska` = Riksdagens sida för författningen.
+* `Faktautkast.lank_maskin` = `https://data.riksdagen.se/dokument/{dok_id}`.
+* `hamtad` = när kopian togs, inte när frågan ställdes.
+
+Ett svar som citerar en paragraf ska alltså kunna visa *"3 kap. 9 § IL, i
+lydelse enligt SFS 2026:1393, hämtad 2026-08-14"*. Utan det blir den lokala
+kopian den bakdörr in i arkitekturen som §1 finns för att stänga.
+
+**Acceptans:**
+- `lag_ingest` hämtar alla fem och rapporterar `t.o.m. SFS` per författning.
+- Inkomstskattelagen parsas till **minst 60 kapitel**; inget kapitel är tomt.
+- Stickprov: `3 kap. 9 §` IL återfinns som en egen chunk med rätt kapitelrubrik,
+  och chunken bär en `Lag (ÅÅÅÅ:NNN)`-markering.
+- Sökning på `"när är man begränsat skattskyldig"` ger en IL-chunk bland topp 5,
+  utan lexikal överlappning med paragrafens rubrik.
+- En Faktapost från `lagtext`-adaptern har `period` satt till
+  konsolideringspunkten, och registret avvisar den om `lank_manniska` saknas.
+- Ändringskontrollen upptäcker en ändring: mata in ett gammalt `systemdatum` för
+  en författning och verifiera att den flaggas för omhämtning.
+- `python -m ruff check .` och `python -m pytest -q` är rena.
+
+---
+
+## Steg 16B — Lagkorpus, resterande författningar
+
+**Gör detta först när 16A är godkänt och parsningen bevisat sig mot
+inkomstskattelagens 70 kapitel.** Att skala en parser som inte håller ger 60
+tysta fel i stället för ett.
+
+Arbetet är att fylla på `lagar/lagregister.yaml`. Ingen ny kod ska behövas — och
+behövs det ny kod är det ett tecken på att 16A:s parser var för snäv.
+
+Listan omfattar **57 författningar**, vilket med 16A:s fem ger 62 totalt.
+
+**Samtliga SFS-nummer nedan är kontrollerade mot Riksdagens `dokumentlista`
+2026-08-13 och gav träff på exakt beteckning.** Listan är transkriberad ur
+beställarens källförteckning, så kontrollen var nödvändig — men den är gjord.
+Slår ett nummer ändå fel: rapportera det, hitta inte på ett annat.
+
+### Inkomstskatt m.m.
+`2011:1268` Investeringssparkonto ·
+`2018:1384` Uppskovsbelopp vid betydande samhällsförflyttning ·
+`2022:1843` Tillfällig skatt på extraordinära vinster för vissa företag under 2023 ·
+`2023:75` Överintäkter från el ·
+`2023:875` Tilläggsskatt
+
+### Internationellt, svenska författningar
+`1970:624` Kupongskattelag ·
+`1986:468` Avräkning av utländsk skatt ·
+`1990:314` Handräckning i skatteärenden ·
+`1991:481` Folkbokföringslag ·
+`1991:586` Särskild inkomstskatt för utomlands bosatta (SINK) ·
+`1991:591` Artister, skatt för utlandsbosatta ·
+`2009:1289` Prissättningsbesked vid internationella transaktioner ·
+`2019:601` Tvistlösningsförfarande inom EU
+
+### Mervärdesskatt
+`2005:807` Ersättning för viss mervärdesskatt för kommuner och regioner, lag ·
+`2005:811` samma, förordning ·
+`2023:328` Mervärdesskatteförordning
+
+### Socialavgifter m.m.
+`1967:531` Tryggandelag ·
+`1990:659` Löneskatt på förvärvsinkomster ·
+`1990:661` Avkastningsskatt på pensionsmedel ·
+`1991:687` Löneskatt på pensionskostnader ·
+`1991:1047` Sjuklönelag ·
+`1993:931` Individuellt pensionssparande ·
+`1994:1744` Allmän pensionsavgift ·
+`1994:1920` Allmän löneavgift ·
+`2000:980` Socialavgiftslag ·
+`2001:1170` Särskilda avdrag i vissa fall vid avgiftsberäkningen ·
+`2010:110` Socialförsäkringsbalk ·
+`2016:1053` Särskild beräkning av vissa avgifter för enmansföretag ·
+`2023:747` Särskilt avdrag för personer som arbetar med forskning eller utveckling ·
+`2023:748` Särskilt avdrag vid beräkning av egenavgifter och allmän löneavgift
+
+### Punktskatter
+`1994:1776` Energiskattelag ·
+`2004:629` Trängselskattelag ·
+`2017:1200` Flygskatt ·
+`2018:1893` Finansiering av radio och tv i allmänhetens tjänst ·
+`2022:156` Alkoholskattelag
+
+### Fastigheter
+`1970:994` Jordabalken ·
+`1979:1152` Fastighetstaxeringslag ·
+`1984:404` Stämpelskatt vid inskrivningsmyndigheter ·
+`1984:1052` Fastighetsskatt ·
+`2007:1398` Kommunal fastighetsavgift
+
+### Skatteförfarandet
+`1971:69` Skattebrottslag ·
+`1971:291` Förvaltningsprocesslag ·
+`1974:152` Regeringsformen ·
+`1982:188` Preskription av skattefordringar ·
+`1995:575` Skatteflyktslag ·
+`1997:484` Dröjsmålsavgift ·
+`1998:189` Förhandsbesked i skattefrågor ·
+`2006:304` Rättsprövningslag ·
+`2006:502` Förhandsavgörande från EU-domstolen ·
+`2008:826` Skattereduktion för kommunal fastighetsavgift ·
+`2009:99` Anstånd med inbetalning av skatt i vissa fall ·
+`2009:194` Förfarandet vid skattereduktion för hushållsarbete ·
+`2011:1261` Skatteförfarandeförordning ·
+`2015:632` Skattetillägg i vissa fall ·
+`2017:900` Förvaltningslag ·
+`2020:1066` Förfarandet vid skattereduktion för installation av grön teknik
+
+### Redovisning
+`2005:551` Aktiebolagslag
+
+### Utanför räckvidden — och varför
+
+Källförteckningen innehåller sju dokument som **inte** finns i Riksdagens
+SFS-data: EU-fördraget, EUF-fördraget, ränte/royaltydirektivet 2003/49/EG,
+fusionsdirektivet 2009/133/EG, moder/dotterbolagsdirektivet 2011/96/EU,
+skatteflyktsdirektivet 2016/1164/EU, genomförandeförordningen 282/2011/EU samt
+OECD:s modellavtal.
+
+De ligger hos EUR-Lex respektive OECD och kräver en egen källa och adapter.
+**Lägg inte in dem i lagregistret som om de vore SFS.** Antingen utreds EUR-Lex
+som en ny källa i ett eget steg — enligt §0: anropa, inspektera, dokumentera —
+eller så noteras de som en känd lucka. Det senare är ett giltigt utfall.
+
+### Notering om "utdrag"
+
+Källförteckningen anger utdrag för flera författningar (t.ex.
+socialförsäkringsbalken, jordabalken, regeringsformen). Riksdagen ger hela
+texten. Indexera hela — ett utdrag är bokens redaktionella val, inte en
+egenskap hos lagen, och en avgränsning här skulle bara skapa luckor där en
+användares fråga råkar hamna utanför.
+
+**Acceptans:**
+- Alla författningar i listan ovan är hämtade, parsade och indexerade, eller
+  uttryckligen redovisade som misslyckade med orsak. Tyst bortfall är inte
+  godkänt.
+- Ingen författning har noll kapitel eller noll paragrafer.
+- Den nattliga ändringskontrollen täcker hela registret och rapporterar
+  antal oförändrade, ändrade och misslyckade.
+- Ett stickprov på tio författningar: `t.o.m. SFS` i indexet stämmer mot
+  Riksdagens aktuella metadata.
+- `python -m ruff check .` och `python -m pytest -q` är rena.
+
+---
+
 ## Granskning av steg 10–13, 2026-08-13
 
 Den bäst byggda etappen hittills. `syntes.py`, `validator.py`, `berakningar.py`
