@@ -152,7 +152,7 @@ en indikation på vilken adapter som kan exekvera mot den.
 
 ---
 
-## Steg 4 — Adaptergränssnitt och två första adaptrar
+## Steg 4 — Adaptergränssnitt och två första adaptrar ✅ Godkänt 2026-08-13
 
 **Gör:** `adaptrar/bas.py` med protokollet ur `ARKITEKTUR.md` §3.3, plus
 `adaptrar/riksbanken.py` och `adaptrar/vies.py`. Båda är verifierade och små — de
@@ -169,6 +169,8 @@ Varje adapter måste:
   `lank_maskin` går att klistra in i curl och ge samma värde.
 - `vies.hamta(Fragplan(momsnr="SE..."))` ger en Faktapost med `isValid` som värde.
 - pytest med inspelade svar passerar utan nätverk.
+
+**Utfall 2026-08-13:** `adaptrar/bas.py`, `adaptrar/riksbanken.py` och `adaptrar/vies.py` har implementerats. En initial `transport.py` har skapats för HTTP-förfrågningar (som ska utökas i nästa steg). Acceptanstester skrivna med VCR (`pytest-vcr`) som bekräftar korrekt generering av `Faktapost`-objekt för både Riksbanken och VIES.
 
 ---
 
