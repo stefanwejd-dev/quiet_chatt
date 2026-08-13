@@ -181,6 +181,13 @@ går genom en token bucket per källa, konfigurerad av `takt` i registret. Svare
 SQLite med `cache_ttl` per källa (valutakurs 1 h, statistiktabell 24 h, DCAT-metadata
 7 dygn). Cachenyckeln är det normaliserade anropet, inte frågan.
 
+### 3.6 Katalogstruktur och Hantering av Hemligheter
+
+Projektet är uppdelat i två rot-mappar på maskinen för att skydda API-nycklar och hemlig miljöinformation från publik källkod:
+1. `G:\My Drive\Claude Cowork\quiet_chatt` — Huvudprojektet. Här ligger all öppen källkod (Python, konfig, adaptrar och publicerad dokumentation).
+2. `G:\My Drive\Claude Cowork\quiet_chatt_hemligt` — Hemlig arbetsyta. Används exklusivt för att spara API-nycklar (t.ex. mot Bolagsverket), privata certifikat och lokal utvecklingsmiljö-information som aldrig ska lämnas ut.
+Kod i huvudprojektet konfigureras att läsa referenser från den hemliga mappen där det behövs utan att stiga över till GitHub.
+
 ---
 
 ## 4. Frågeflödet
