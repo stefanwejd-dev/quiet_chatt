@@ -511,7 +511,7 @@ Hela sviten (utom livetester): **152 passed**.
 
 ---
 
-## Steg 13 — HTTP-API och kvoter
+## Steg 13 — HTTP-API och kvoter ✅ Godkänt 2026-08-13
 
 **Gör:** `api.py`.
 
@@ -528,6 +528,58 @@ Hela sviten (utom livetester): **152 passed**.
 - Ett anrop från fel origin avvisas.
 - Anrop 51 från samma IP samma dygn avvisas med kvotmeddelande.
 - Nyckeln syns inte i något svar och inte i någon logg.
+
+**Utfall 2026-08-13:** Implementerade `api.py` med tre endpoints, plus två
+nya stödmoduler (utanför `api.py` men inom stegets scope, samma mönster som
+tidigare steg fick utöka `transport.py`/`register.py`):
+
+* `src/quiet_oppen_data/kvot.py` — per-IP- och total-dygnskvot i en egen
+  SQLite-fil (`data/kvoter.sqlite`), kontroll och uppräkning under samma lås
+  så två samtidiga anrop inte båda kan smita igenom vid gränsen. Dygnet
+  räknas i UTC.
+* `adaptrar/transport.py` fick en `kalla_halsa`-tabell och en publik
+  `halsostatistik()`-funktion: varje cache-träff och varje nytt lyckat
+  nätanrop bokförs, så `/halsa` kan visa senaste lyckade anrop och
+  cache-träffkvot per källa utan att gissa.
+
+`api.py`:
+* `POST /fraga` — kvoten kontrolleras och räknas upp INNAN fas A/B/C körs
+  (fail-closed, ett avvisat anrop kostar inget). Strömmar SSE-händelser:
+  `stycke` per stycke, en avslutande `kallor` (källpanelen: myndighet,
+  dataset, period, dimensioner, hämtningstid, båda länkarna, licens,
+  attribution, härledningsstatus), `attribution`/`forbehall` om satta, och
+  `klart`. Tomt/overksamt svar strömmar en `svar`-händelse med
+  fail-closed-texten i stället.
+* `GET /kallor` — publikt, `Sparrad`-poster (§7:s spärrlista) helt
+  uteslutna, inte bara maskerade.
+* `GET /halsa` — behåller kontraktet `{"status": "ok", …}` som redan är
+  deployat mot Coolify (se "Frågor till beställaren" #5) och lägger till
+  per-källa-statistiken som ett extra fält i samma svar, inte ett nytt
+  kontrakt.
+* CORS: `CORSMiddleware` med allowlist byggd ur `site.domain`, plus en
+  egen kontroll (`_kontrollera_ursprung`) som explicit avvisar `/fraga` med
+  403 om `Origin`-headern är satt och inte matchar — `CORSMiddleware` ensam
+  skyddar bara webbläsarens läsning av svaret, inte ett direkt anrop.
+* Fas A/C instansieras lat, en gång per process — importen av
+  `motor.hamtning`/`motor.syntes`/`motor.validator` sker inne i funktionen
+  som bygger dem, så `/kallor` och `/halsa` fungerar utan
+  `ANTHROPIC_API_KEY` i miljön.
+
+8 tester i `tests/test_steg13_api.py`, alla med fas A/C mockade (inget
+nätverk). Livetester körda manuellt mot en riktig `uvicorn`-process med
+riktig `ANTHROPIC_API_KEY`:
+* `GET /halsa` → 200, alla registrerade källor listade med nollställd
+  statistik.
+* `GET /kallor` → 200, `polisen_efterlysta` och
+  `bolagsverket_verkliga_huvudman` finns inte i svaret.
+* `POST /fraga` med "referensranta" → riktig SSE-ström: två `stycke`,
+  en `kallor`-händelse med fullständig källpanel (F1 seriekatalogen, F2
+  observationen, båda med `lank_maskin` som går att curla), `forbehall`,
+  `klart`.
+* Fel `Origin` (`https://evil.example`) → 403. Rätt `Origin`
+  (`https://quiet.nu`) → 200.
+
+Hela sviten (utom livetester): **160 passed**.
 
 ---
 

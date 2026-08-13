@@ -4,6 +4,7 @@ import logging
 import sqlite3
 import threading
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
@@ -84,8 +85,66 @@ def _get_cache_db() -> sqlite3.Connection:
             expires_at REAL
         )
     ''')
+    # Per-källa hälsostatistik för GET /halsa (steg 13) — senaste lyckade
+    # (icke-cachade) anrop och cache-träffkvot. Bor i samma databas som
+    # cachen den beskriver, så isolerad_cache-fixturen isolerar båda.
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS kalla_halsa (
+            kalla_id TEXT PRIMARY KEY,
+            senaste_lyckad REAL,
+            cache_traffar INTEGER NOT NULL DEFAULT 0,
+            cache_missar INTEGER NOT NULL DEFAULT 0
+        )
+    ''')
     conn.commit()
     return conn
+
+
+def _uppdatera_halsa(conn: sqlite3.Connection, kalla_id: str, cache_traff: bool) -> None:
+    """Bokför ett anrop mot en källa — cache-träff eller ett nytt lyckat nätanrop."""
+    if cache_traff:
+        conn.execute(
+            "INSERT INTO kalla_halsa (kalla_id, cache_traffar) VALUES (?, 1) "
+            "ON CONFLICT(kalla_id) DO UPDATE SET cache_traffar = cache_traffar + 1",
+            (kalla_id,),
+        )
+    else:
+        now = time.time()
+        conn.execute(
+            "INSERT INTO kalla_halsa (kalla_id, senaste_lyckad, cache_missar) "
+            "VALUES (?, ?, 1) "
+            "ON CONFLICT(kalla_id) DO UPDATE SET senaste_lyckad = ?, "
+            "cache_missar = cache_missar + 1",
+            (kalla_id, now, now),
+        )
+    conn.commit()
+
+
+def halsostatistik() -> dict[str, dict[str, Any]]:
+    """Läser per-källa-statistik för GET /halsa: senaste lyckade anrop och
+    cache-träffkvot. Källor utan trafik saknas i returvärdet — anroparen
+    (api.py) slår ihop det med registrets fullständiga källista."""
+    conn = _get_cache_db()
+    try:
+        rader = conn.execute(
+            "SELECT kalla_id, senaste_lyckad, cache_traffar, cache_missar FROM kalla_halsa"
+        ).fetchall()
+    finally:
+        conn.close()
+
+    resultat: dict[str, dict[str, Any]] = {}
+    for kalla_id, senaste_lyckad, traffar, missar in rader:
+        total = traffar + missar
+        resultat[kalla_id] = {
+            "senaste_lyckade_anrop": (
+                datetime.fromtimestamp(senaste_lyckad, tz=timezone.utc).isoformat()
+                if senaste_lyckad else None
+            ),
+            "cache_traffar": traffar,
+            "cache_missar": missar,
+            "cache_traffkvot": round(traffar / total, 4) if total else None,
+        }
+    return resultat
 
 def _ar_tillaten_vard(url: str) -> bool:
     """Sant om värdnamnet i url förekommer i katalogindexet.
@@ -202,6 +261,7 @@ def _hamta_generisk(kalla_id: str, method: str, url: str, return_json: bool, **k
         if row:
             data, expires_at = row
             if now < expires_at:
+                _uppdatera_halsa(conn, kalla_id, cache_traff=True)
                 return json.loads(data) if return_json else data
             conn.execute("DELETE FROM http_cache WHERE key = ?", (cache_key,))
             conn.commit()
@@ -223,6 +283,7 @@ def _hamta_generisk(kalla_id: str, method: str, url: str, return_json: bool, **k
                 now + k.cache_ttl,
             ),
         )
+        _uppdatera_halsa(conn, kalla_id, cache_traff=False)
         conn.commit()
     finally:
         conn.close()
