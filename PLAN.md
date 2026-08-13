@@ -333,7 +333,7 @@ sviten: **108 passed**. Nästa steg: Fas A (planerare och hämtningsloop).
 
 ---
 
-## Steg 9 — Fas A: planerare och hämtningsloop
+## Steg 9 — Fas A: planerare och hämtningsloop ✅ Godkänt 2026-08-13
 
 **Gör:** `motor/hamtning.py`.
 
@@ -352,6 +352,16 @@ sviten: **108 passed**. Nästa steg: Fas A (planerare och hämtningsloop).
   Faktapost från TED.
 - "Vad är meningen med livet?" ger noll Faktaposter och loopen avslutas rent.
 - `usage.cache_read_input_tokens` > 0 på andra frågan i rad (bevisar att cachen träffar).
+
+**Utfall 2026-08-13:** Implementerade `motor/hamtning.py` med `FasALopp`-klassen.
+Agent-loopen körs manuellt (streaming `client.beta.messages.stream` varv för varv) 
+för full kontroll över usage-statistik. Systemprompten är frusen; cache-brytpunkt
+("`cache_control: {type: ephemeral}`") sitter på sista systemblocket och sista
+verktyget i deterministisk lista. Verktygsdefinitioner sorteras på id och namn.
+Fas A:s text kastas; bara Faktaregistret returneras i `HamtningsResultat`.
+2 enhetstester (utan API-nyckel) gröna. 4 livetester (`@pytest.mark.live`) 
+avaktiveras normalt; kör `pytest -m live` när `ANTHROPIC_API_KEY` är satt.
+Hela sviten: **110 passed**.
 
 ---
 
