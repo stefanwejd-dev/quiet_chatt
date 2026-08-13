@@ -1,0 +1,74 @@
+interactions:
+- request:
+    body: '{"query":"buyer-country=SWE AND notice-type=XXXXXXXXXX_OGILTIGT","limit":5,"fields":["publication-number","publication-date","notice-type","notice-title","buyer-name","buyer-city","classification-cpv","procedure-type","tender-value","tender-value-cur","winner-partname","winner-country","winner-size"]}'
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      content-length:
+      - '302'
+      content-type:
+      - application/json
+      host:
+      - api.ted.europa.eu
+      user-agent:
+      - python-httpx/0.28.1
+    method: POST
+    uri: https://api.ted.europa.eu/v3/notices/search
+  response:
+    body:
+      string: '{"message":"Value ''XXXXXXXXXX_OGILTIGT'' is not supported for search
+        field ''notice-type'' in expert search","error":{"type":"QUERY_UNSUPPORTED_FIELD_VALUE","location":{"beginColumn":34,"beginLine":1,"endColumn":53,"endLine":1},"fieldName":"notice-type","fieldValue":"XXXXXXXXXX_OGILTIGT"}}'
+    headers:
+      cache-control:
+      - no-cache, no-store, max-age=0, must-revalidate
+      connection:
+      - keep-alive
+      content-security-policy:
+      - 'default-src ''self'' ted.europa.eu tedweb.api.ted.europa.eu api.ted.europa.eu
+        europa.eu webtools.europa.eu jackson.webtools.europa.eu gisco-services.ec.europa.eu
+        analytics.webanalytics.op.europa.eu dashboard.tech.ec.europa.eu *.token.awswaf.com
+        *.captcha.awswaf.com *.captcha-sdk.awswaf.com blob: data: ''unsafe-inline''
+        ''unsafe-eval'''
+      content-type:
+      - application/json
+      date:
+      - Thu, 13 Aug 2026 15:13:43 GMT
+      expires:
+      - '0'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Origin
+      - Access-Control-Request-Method
+      - Access-Control-Request-Headers
+      - Origin
+      - Origin
+      via:
+      - 1.1 bfce36cf070c72a24eb681e362bd550a.cloudfront.net (CloudFront), 1.1 341c4a011d81d1a34d88d3adcf5b63b2.cloudfront.net
+        (CloudFront)
+      x-amz-cf-id:
+      - 2I8wdEpv0q711TpDy8PL0otJOUSmY-oEzXho6RGFD1dqfmRoCqm2Xg==
+      x-amz-cf-pop:
+      - DUB56-P4
+      - ARN56-P4
+      x-cache:
+      - Error from cloudfront
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - DENY
+      x-xss-protection:
+      - '0'
+    status:
+      code: 400
+      message: Bad Request
+version: 1

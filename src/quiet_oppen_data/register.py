@@ -33,13 +33,12 @@ _IGNORERADE_NYCKLAR = frozenset({
     "varning",
     "hinder",
     "dokumentation",
-    "faltval",
     "sprakhantering",
     "metod",
     "roll",
-    "maxceller",
     "version",
     "uppdaterad",
+    "kommentar",
 })
 
 
@@ -59,6 +58,8 @@ class Kalla:
     licens: str = "okänd"
     attribution: str | None = None
     manniskolank_mall: str | None = None
+    faltval: list | None = None        # kurerat fältunderval (TED)
+    maxceller: int | None = None       # celltak (PxWeb)
 
 
 @dataclass(frozen=True)
@@ -168,6 +169,8 @@ def las(registersokväg: Path | str | None = None) -> list[KallaPost]:
                     takt=dict(post.get("takt") or {}),
                     cache_ttl=int(post.get("cache_ttl", 3600)),
                     manniskolank_mall=post.get("manniskolank_mall"),
+                    faltval=post.get("faltval"),
+                    maxceller=post.get("maxceller"),
                 )
             )
 

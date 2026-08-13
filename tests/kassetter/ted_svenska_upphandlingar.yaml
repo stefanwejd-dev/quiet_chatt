@@ -1,0 +1,163 @@
+interactions:
+- request:
+    body: '{"query":"buyer-country=SWE AND publication-date>=today(-30)","limit":2,"fields":["publication-number","publication-date","notice-type","notice-title","buyer-name","buyer-city","classification-cpv","procedure-type","tender-value","tender-value-cur","winner-partname","winner-country","winner-size"]}'
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      content-length:
+      - '299'
+      content-type:
+      - application/json
+      host:
+      - api.ted.europa.eu
+      user-agent:
+      - python-httpx/0.28.1
+    method: POST
+    uri: https://api.ted.europa.eu/v3/notices/search
+  response:
+    body:
+      string: "{\"notices\":[{\"notice-type\":\"can-standard\",\"procedure-type\":\"open\",\"publication-number\":\"483918-2026\",\"classification-cpv\":[\"31400000\",\"31400000\",\"31410000\",\"31411000\",\"31434000\",\"31440000\"],\"winner-country\":[\"SWE\",\"FIN\",\"SWE\",\"SWE\",\"SWE\",\"SWE\",\"IRQ\",\"SWE\"],\"publication-date\":\"2026-07-14+02:00\",\"buyer-name\":{\"swe\":[\"Region
+        Stockholm - Fastighets- och servicen\xE4mnden/Ink\xF6pscentralen\",\"Akutsjukhusn\xE4mnden\",\"Regionstyrelsen\",\"Karolinska
+        Universitetssjukhuset\",\"Klimat- och regionutvecklingsn\xE4mnden\",\"Kulturn\xE4mnden\",\"Prim\xE4rv\xE5rdsn\xE4mnden\",\"Regionrevisorerna\",\"Stockholms
+        l\xE4ns sjukv\xE5rdsomr\xE5de\",\"Folktandv\xE5rden Stockholms l\xE4n AB\",\"Film
+        Stockholm AB\",\"Locum AB\",\"MediCarrier AB\",\"Tobiasregistret AB\",\"Tiohundra
+        AB\",\"H\xE4lso- och sjukv\xE5rdsn\xE4mnden\"]},\"winner-size\":[\"large\"],\"links\":{\"xml\":{\"MUL\":\"https://ted.europa.eu/en/notice/483918-2026/xml\"},\"pdf\":{\"BUL\":\"https://ted.europa.eu/bg/notice/483918-2026/pdf\",\"SPA\":\"https://ted.europa.eu/es/notice/483918-2026/pdf\",\"CES\":\"https://ted.europa.eu/cs/notice/483918-2026/pdf\",\"DAN\":\"https://ted.europa.eu/da/notice/483918-2026/pdf\",\"DEU\":\"https://ted.europa.eu/de/notice/483918-2026/pdf\",\"EST\":\"https://ted.europa.eu/et/notice/483918-2026/pdf\",\"ELL\":\"https://ted.europa.eu/el/notice/483918-2026/pdf\",\"ENG\":\"https://ted.europa.eu/en/notice/483918-2026/pdf\",\"FRA\":\"https://ted.europa.eu/fr/notice/483918-2026/pdf\",\"GLE\":\"https://ted.europa.eu/ga/notice/483918-2026/pdf\",\"HRV\":\"https://ted.europa.eu/hr/notice/483918-2026/pdf\",\"ITA\":\"https://ted.europa.eu/it/notice/483918-2026/pdf\",\"LAV\":\"https://ted.europa.eu/lv/notice/483918-2026/pdf\",\"LIT\":\"https://ted.europa.eu/lt/notice/483918-2026/pdf\",\"HUN\":\"https://ted.europa.eu/hu/notice/483918-2026/pdf\",\"MLT\":\"https://ted.europa.eu/mt/notice/483918-2026/pdf\",\"NLD\":\"https://ted.europa.eu/nl/notice/483918-2026/pdf\",\"POL\":\"https://ted.europa.eu/pl/notice/483918-2026/pdf\",\"POR\":\"https://ted.europa.eu/pt/notice/483918-2026/pdf\",\"RON\":\"https://ted.europa.eu/ro/notice/483918-2026/pdf\",\"SLK\":\"https://ted.europa.eu/sk/notice/483918-2026/pdf\",\"SLV\":\"https://ted.europa.eu/sl/notice/483918-2026/pdf\",\"FIN\":\"https://ted.europa.eu/fi/notice/483918-2026/pdf\",\"SWE\":\"https://ted.europa.eu/sv/notice/483918-2026/pdf\"},\"pdfs\":{\"SWE\":\"https://ted.europa.eu/sv/notice/483918-2026/pdfs\"},\"html\":{\"BUL\":\"https://ted.europa.eu/bg/notice/-/detail/483918-2026\",\"SPA\":\"https://ted.europa.eu/es/notice/-/detail/483918-2026\",\"CES\":\"https://ted.europa.eu/cs/notice/-/detail/483918-2026\",\"DAN\":\"https://ted.europa.eu/da/notice/-/detail/483918-2026\",\"DEU\":\"https://ted.europa.eu/de/notice/-/detail/483918-2026\",\"EST\":\"https://ted.europa.eu/et/notice/-/detail/483918-2026\",\"ELL\":\"https://ted.europa.eu/el/notice/-/detail/483918-2026\",\"ENG\":\"https://ted.europa.eu/en/notice/-/detail/483918-2026\",\"FRA\":\"https://ted.europa.eu/fr/notice/-/detail/483918-2026\",\"GLE\":\"https://ted.europa.eu/ga/notice/-/detail/483918-2026\",\"HRV\":\"https://ted.europa.eu/hr/notice/-/detail/483918-2026\",\"ITA\":\"https://ted.europa.eu/it/notice/-/detail/483918-2026\",\"LAV\":\"https://ted.europa.eu/lv/notice/-/detail/483918-2026\",\"LIT\":\"https://ted.europa.eu/lt/notice/-/detail/483918-2026\",\"HUN\":\"https://ted.europa.eu/hu/notice/-/detail/483918-2026\",\"MLT\":\"https://ted.europa.eu/mt/notice/-/detail/483918-2026\",\"NLD\":\"https://ted.europa.eu/nl/notice/-/detail/483918-2026\",\"POL\":\"https://ted.europa.eu/pl/notice/-/detail/483918-2026\",\"POR\":\"https://ted.europa.eu/pt/notice/-/detail/483918-2026\",\"RON\":\"https://ted.europa.eu/ro/notice/-/detail/483918-2026\",\"SLK\":\"https://ted.europa.eu/sk/notice/-/detail/483918-2026\",\"SLV\":\"https://ted.europa.eu/sl/notice/-/detail/483918-2026\",\"FIN\":\"https://ted.europa.eu/fi/notice/-/detail/483918-2026\",\"SWE\":\"https://ted.europa.eu/sv/notice/-/detail/483918-2026\"},\"htmlDirect\":{\"BUL\":\"https://ted.europa.eu/bg/notice/483918-2026/html\",\"SPA\":\"https://ted.europa.eu/es/notice/483918-2026/html\",\"CES\":\"https://ted.europa.eu/cs/notice/483918-2026/html\",\"DAN\":\"https://ted.europa.eu/da/notice/483918-2026/html\",\"DEU\":\"https://ted.europa.eu/de/notice/483918-2026/html\",\"EST\":\"https://ted.europa.eu/et/notice/483918-2026/html\",\"ELL\":\"https://ted.europa.eu/el/notice/483918-2026/html\",\"ENG\":\"https://ted.europa.eu/en/notice/483918-2026/html\",\"FRA\":\"https://ted.europa.eu/fr/notice/483918-2026/html\",\"GLE\":\"https://ted.europa.eu/ga/notice/483918-2026/html\",\"HRV\":\"https://ted.europa.eu/hr/notice/483918-2026/html\",\"ITA\":\"https://ted.europa.eu/it/notice/483918-2026/html\",\"LAV\":\"https://ted.europa.eu/lv/notice/483918-2026/html\",\"LIT\":\"https://ted.europa.eu/lt/notice/483918-2026/html\",\"HUN\":\"https://ted.europa.eu/hu/notice/483918-2026/html\",\"MLT\":\"https://ted.europa.eu/mt/notice/483918-2026/html\",\"NLD\":\"https://ted.europa.eu/nl/notice/483918-2026/html\",\"POL\":\"https://ted.europa.eu/pl/notice/483918-2026/html\",\"POR\":\"https://ted.europa.eu/pt/notice/483918-2026/html\",\"RON\":\"https://ted.europa.eu/ro/notice/483918-2026/html\",\"SLK\":\"https://ted.europa.eu/sk/notice/483918-2026/html\",\"SLV\":\"https://ted.europa.eu/sl/notice/483918-2026/html\",\"FIN\":\"https://ted.europa.eu/fi/notice/483918-2026/html\",\"SWE\":\"https://ted.europa.eu/sv/notice/483918-2026/html\"}},\"notice-title\":{\"hun\":\"Sv\xE9dorsz\xE1g
+        \u2013 Akkumul\xE1torok, primer elemek \xE9s primer telepek \u2013 SLL145
+        Batterier 2026\",\"lav\":\"Zviedrija \u2013 Akumulatori, galvaniskie elementi
+        un galvanisk\u0101s baterijas \u2013 SLL145 Batterier 2026\",\"swe\":\"Sverige
+        \u2013 Ackumulatorer, prim\xE4rceller och prim\xE4rbatterier \u2013 SLL145
+        Batterier 2026\",\"gle\":\"An tSualainn \u2013 Accumulators, primary cells
+        and primary batteries \u2013 SLL145 Batterier 2026\",\"ell\":\"\u03A3\u03BF\u03C5\u03B7\u03B4\u03AF\u03B1
+        \u2013 \u03A3\u03C5\u03C3\u03C3\u03C9\u03C1\u03B5\u03C5\u03C4\u03AD\u03C2,
+        \u03C0\u03C1\u03C9\u03C4\u03BF\u03B3\u03B5\u03BD\u03AE \u03C3\u03C4\u03BF\u03B9\u03C7\u03B5\u03AF\u03B1
+        \u03BA\u03B1\u03B9 \u03C0\u03C1\u03C9\u03C4\u03BF\u03B3\u03B5\u03BD\u03B5\u03AF\u03C2
+        \u03C3\u03C5\u03C3\u03C4\u03BF\u03B9\u03C7\u03AF\u03B5\u03C2 \u2013 SLL145
+        Batterier 2026\",\"spa\":\"Suecia \u2013 Acumuladores, pilas y bater\xEDas
+        de pilas \u2013 SLL145 Batterier 2026\",\"est\":\"Rootsi \u2013 Akud, primaarelemendid
+        ja primaarpatareid \u2013 SLL145 Batterier 2026\",\"nld\":\"Zweden \u2013
+        Accumulatoren, primaire cellen en primaire elementen \u2013 SLL145 Batterier
+        2026\",\"fin\":\"Ruotsi \u2013 Akut, galvaaniset parit ja paristot \u2013
+        SLL145 Batterier 2026\",\"pol\":\"Szwecja \u2013 Akumulatory, komory galwaniczne
+        i baterie galwaniczne \u2013 SLL145 Batterier 2026\",\"hrv\":\"\u0160vedska
+        \u2013 Akumulatori, primarne \u0107elije i primarne baterije \u2013 SLL145
+        Batterier 2026\",\"ces\":\"\u0160v\xE9dsko \u2013 Akumul\xE1tory, galvanick\xE9
+        \u010Dl\xE1nky a baterie \u2013 SLL145 Batterier 2026\",\"dan\":\"Sverige
+        \u2013 Akkumulatorer, prim\xE6relementer og prim\xE6rbatterier \u2013 SLL145
+        Batterier 2026\",\"ron\":\"Suedia \u2013 Acumulatori, pile galvanice \u015Fi
+        baterii primare \u2013 SLL145 Batterier 2026\",\"por\":\"Su\xE9cia \u2013
+        Acumuladores, pilhas e baterias el\xE9ctricas \u2013 SLL145 Batterier 2026\",\"slk\":\"\u0160v\xE9dsko
+        \u2013 Akumul\xE1tory, galvanick\xE9 \u010Dl\xE1nky a bat\xE9rie \u2013 SLL145
+        Batterier 2026\",\"fra\":\"Su\xE8de \u2013 Accumulateurs, piles et batteries
+        primaires \u2013 SLL145 Batterier 2026\",\"mlt\":\"L-I\u017Cvezja \u2013 Akkumulaturi,
+        \u010Belloli primarji u batteriji primarji \u2013 SLL145 Batterier 2026\",\"deu\":\"Schweden
+        \u2013 Akkumulatoren und Batterien \u2013 SLL145 Batterier 2026\",\"lit\":\"\u0160vedija
+        \u2013 Akumuliatoriai, galvaniniai elementai ir baterijos \u2013 SLL145 Batterier
+        2026\",\"ita\":\"Svezia \u2013 Accumulatori, pile e batterie primarie \u2013
+        SLL145 Batterier 2026\",\"bul\":\"\u0428\u0432e\u0446\u0438\u044F \u2013 \u0410\u043A\u0443\u043C\u0443\u043B\u0430\u0442\u043E\u0440\u0438,
+        \u0435\u043B\u0435\u043A\u0442\u0440\u0438\u0447\u0435\u0441\u043A\u0438 \u0431\u0430\u0442\u0435\u0440\u0438\u0438,
+        \u0441\u044A\u0434\u044A\u0440\u0436\u0430\u0449\u0438 \u0435\u0434\u0438\u043D
+        \u0438\u043B\u0438 \u043D\u044F\u043A\u043E\u043B\u043A\u043E \u0433\u0430\u043B\u0432\u0430\u043D\u0438\u0447\u043D\u0438
+        \u0435\u043B\u0435\u043C\u0435\u043D\u0442\u0430 \u2013 SLL145 Batterier 2026\",\"slv\":\"\u0160vedska
+        \u2013 Akumulatorji, primarne celice in primarne baterije \u2013 SLL145 Batterier
+        2026\",\"eng\":\"Sweden \u2013 Accumulators, primary cells and primary batteries
+        \u2013 SLL145 Batterier 2026\"},\"buyer-city\":{\"mul\":[\"Stockholm\",\"Stockholm\",\"Stockholm\",\"Stockholm\",\"Stockholm\",\"Stockholm\",\"Stockholm\",\"Stockholm\",\"Stockholm\",\"Stockholm\",\"Stockholm\",\"Stockholm\",\"Sp\xE5nga\",\"Stockholm\",\"Norrt\xE4lje\",\"Stockholm\"]}},{\"notice-type\":\"can-standard\",\"procedure-type\":\"open\",\"publication-number\":\"484062-2026\",\"classification-cpv\":[\"71240000\",\"71240000\",\"71320000\"],\"winner-country\":[\"SWE\",\"SWE\",\"SWE\"],\"publication-date\":\"2026-07-14+02:00\",\"buyer-name\":{\"swe\":[\"Region
+        J\xE4mtland H\xE4rjedalen\"]},\"winner-size\":[\"large\"],\"links\":{\"xml\":{\"MUL\":\"https://ted.europa.eu/en/notice/484062-2026/xml\"},\"pdf\":{\"BUL\":\"https://ted.europa.eu/bg/notice/484062-2026/pdf\",\"SPA\":\"https://ted.europa.eu/es/notice/484062-2026/pdf\",\"CES\":\"https://ted.europa.eu/cs/notice/484062-2026/pdf\",\"DAN\":\"https://ted.europa.eu/da/notice/484062-2026/pdf\",\"DEU\":\"https://ted.europa.eu/de/notice/484062-2026/pdf\",\"EST\":\"https://ted.europa.eu/et/notice/484062-2026/pdf\",\"ELL\":\"https://ted.europa.eu/el/notice/484062-2026/pdf\",\"ENG\":\"https://ted.europa.eu/en/notice/484062-2026/pdf\",\"FRA\":\"https://ted.europa.eu/fr/notice/484062-2026/pdf\",\"GLE\":\"https://ted.europa.eu/ga/notice/484062-2026/pdf\",\"HRV\":\"https://ted.europa.eu/hr/notice/484062-2026/pdf\",\"ITA\":\"https://ted.europa.eu/it/notice/484062-2026/pdf\",\"LAV\":\"https://ted.europa.eu/lv/notice/484062-2026/pdf\",\"LIT\":\"https://ted.europa.eu/lt/notice/484062-2026/pdf\",\"HUN\":\"https://ted.europa.eu/hu/notice/484062-2026/pdf\",\"MLT\":\"https://ted.europa.eu/mt/notice/484062-2026/pdf\",\"NLD\":\"https://ted.europa.eu/nl/notice/484062-2026/pdf\",\"POL\":\"https://ted.europa.eu/pl/notice/484062-2026/pdf\",\"POR\":\"https://ted.europa.eu/pt/notice/484062-2026/pdf\",\"RON\":\"https://ted.europa.eu/ro/notice/484062-2026/pdf\",\"SLK\":\"https://ted.europa.eu/sk/notice/484062-2026/pdf\",\"SLV\":\"https://ted.europa.eu/sl/notice/484062-2026/pdf\",\"FIN\":\"https://ted.europa.eu/fi/notice/484062-2026/pdf\",\"SWE\":\"https://ted.europa.eu/sv/notice/484062-2026/pdf\"},\"pdfs\":{\"SWE\":\"https://ted.europa.eu/sv/notice/484062-2026/pdfs\"},\"html\":{\"BUL\":\"https://ted.europa.eu/bg/notice/-/detail/484062-2026\",\"SPA\":\"https://ted.europa.eu/es/notice/-/detail/484062-2026\",\"CES\":\"https://ted.europa.eu/cs/notice/-/detail/484062-2026\",\"DAN\":\"https://ted.europa.eu/da/notice/-/detail/484062-2026\",\"DEU\":\"https://ted.europa.eu/de/notice/-/detail/484062-2026\",\"EST\":\"https://ted.europa.eu/et/notice/-/detail/484062-2026\",\"ELL\":\"https://ted.europa.eu/el/notice/-/detail/484062-2026\",\"ENG\":\"https://ted.europa.eu/en/notice/-/detail/484062-2026\",\"FRA\":\"https://ted.europa.eu/fr/notice/-/detail/484062-2026\",\"GLE\":\"https://ted.europa.eu/ga/notice/-/detail/484062-2026\",\"HRV\":\"https://ted.europa.eu/hr/notice/-/detail/484062-2026\",\"ITA\":\"https://ted.europa.eu/it/notice/-/detail/484062-2026\",\"LAV\":\"https://ted.europa.eu/lv/notice/-/detail/484062-2026\",\"LIT\":\"https://ted.europa.eu/lt/notice/-/detail/484062-2026\",\"HUN\":\"https://ted.europa.eu/hu/notice/-/detail/484062-2026\",\"MLT\":\"https://ted.europa.eu/mt/notice/-/detail/484062-2026\",\"NLD\":\"https://ted.europa.eu/nl/notice/-/detail/484062-2026\",\"POL\":\"https://ted.europa.eu/pl/notice/-/detail/484062-2026\",\"POR\":\"https://ted.europa.eu/pt/notice/-/detail/484062-2026\",\"RON\":\"https://ted.europa.eu/ro/notice/-/detail/484062-2026\",\"SLK\":\"https://ted.europa.eu/sk/notice/-/detail/484062-2026\",\"SLV\":\"https://ted.europa.eu/sl/notice/-/detail/484062-2026\",\"FIN\":\"https://ted.europa.eu/fi/notice/-/detail/484062-2026\",\"SWE\":\"https://ted.europa.eu/sv/notice/-/detail/484062-2026\"},\"htmlDirect\":{\"BUL\":\"https://ted.europa.eu/bg/notice/484062-2026/html\",\"SPA\":\"https://ted.europa.eu/es/notice/484062-2026/html\",\"CES\":\"https://ted.europa.eu/cs/notice/484062-2026/html\",\"DAN\":\"https://ted.europa.eu/da/notice/484062-2026/html\",\"DEU\":\"https://ted.europa.eu/de/notice/484062-2026/html\",\"EST\":\"https://ted.europa.eu/et/notice/484062-2026/html\",\"ELL\":\"https://ted.europa.eu/el/notice/484062-2026/html\",\"ENG\":\"https://ted.europa.eu/en/notice/484062-2026/html\",\"FRA\":\"https://ted.europa.eu/fr/notice/484062-2026/html\",\"GLE\":\"https://ted.europa.eu/ga/notice/484062-2026/html\",\"HRV\":\"https://ted.europa.eu/hr/notice/484062-2026/html\",\"ITA\":\"https://ted.europa.eu/it/notice/484062-2026/html\",\"LAV\":\"https://ted.europa.eu/lv/notice/484062-2026/html\",\"LIT\":\"https://ted.europa.eu/lt/notice/484062-2026/html\",\"HUN\":\"https://ted.europa.eu/hu/notice/484062-2026/html\",\"MLT\":\"https://ted.europa.eu/mt/notice/484062-2026/html\",\"NLD\":\"https://ted.europa.eu/nl/notice/484062-2026/html\",\"POL\":\"https://ted.europa.eu/pl/notice/484062-2026/html\",\"POR\":\"https://ted.europa.eu/pt/notice/484062-2026/html\",\"RON\":\"https://ted.europa.eu/ro/notice/484062-2026/html\",\"SLK\":\"https://ted.europa.eu/sk/notice/484062-2026/html\",\"SLV\":\"https://ted.europa.eu/sl/notice/484062-2026/html\",\"FIN\":\"https://ted.europa.eu/fi/notice/484062-2026/html\",\"SWE\":\"https://ted.europa.eu/sv/notice/484062-2026/html\"}},\"notice-title\":{\"hun\":\"Sv\xE9dorsz\xE1g
+        \u2013 \xC9p\xEDt\xE9szeti, m\xE9rn\xF6ki \xE9s tervez\xE9si szolg\xE1ltat\xE1sok
+        \u2013 Ramavtal strategisk fastighetsutveckling\",\"lav\":\"Zviedrija \u2013
+        Arhitekt\u016Bras, in\u017Eeniertehniskie un pl\u0101no\u0161anas pakalpojumi
+        \u2013 Ramavtal strategisk fastighetsutveckling\",\"swe\":\"Sverige \u2013
+        Arkitekt-, ingenj\xF6rs- och planeringstj\xE4nster \u2013 Ramavtal strategisk
+        fastighetsutveckling\",\"gle\":\"An tSualainn \u2013 Architectural, engineering
+        and planning services \u2013 Ramavtal strategisk fastighetsutveckling\",\"ell\":\"\u03A3\u03BF\u03C5\u03B7\u03B4\u03AF\u03B1
+        \u2013 \u03A5\u03C0\u03B7\u03C1\u03B5\u03C3\u03AF\u03B5\u03C2 \u03B1\u03C1\u03C7\u03B9\u03C4\u03AD\u03BA\u03C4\u03BF\u03BD\u03B1,
+        \u03BC\u03B7\u03C7\u03B1\u03BD\u03B9\u03BA\u03BF\u03CD \u03BA\u03B1\u03B9
+        \u03C4\u03B5\u03C7\u03BD\u03B9\u03BA\u03BF\u03CD \u03B3\u03C1\u03B1\u03C6\u03B5\u03AF\u03BF\u03C5
+        \u2013 Ramavtal strategisk fastighetsutveckling\",\"spa\":\"Suecia \u2013
+        Servicios de arquitectura, ingenier\xEDa y planificaci\xF3n \u2013 Ramavtal
+        strategisk fastighetsutveckling\",\"est\":\"Rootsi \u2013 Arhitektuuri-, insener-tehnilise
+        projekteerimise ja planeerimisteenused \u2013 Ramavtal strategisk fastighetsutveckling\",\"nld\":\"Zweden
+        \u2013 Dienstverlening op het gebied van architectuur, bouwkunde en planning
+        \u2013 Ramavtal strategisk fastighetsutveckling\",\"fin\":\"Ruotsi \u2013
+        Arkkitehti-, insin\xF6\xF6ri- ja suunnittelupalvelut \u2013 Ramavtal strategisk
+        fastighetsutveckling\",\"pol\":\"Szwecja \u2013 Us\u0142ugi architektoniczne,
+        in\u017Cynieryjne i planowania \u2013 Ramavtal strategisk fastighetsutveckling\",\"hrv\":\"\u0160vedska
+        \u2013 Arhitektonske usluge, tehni\u010Dke usluge i usluge planiranja \u2013
+        Ramavtal strategisk fastighetsutveckling\",\"ces\":\"\u0160v\xE9dsko \u2013
+        Architektonick\xE9, technick\xE9 a pl\xE1novac\xED slu\u017Eby \u2013 Ramavtal
+        strategisk fastighetsutveckling\",\"dan\":\"Sverige \u2013 Arkitekt-, ingeni\xF8r-
+        og planl\xE6gningsvirksomhed \u2013 Ramavtal strategisk fastighetsutveckling\",\"ron\":\"Suedia
+        \u2013 Servicii de arhitectur\u0103, de inginerie \u015Fi de planificare \u2013
+        Ramavtal strategisk fastighetsutveckling\",\"por\":\"Su\xE9cia \u2013 Servi\xE7os
+        de arquitectura, engenharia e planeamento \u2013 Ramavtal strategisk fastighetsutveckling\",\"slk\":\"\u0160v\xE9dsko
+        \u2013 Architektonick\xE9, in\u017Einierske a pl\xE1novacie slu\u017Eby \u2013
+        Ramavtal strategisk fastighetsutveckling\",\"fra\":\"Su\xE8de \u2013 Services
+        d'architecture, d'ing\xE9nierie et de planification \u2013 Ramavtal strategisk
+        fastighetsutveckling\",\"mlt\":\"L-I\u017Cvezja \u2013 Servizzi dwar l-arkitettura,
+        l-in\u0121inerija u l-ippjanar \u2013 Ramavtal strategisk fastighetsutveckling\",\"deu\":\"Schweden
+        \u2013 Dienstleistungen von Architektur- und Ingenieurb\xFCros sowie planungsbezogene
+        Leistungen \u2013 Ramavtal strategisk fastighetsutveckling\",\"lit\":\"\u0160vedija
+        \u2013 Architekt\u016Bros, in\u017Einerijos ir planavimo paslaugos \u2013
+        Ramavtal strategisk fastighetsutveckling\",\"ita\":\"Svezia \u2013 Servizi
+        architettonici, di ingegneria e pianificazione \u2013 Ramavtal strategisk
+        fastighetsutveckling\",\"bul\":\"\u0428\u0432e\u0446\u0438\u044F \u2013 \u0410\u0440\u0445\u0438\u0442\u0435\u043A\u0442\u0443\u0440\u043D\u0438
+        \u0438 \u0438\u043D\u0436\u0435\u043D\u0435\u0440\u043D\u0438 \u0443\u0441\u043B\u0443\u0433\u0438
+        \u043F\u043E \u0438\u0437\u0433\u043E\u0442\u0432\u044F\u043D\u0435 \u043D\u0430
+        \u043F\u043B\u0430\u043D\u043E\u0432\u0435 \u0438 \u0447\u0435\u0440\u0442\u0435\u0436\u0438
+        \u2013 Ramavtal strategisk fastighetsutveckling\",\"slv\":\"\u0160vedska \u2013
+        Arhitekturne, in\u017Eenirske in projektantske storitve \u2013 Ramavtal strategisk
+        fastighetsutveckling\",\"eng\":\"Sweden \u2013 Architectural, engineering
+        and planning services \u2013 Ramavtal strategisk fastighetsutveckling\"},\"buyer-city\":{\"mul\":[\"\xD6stersund\"]}}],\"totalNoticeCount\":709,\"iterationNextToken\":null,\"timedOut\":false}"
+    headers:
+      cache-control:
+      - no-cache, no-store, max-age=0, must-revalidate
+      connection:
+      - keep-alive
+      content-security-policy:
+      - 'default-src ''self'' ted.europa.eu tedweb.api.ted.europa.eu api.ted.europa.eu
+        europa.eu webtools.europa.eu jackson.webtools.europa.eu gisco-services.ec.europa.eu
+        analytics.webanalytics.op.europa.eu dashboard.tech.ec.europa.eu *.token.awswaf.com
+        *.captcha.awswaf.com *.captcha-sdk.awswaf.com blob: data: ''unsafe-inline''
+        ''unsafe-eval'''
+      content-type:
+      - application/json
+      date:
+      - Thu, 13 Aug 2026 15:13:37 GMT
+      expires:
+      - '0'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=63072000; includeSubdomains
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Origin
+      - Access-Control-Request-Method
+      - Access-Control-Request-Headers
+      - Origin
+      - Origin
+      via:
+      - 1.1 ab1ba0c054cbe2224a754b50a7ff663c.cloudfront.net (CloudFront), 1.1 75dd52ee26c5e5edbd575fc892e79bb6.cloudfront.net
+        (CloudFront)
+      x-amz-cf-id:
+      - _w3cEr8jdU2QE8dMOQe91vkw1z7d2kkoNB3yYXiCsJqxgZX9g8GwYQ==
+      x-amz-cf-pop:
+      - DUB56-P4
+      - ARN56-P4
+      x-cache:
+      - Miss from cloudfront
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - DENY
+      x-xss-protection:
+      - '0'
+    status:
+      code: 200
+      message: OK
+version: 1

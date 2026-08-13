@@ -1,0 +1,34 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - api.kolada.se
+      user-agent:
+      - python-httpx/0.28.1
+    method: GET
+    uri: https://api.kolada.se/v3/data/kpi/N15033/municipality/1280/year/2022
+  response:
+    body:
+      string: '{"values":[{"values":[{"gender":"T","count":1,"status":"","value":11.88315334,"isdeleted":false}],"kpi":"N15033","period":2022,"municipality":"1280"}],"next_url":null,"previous_url":null,"count":1}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '197'
+      content-type:
+      - application/json
+      date:
+      - Thu, 13 Aug 2026 15:13:51 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+    status:
+      code: 200
+      message: OK
+version: 1

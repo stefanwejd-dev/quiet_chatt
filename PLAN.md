@@ -292,7 +292,7 @@ först efter beställarens godkännande. Källor som fortfarande inte går att n
 
 ---
 
-## Steg 8 — Övriga verifierade adaptrar   ← NÄSTA STEG
+## Steg 8 — Övriga verifierade adaptrar ✅ Godkänt 2026-08-13
 
 **Läs "Kontrakt från och med steg 8" högst upp i detta dokument innan du börjar.**
 Adapterkontraktet ändrades vid granskningen av steg 0–6; `riksbanken.py` och
@@ -323,6 +323,13 @@ TED-specifikt, redan utrett:
   `tests/kassetter/` innehåller en fil per nätverkstest.
 - `python -m pytest -q` ger samma resultat två körningar i rad **och** efter
   `rm data/cache.sqlite`.
+
+**Utfall 2026-08-13:** Skapade `adaptrar/ted.py`, `riksdagen.py`, `kolada.py`,
+`dataportal.py`, `rowstore.py` (generisk för Skatteverket och Kronofogden), samt
+`json_rest.py` (konfigurerad för SMHI, Skolverket, Trafa, Polisens händelser och
+JobTech). Utvidgade `register.py` så att `faltval` och `maxceller` från YAML
+läses in i `Kalla`-objektet. 12 VCR-kassetter i `tests/kassetter/`. Hela
+sviten: **108 passed**. Nästa steg: Fas A (planerare och hämtningsloop).
 
 ---
 

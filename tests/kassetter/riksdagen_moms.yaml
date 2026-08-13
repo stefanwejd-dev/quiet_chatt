@@ -1,0 +1,215 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - data.riksdagen.se
+      user-agent:
+      - python-httpx/0.28.1
+    method: GET
+    uri: https://data.riksdagen.se/dokumentlista/?sok=moms&utformat=json&sz=3
+  response:
+    body:
+      string: "{\r\n  \"dokumentlista\": {\r\n    \"@ms\": \"33215.15\",\r\n    \"@version\":
+        \"3.8.5.21679\",\r\n    \"@q\": \"utformat=json&sok=moms&sz=3\",\r\n    \"@varning\":
+        \"traffar=50846\",\r\n    \"@datum\": \"2026-08-13 17:13:43\",\r\n    \"@nasta_sida\":
+        \"http://data.riksdagen.se/dokumentlista/?utformat=json&sok=moms&sz=3&p=2\",\r\n
+        \   \"@sida\": \"1\",\r\n    \"@sidor\": \"16949\",\r\n    \"@traff_fran\":
+        \"1\",\r\n    \"@traff_till\": \"3\",\r\n    \"@traffar\": \"50846\",\r\n
+        \   \"@dPre\": \"0\",\r\n    \"@dSol\": \"31\",\r\n    \"@dDt\": \"0\",\r\n
+        \   \"@dR\": \"0\",\r\n    \"facettlista\": null,\r\n    \"dokument\": [\r\n
+        \     {\r\n        \"traff\": \"1\",\r\n        \"domain\": \"rdwebb\",\r\n
+        \       \"database\": \"dokument\",\r\n        \"datum\": \"2026-08-11\",\r\n
+        \       \"id\": \"hd09155\",\r\n        \"rdrest\": null,\r\n        \"slutdatum\":
+        \"\",\r\n        \"rddata\": null,\r\n        \"plats\": \"\",\r\n        \"klockslag\":
+        \"\",\r\n        \"publicerad\": \"2026-08-12\",\r\n        \"systemdatum\":
+        \"2026-08-12 09:06:21\",\r\n        \"undertitel\": \"\",\r\n        \"kalla\":
+        \"RIM\",\r\n        \"kall_id\": \"\",\r\n        \"dok_id\": \"HD09155\",\r\n
+        \       \"dokumentformat\": \"\",\r\n        \"dokument_url_text\": \"//data.riksdagen.se/dokument/HD09155.text\",\r\n
+        \       \"dokument_url_html\": \"//data.riksdagen.se/dokument/HD09155.html\",\r\n
+        \       \"inlamnad\": \"\",\r\n        \"motionstid\": \"\",\r\n        \"tilldelat\":
+        \"\",\r\n        \"lang\": \"\",\r\n        \"url\": \"\",\r\n        \"relurl\":
+        \"\",\r\n        \"titel\": \"Protokoll 2025/26:155 Tisdagen den 11 augusti\",\r\n
+        \       \"rm\": \"2025/26\",\r\n        \"organ\": \"\",\r\n        \"relaterat_id\":
+        \"\",\r\n        \"doktyp\": \"prot\",\r\n        \"typ\": \"prot\",\r\n        \"subtyp\":
+        \"\",\r\n        \"beteckning\": \"155\",\r\n        \"tempbeteckning\": \"\",\r\n
+        \       \"nummer\": \"155\",\r\n        \"status\": \"justerat\",\r\n        \"score\":
+        \"9292,73\",\r\n        \"sokdata\": {\r\n          \"titel\": \"Protokoll
+        2025/26:155 Tisdagen den 11 augusti\",\r\n          \"undertitel\": \"Riksdagens
+        protokoll 2025/26:155\",\r\n          \"soktyp\": \"\",\r\n          \"statusrad\":
+        \"\\n\\t\\t\\t\\t<dl>\\n\\t\\t\\t\\t<dt>Datum</dt>\\n\\t\\t\\t\\t\\t\\t<dd>2026-08-11</dd>\\n\\t\\t\\t</dl>\\n\\t\\t\\t\",\r\n
+        \         \"brodsmula\": \"\",\r\n          \"parti_kod\": \"\",\r\n          \"parti_namn\":
+        \"\",\r\n          \"parti_website_url\": \"\",\r\n          \"parti_website_namn\":
+        \"\",\r\n          \"parti_epost\": \"\",\r\n          \"parti_telefon\":
+        \"\",\r\n          \"parti_telefontider\": \"\",\r\n          \"parti_logotyp_img_id\":
+        \"\",\r\n          \"parti_logotyp_img_url\": \"\",\r\n          \"parti_logotyp_img_alt\":
+        \"\",\r\n          \"parti_mandat\": \"\",\r\n          \"kalenderprio\":
+        \"\"\r\n        },\r\n        \"summary\": \"\u2026 Under ordf\xF6randeskapet
+        ledde vi arbetet med en uppdatering av EU s f\xF6rteckning \xF6ver de icke
+        samarbetsvilliga jurisdiktionerna, som det heter p\xE5 skattespr\xE5k. Vi
+        ledde ocks\xE5 f\xF6rhandlingarna om f\xF6rslaget om <mark>moms</mark> i den
+        digitala tids\xE5ldern, ViDA. Det handlar om och syftar till att stoppa till
+        exempel momsbedr\xE4gerier. Dessutom har vi varit p\xE5drivande i f\xF6rhandlingarna
+        om rapportering och utbyte av upplysningar om kryptotillg\xE5ngar, f\xF6r
+        att d\xE4r minska skatteundandragande och skatteflykt.  \u2026\",\r\n        \"notisrubrik\":
+        \"Protokoll 2025/26:155 Tisdagen den 11 augusti\",\r\n        \"notis\": \"Riksdagens
+        snabbprotokoll\\n 2025/26:155\\n Tisdagen den 11 augusti\\n Kl.  09.00\u201322.26\\n
+        Det justerade protokollet utkommer inom tre veckor eller vid den tidpunkt
+        som talmannen best\xE4mmer. Talare som vill g\xF6ra anm\xE4rkningar mot snabbprotokollet
+        ska anm\xE4la detta senast kl. 12.00 den tredje vardagen efter sammantr\xE4det.\\n
+        1  Justering\",\r\n        \"dokintressent\": null,\r\n        \"filbilaga\":
+        {\r\n          \"fil\": [\r\n            {\r\n              \"typ\": \"pdf\",\r\n
+        \             \"namn\": \"prot_202526__155.pdf\",\r\n              \"storlek\":
+        \"1467433\",\r\n              \"url\": \"https://data.riksdagen.se/fil/F152B46E-975F-4BFD-AF0E-9EDCE43DDC3D\"\r\n
+        \           }\r\n          ]\r\n        },\r\n        \"avdelning\": \"alla\",\r\n
+        \       \"avdelningar\": {\r\n          \"avdelning\": [\r\n            \"alla\",\r\n
+        \           \"dokument\"\r\n          ]\r\n        },\r\n        \"struktur\":
+        \"\",\r\n        \"audio\": \"\",\r\n        \"video\": \"\",\r\n        \"debattgrupp\":
+        \"\",\r\n        \"debattdag\": \"\",\r\n        \"beslutsdag\": \"\",\r\n
+        \       \"beredningsdag\": \"\",\r\n        \"justeringsdag\": \"\",\r\n        \"beslutad\":
+        \"\",\r\n        \"debattsekunder\": \"\",\r\n        \"ardometyp\": \"\",\r\n
+        \       \"reservationer\": \"\",\r\n        \"debatt\": null,\r\n        \"debattnamn\":
+        \"Protokoll\",\r\n        \"dokumentnamn\": \"Protokoll\"\r\n      },\r\n
+        \     {\r\n        \"traff\": \"2\",\r\n        \"domain\": \"rdwebb\",\r\n
+        \       \"database\": \"dokument\",\r\n        \"datum\": \"2026-07-08\",\r\n
+        \       \"id\": \"hd12930\",\r\n        \"rdrest\": null,\r\n        \"slutdatum\":
+        \"\",\r\n        \"rddata\": null,\r\n        \"plats\": \"\",\r\n        \"klockslag\":
+        \"\",\r\n        \"publicerad\": \"2026-07-08\",\r\n        \"systemdatum\":
+        \"2026-07-08 12:05:41\",\r\n        \"undertitel\": \"Minister f\xF6r civilt
+        f\xF6rsvar Carl-Oskar Bohlin (M)\",\r\n        \"kalla\": \"Frips\",\r\n        \"kall_id\":
+        \"\",\r\n        \"dok_id\": \"HD12930\",\r\n        \"dokumentformat\": \"\",\r\n
+        \       \"dokument_url_text\": \"//data.riksdagen.se/dokument/HD12930.text\",\r\n
+        \       \"dokument_url_html\": \"//data.riksdagen.se/dokument/HD12930.html\",\r\n
+        \       \"inlamnad\": \"\",\r\n        \"motionstid\": \"\",\r\n        \"tilldelat\":
+        \"\",\r\n        \"lang\": \"\",\r\n        \"url\": \"\",\r\n        \"relurl\":
+        \"\",\r\n        \"titel\": \"Kustbevakningens operativa f\xF6rm\xE5ga i V\xE4sternorrland\",\r\n
+        \       \"rm\": \"2025/26\",\r\n        \"organ\": \"\",\r\n        \"relaterat_id\":
+        \"\",\r\n        \"doktyp\": \"frs\",\r\n        \"typ\": \"frs\",\r\n        \"subtyp\":
+        \"\",\r\n        \"beteckning\": \"930\",\r\n        \"tempbeteckning\": \"\",\r\n
+        \       \"nummer\": \"930\",\r\n        \"status\": \"Inkommen\",\r\n        \"score\":
+        \"8518,336\",\r\n        \"sokdata\": {\r\n          \"titel\": \"Kustbevakningens
+        operativa f\xF6rm\xE5ga i V\xE4sternorrland\",\r\n          \"undertitel\":
+        \"Svar p\xE5 skriftlig fr\xE5ga 2025/26:930 besvarad av Minister f\xF6r civilt
+        f\xF6rsvar Carl-Oskar Bohlin (M)\",\r\n          \"soktyp\": \"\",\r\n          \"statusrad\":
+        \"\\n\\t\\t\\t\\t<dl>\\n\\t\\t\\t\\t\\n\\t\\t\\t\\t\\t\\t\\t\\t<dt>Svarsdatum</dt>
+        \ <dd>2026-07-08</dd><dt>Fr\xE5gest\xE4llare</dt>  <dd>Peder Bj\xF6rk (S)</dd>\\n\\t\\t\\t</dl>\\n\\t\\t\\t\",\r\n
+        \         \"brodsmula\": \"\",\r\n          \"parti_kod\": \"\",\r\n          \"parti_namn\":
+        \"\",\r\n          \"parti_website_url\": \"\",\r\n          \"parti_website_namn\":
+        \"\",\r\n          \"parti_epost\": \"\",\r\n          \"parti_telefon\":
+        \"\",\r\n          \"parti_telefontider\": \"\",\r\n          \"parti_logotyp_img_id\":
+        \"\",\r\n          \"parti_logotyp_img_url\": \"\",\r\n          \"parti_logotyp_img_alt\":
+        \"\",\r\n          \"parti_mandat\": \"\",\r\n          \"kalenderprio\":
+        \"\"\r\n        },\r\n        \"summary\": \" regeringen en ytterligare s\xE4nkning
+        av skattesatsen f\xF6r bensin med 2 kronor och 40 \xF6re per liter samt en
+        s\xE4nkning av skattesatsen f\xF6r diesel med 3 kronor per liter inklusive
+        <mark>moms</mark> vid full pris\xF6verv\xE4ltring, mellan 1 juli och 30 november
+        2026. Det \xE4r \xE5tg\xE4rder som \xE4ven kommer Kustbevakningen till godo.
+        \ Regeringens samlade satsningar har gett Kustbevakningen verktyg f\xF6r att
+        kunna \xF6ka sin operativa f\xF6rm\xE5ga i en alltmer s\xE4kerhetspolitisk
+        komplex milj\xF6.  \u2026\",\r\n        \"notisrubrik\": \"Kustbevakningens
+        operativa f\xF6rm\xE5ga i V\xE4sternorrland\",\r\n        \"notis\": \"Svar
+        p\xE5 fr\xE5ga 2025/26:930 Kustbevakningens operativa f\xF6rm\xE5ga i V\xE4sternorrland\\n
+        till Minister f\xF6r civilt f\xF6rsvar Carl-Oskar Bohlin (M)\\n Svar p\xE5
+        fr\xE5ga 2025/26:930 av Peder Bj\xF6rk (S) Kustbevakningens operativa f\xF6rm\xE5ga
+        i V\xE4sternorrland\\n Peder Bj\xF6rk har fr\xE5gat mig vilka \xE5tg\xE4rder
+        ministern och regeringen avser att vidta f\xF6r att\",\r\n        \"dokintressent\":
+        {\r\n          \"intressent\": [\r\n            {\r\n              \"roll\":
+        \"besvaradav\",\r\n              \"namn\": \"Minister f\xF6r civilt f\xF6rsvar
+        Carl-Oskar Bohlin\",\r\n              \"partibet\": \"M\",\r\n              \"intressent_id\":
+        \"0108109641223\"\r\n            },\r\n            {\r\n              \"roll\":
+        \"stalldtill\",\r\n              \"namn\": \"Minister f\xF6r civilt f\xF6rsvar
+        Carl-Oskar Bohlin\",\r\n              \"partibet\": \"M\",\r\n              \"intressent_id\":
+        \"0108109641223\"\r\n            },\r\n            {\r\n              \"roll\":
+        \"fragestallare\",\r\n              \"namn\": \"Peder Bj\xF6rk\",\r\n              \"partibet\":
+        \"S\",\r\n              \"intressent_id\": \"0140985614421\"\r\n            }\r\n
+        \         ]\r\n        },\r\n        \"filbilaga\": {\r\n          \"fil\":
+        [\r\n            {\r\n              \"typ\": \"pdf\",\r\n              \"namn\":
+        \"frs_202526__930.pdf\",\r\n              \"storlek\": \"66328\",\r\n              \"url\":
+        \"https://data.riksdagen.se/fil/1D412E9B-2D3D-4CDD-BAF8-2AFB5C6D3AC8\"\r\n
+        \           }\r\n          ]\r\n        },\r\n        \"avdelning\": \"alla\",\r\n
+        \       \"avdelningar\": {\r\n          \"avdelning\": [\r\n            \"alla\",\r\n
+        \           \"dokument\"\r\n          ]\r\n        },\r\n        \"struktur\":
+        \"\",\r\n        \"audio\": \"\",\r\n        \"video\": \"\",\r\n        \"debattgrupp\":
+        \"\",\r\n        \"debattdag\": \"\",\r\n        \"beslutsdag\": \"\",\r\n
+        \       \"beredningsdag\": \"\",\r\n        \"justeringsdag\": \"\",\r\n        \"beslutad\":
+        \"\",\r\n        \"debattsekunder\": \"\",\r\n        \"ardometyp\": \"\",\r\n
+        \       \"reservationer\": \"\",\r\n        \"debatt\": null,\r\n        \"debattnamn\":
+        \"Svar p\xE5 skriftlig fr\xE5ga\",\r\n        \"dokumentnamn\": \"Svar p\xE5
+        skriftlig fr\xE5ga\"\r\n      },\r\n      {\r\n        \"traff\": \"3\",\r\n
+        \       \"domain\": \"rdwebb\",\r\n        \"database\": \"dokument\",\r\n
+        \       \"datum\": \"2026-07-02\",\r\n        \"id\": \"hd0wrfr22\",\r\n        \"rdrest\":
+        null,\r\n        \"slutdatum\": \"\",\r\n        \"rddata\": null,\r\n        \"plats\":
+        \"\",\r\n        \"klockslag\": \"\",\r\n        \"publicerad\": \"2026-07-02\",\r\n
+        \       \"systemdatum\": \"2026-07-02 15:48:36\",\r\n        \"undertitel\":
+        \"\",\r\n        \"kalla\": \"\",\r\n        \"kall_id\": \"\",\r\n        \"dok_id\":
+        \"HD0WRFR22\",\r\n        \"dokumentformat\": \"\",\r\n        \"dokument_url_text\":
+        \"//data.riksdagen.se/dokument/HD0WRFR22.text\",\r\n        \"dokument_url_html\":
+        \"//data.riksdagen.se/dokument/HD0WRFR22.html\",\r\n        \"inlamnad\":
+        \"\",\r\n        \"motionstid\": \"\",\r\n        \"tilldelat\": \"\",\r\n
+        \       \"lang\": \"\",\r\n        \"url\": \"\",\r\n        \"relurl\": \"\",\r\n
+        \       \"titel\": \"Offentligt sammantr\xE4de med utfr\xE5gning av Riksbankens
+        direktion om penningpolitiken 2025\",\r\n        \"rm\": \"2025/26\",\r\n
+        \       \"organ\": \"FiU\",\r\n        \"relaterat_id\": \"\",\r\n        \"doktyp\":
+        \"rfr\",\r\n        \"typ\": \"rfr\",\r\n        \"subtyp\": \"\",\r\n        \"beteckning\":
+        \"RFR22\",\r\n        \"tempbeteckning\": \"\",\r\n        \"nummer\": \"22\",\r\n
+        \       \"status\": \"\",\r\n        \"score\": \"7743,942\",\r\n        \"sokdata\":
+        {\r\n          \"titel\": \"Offentligt sammantr\xE4de med utfr\xE5gning av
+        Riksbankens direktion om penningpolitiken 2025\",\r\n          \"undertitel\":
+        \"Rapport fr\xE5n riksdagen 2025/26:RFR22\",\r\n          \"soktyp\": \"\",\r\n
+        \         \"statusrad\": \"\\n\\t\\t\\t\\t<dl>\\n\\t\\t\\t\\t<dt>Datum</dt>\\n\\t\\t\\t\\t\\t\\t<dd>2026-07-02</dd>\\n\\t\\t\\t</dl>\\n\\t\\t\\t\",\r\n
+        \         \"brodsmula\": \"\",\r\n          \"parti_kod\": \"\",\r\n          \"parti_namn\":
+        \"\",\r\n          \"parti_website_url\": \"\",\r\n          \"parti_website_namn\":
+        \"\",\r\n          \"parti_epost\": \"\",\r\n          \"parti_telefon\":
+        \"\",\r\n          \"parti_telefontider\": \"\",\r\n          \"parti_logotyp_img_id\":
+        \"\",\r\n          \"parti_logotyp_img_url\": \"\",\r\n          \"parti_logotyp_img_alt\":
+        \"\",\r\n          \"parti_mandat\": \"\",\r\n          \"kalenderprio\":
+        \"\"\r\n        },\r\n        \"summary\": \"\u2026 Det var en mer expansiv
+        budget \xE4n v\xE4ntat, med reformer p\xE5 totalt 91  miljarder. Framf\xF6r
+        allt s\xE4nkt skatt p\xE5 arbete och <mark>moms</mark> p\xE5 livsmedel var
+        viktiga  poster f\xF6r Riksbanken att ta h\xF6jd f\xF6r i sina prognoser f\xF6r
+        b\xE5de realekonomin  och inflationen.  Kort sammanfattat kan man s\xE4ga
+        att Riksbanken anv\xE4nde sig av s\xE5 kallade  finanspolitiska multiplikatorer
+        f\xF6r att bed\xF6ma effekterna av det h\xE4r.  \u2026\",\r\n        \"notisrubrik\":
+        \"Offentligt sammantr\xE4de med utfr\xE5gning av Riksbankens direktion om
+        penningpolitiken 2025\",\r\n        \"notis\": \"Rapporter fr\xE5n riksdagen
+        2025/26:RFR22\\n Finansutskottet FiU\\n Offentligt sammantr\xE4de med utfr\xE5gning
+        av Riksbankens direktion om penningpolitiken 2025\\n Offentligt sammantr\xE4de
+        med utfr\xE5gning\\n av Riksbankens direktion om penningpolitiken 2025\\n
+        ISSN  1653-0942\\n ISBN  978-91-7915-205-5\\n (tryck)\\n ISBN  978-91-7915-206-2\\n
+        (pdf)\\n\",\r\n        \"dokintressent\": null,\r\n        \"filbilaga\":
+        {\r\n          \"fil\": [\r\n            {\r\n              \"typ\": \"pdf\",\r\n
+        \             \"namn\": \"RFR_202526_RFR_22.pdf\",\r\n              \"storlek\":
+        \"3182089\",\r\n              \"url\": \"https://data.riksdagen.se/fil/EE18C2BC-8E08-4586-82E8-941E0DEFEEF6\"\r\n
+        \           }\r\n          ]\r\n        },\r\n        \"avdelning\": \"alla\",\r\n
+        \       \"avdelningar\": {\r\n          \"avdelning\": [\r\n            \"alla\",\r\n
+        \           \"dokument\"\r\n          ]\r\n        },\r\n        \"struktur\":
+        \"\",\r\n        \"audio\": \"\",\r\n        \"video\": \"\",\r\n        \"debattgrupp\":
+        \"\",\r\n        \"debattdag\": \"\",\r\n        \"beslutsdag\": \"\",\r\n
+        \       \"beredningsdag\": \"\",\r\n        \"justeringsdag\": \"\",\r\n        \"beslutad\":
+        \"\",\r\n        \"debattsekunder\": \"\",\r\n        \"ardometyp\": \"\",\r\n
+        \       \"reservationer\": \"\",\r\n        \"debatt\": null,\r\n        \"debattnamn\":
+        \"Rapport fr\xE5n riksdagen\",\r\n        \"dokumentnamn\": \"Rapport fr\xE5n
+        riksdagen\"\r\n      }\r\n    ]\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - private
+      content-length:
+      - '12886'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 13 Aug 2026 15:13:43 GMT
+      server:
+      - 'Null'
+      strict-transport-security:
+      - max-age=16070400
+    status:
+      code: 200
+      message: OK
+version: 1

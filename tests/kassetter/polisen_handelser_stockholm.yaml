@@ -1,0 +1,1707 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - polisen.se
+      user-agent:
+      - python-httpx/0.28.1
+    method: GET
+    uri: https://polisen.se/api/events?locationname=Stockholm
+  response:
+    body:
+      string: '[{"id":649276,"datetime":"2026-08-13 8:35:24 \u002B02:00","name":"13
+        augusti 04.56, Trafikolycka, Stockholm","summary":"En bilist blir p\u00E5k\u00F6rd
+        av en taxibil p\u00E5 Vasagatan i centrala Stockholm.","url":"/aktuellt/handelser/2026/augusti/13/13-augusti-04.56-trafikolycka-stockholm/","type":"Trafikolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":649275,"datetime":"2026-08-13
+        8:20:00 \u002B02:00","name":"13 augusti 05.09, Misshandel, Stockholm","summary":"En
+        ordningsvakt ringer in om ett nyligen intr\u00E4ffat slagsm\u00E5l vid Stureplan.","url":"/aktuellt/handelser/2026/augusti/13/13-augusti-05.09-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":649273,"datetime":"2026-08-13
+        7:48:01 \u002B02:00","name":"13 augusti 03.21, Rattfylleri, Stockholm","summary":"En
+        bilist som stoppas p\u00E5 Krossgatan i V\u00E4llingby blir misst\u00E4nkt
+        f\u00F6r grovt rattfylleri.","url":"/aktuellt/handelser/2026/augusti/13/13-augusti-03.21-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":649272,"datetime":"2026-08-13
+        7:26:58 \u002B02:00","name":"13 augusti 00.44, Rattfylleri, Stockholm","summary":"Polispatrull
+        kontrollerar en bilist p\u00E5 Kirunagatan i V\u00E4llingby.","url":"/aktuellt/handelser/2026/augusti/13/13-augusti-00.44-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":649261,"datetime":"2026-08-13
+        7:16:24 \u002B02:00","name":"12 augusti 22.45, Rattfylleri, Stockholm","summary":"Ett
+        fordonsstopp i V\u00E4llingby renderar i flertalet anm\u00E4lningar.","url":"/aktuellt/handelser/2026/augusti/12/12-augusti-22.45-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":649219,"datetime":"2026-08-12
+        16:06:24 \u002B02:00","name":"12 augusti 15.29, R\u00E4ddningsinsats, Stockholm","summary":"Polisen
+        bitr\u00E4der r\u00E4ddningstj\u00E4nst och ambulans i en r\u00E4ddningsinsats
+        i H\u00F6kar\u00E4ngen i s\u00F6dra Stockholm.","url":"/aktuellt/handelser/2026/augusti/12/12-augusti-15.29-raddningsinsats-stockholm/","type":"R\u00E4ddningsinsats","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":649233,"datetime":"2026-08-12
+        18:23:59 \u002B02:00","name":"12 augusti 17.06, Brand, Stockholm","summary":"Det
+        brinner p\u00E5 marken vid Flatenbadet i den s\u00F6dra delen av Stockholms
+        kommun.","url":"/aktuellt/handelser/2026/augusti/12/12-augusti-17.06-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":649141,"datetime":"2026-08-12
+        7:23:19 \u002B02:00","name":"12 augusti 01.19, Olaga hot, Stockholm","summary":"En
+        man hotade en ordningsvakt utanf\u00F6r en krog p\u00E5 Kungsholmen. Den misst\u00E4nkte
+        mannen \u00E4r identifierad.","url":"/aktuellt/handelser/2026/augusti/12/12-augusti-01.19-olaga-hot-stockholm/","type":"Olaga
+        hot","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":649055,"datetime":"2026-08-11
+        7:24:44 \u002B02:00","name":"11 augusti 05.39, Skadeg\u00F6relse, Stockholm","summary":"En
+        person i H\u00F6kar\u00E4ngen s\u00E5g en man kasta sten p\u00E5 en bil.","url":"/aktuellt/handelser/2026/augusti/11/11-augusti-05.39-skadegorelse-stockholm/","type":"Skadeg\u00F6relse","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":649041,"datetime":"2026-08-10
+        20:01:07 \u002B02:00","name":"10 augusti 17.34, Rattfylleri, Stockholm","summary":"En
+        polispatrull stoppade en bil p\u00E5 Ringv\u00E4gen som k\u00F6rt i en annan
+        bil och d\u00E4refter avvikit fr\u00E5n platsen.","url":"/aktuellt/handelser/2026/augusti/10/10-augusti-17.34-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":648976,"datetime":"2026-08-10
+        7:26:53 \u002B02:00","name":"10 augusti 01.48, St\u00F6ld, Stockholm","summary":"Ett
+        cyklist-bud p\u00E5 S\u00F6dermalm uppgav att han blivit av med ett paket
+        p\u00E5 sin cykel. Inringaren s\u00E5g n\u00E4r paketet s","url":"/aktuellt/handelser/2026/augusti/10/10-augusti-01.48-stold-stockholm/","type":"St\u00F6ld","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":648947,"datetime":"2026-08-09
+        13:26:50 \u002B02:00","name":"9 augusti 12.11, Trafikolycka, personskada,
+        Stockholm","summary":"En person skadas i samband med en trafikolycka p\u00E5
+        en parkeringsplats i Sickla.","url":"/aktuellt/handelser/2026/augusti/9/9-augusti-12.11-trafikolycka-personskada-stockholm/","type":"Trafikolycka,
+        personskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":648934,"datetime":"2026-08-09
+        9:24:27 \u002B02:00","name":"9 augusti 05.59, Misshandel, Stockholm","summary":"En
+        man grips misst\u00E4nkt f\u00F6r misshandel i centrala Stockholm.","url":"/aktuellt/handelser/2026/augusti/9/9-augusti-05.59-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":648933,"datetime":"2026-08-09
+        9:11:21 \u002B02:00","name":"9 augusti 07.59, Trafikolycka, smitning fr\u00E5n,
+        Stockholm","summary":"En lyktstolpe i \u00C5rsta partihandlaromr\u00E5de har
+        blivit p\u00E5k\u00F6rd.","url":"/aktuellt/handelser/2026/augusti/9/9-augusti-07.59-trafikolycka-smitning-fran-stockholm/","type":"Trafikolycka,
+        smitning fr\u00E5n","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":648931,"datetime":"2026-08-09
+        8:50:57 \u002B02:00","name":"9 augusti 08.08, Olaga intr\u00E5ng, Stockholm","summary":"En
+        person grips p\u00E5 S\u00F6dermalm misst\u00E4nkt f\u00F6r olaga intr\u00E5ng.","url":"/aktuellt/handelser/2026/augusti/9/9-augusti-08.08-olaga-intrang-stockholm/","type":"Olaga
+        intr\u00E5ng","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":648925,"datetime":"2026-08-09
+        8:04:38 \u002B02:00","name":"9 augusti 06.35, Fylleri, Stockholm","summary":"En
+        man omh\u00E4ndertas efter att ha klivit av en inkommande b\u00E5t i V\u00E4rtahamnen.","url":"/aktuellt/handelser/2026/augusti/9/9-augusti-06.35-fylleri-stockholm/","type":"Fylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":648923,"datetime":"2026-08-09
+        7:49:21 \u002B02:00","name":"9 augusti 05.05, St\u00F6ld/inbrott, Stockholm","summary":"En
+        man grips efter ha sm\u00E4llt s\u00F6nder en ruta med kofot i Ulvsunda industriomr\u00E5de.","url":"/aktuellt/handelser/2026/augusti/9/9-augusti-05.05-stoldinbrott-stockholm/","type":"St\u00F6ld/inbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":648895,"datetime":"2026-08-08
+        17:59:51 \u002B02:00","name":"8 augusti 17.06, R\u00E4ddningsinsats, Stockholm","summary":"Larm
+        om kollision mellan en segelb\u00E5t och ett fartyg p\u00E5 Riddarfj\u00E4rden.","url":"/aktuellt/handelser/2026/augusti/8/8-augusti-17.06-raddningsinsats-stockholm/","type":"R\u00E4ddningsinsats","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":648876,"datetime":"2026-08-08
+        9:17:00 \u002B02:00","name":"8 augusti 09.06, Br\u00E5k, Stockholm","summary":"Det
+        h\u00F6rs ljud fr\u00E5n en l\u00E4genhet p\u00E5 S\u00F6dermalm. Misstanke
+        om att tv\u00E5 personer sl\u00E5ss i bostaden uppst\u00E5r.","url":"/aktuellt/handelser/2026/augusti/8/8-augusti-09.06-brak-stockholm/","type":"Br\u00E5k","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":648841,"datetime":"2026-08-07
+        14:30:35 \u002B02:00","name":"7 augusti 12.43, St\u00F6ld, f\u00F6rs\u00F6k,
+        Stockholm","summary":"Polisen f\u00E5r ett samtal om att tv\u00E5 maskerade
+        personer setts med vad som uppfattats som ett vapenliknande f\u00F6rem\u00E5","url":"/aktuellt/handelser/2026/augusti/7/7-augusti-12.43-stold-forsok-stockholm/","type":"St\u00F6ld,
+        f\u00F6rs\u00F6k","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":648781,"datetime":"2026-08-06
+        20:18:36 \u002B02:00","name":"6 augusti 20.06, Sexualbrott, Stockholm","summary":"Polisen
+        \u00E4r p\u00E5 v\u00E4g med tv\u00E5 patruller till en park i Vasastaden.
+        D\u00E4r observeras en man som v\u00E4xlar mellan att plo","url":"/aktuellt/handelser/2026/augusti/6/6-augusti-20.06-sexualbrott-stockholm/","type":"Sexualbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":648780,"datetime":"2026-08-06
+        20:07:06 \u002B02:00","name":"6 augusti 19.50, Kontroll, Stockholm","summary":"En
+        man som upplevs vara p\u00E5verkad av narkotika inne i en butik p\u00E5 S\u00F6dermalm
+        b\u00E4r p\u00E5 verktyg. Kunder och personal","url":"/aktuellt/handelser/2026/augusti/6/6-augusti-19.50-kontroll-stockholm/","type":"Kontroll","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":648718,"datetime":"2026-08-06
+        8:26:12 \u002B02:00","name":"6 augusti 05.02, Skadeg\u00F6relse, Stockholm","summary":"En
+        port p\u00E5 Magnus Ladul\u00E5sgatan p\u00E5 S\u00F6dermalm sparkas s\u00F6nder.","url":"/aktuellt/handelser/2026/augusti/6/6-augusti-05.02-skadegorelse-stockholm/","type":"Skadeg\u00F6relse","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":648695,"datetime":"2026-08-05
+        22:13:07 \u002B02:00","name":"5 augusti 21.16, Farligt f\u00F6rem\u00E5l,
+        misst\u00E4nkt, Stockholm","summary":"Polisen unders\u00F6ker ett misst\u00E4nkt
+        farligt f\u00F6rem\u00E5l p\u00E5 en restauranglokal p\u00E5 S\u00F6dermalm
+        i Stockholm.","url":"/aktuellt/handelser/2026/augusti/5/5-augusti-21.16-farligt-foremal-misstankt-stockholm/","type":"Farligt
+        f\u00F6rem\u00E5l, misst\u00E4nkt","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":648549,"datetime":"2026-08-03
+        21:59:46 \u002B02:00","name":"3 augusti 21.04, Trafikolycka, personskada,
+        Stockholm","summary":"En elsparkcykel har k\u00F6rt in i en sk\u00E5pbil vid
+        en v\u00E4gkorsning med trafikljus p\u00E5 \u00D6stermalm i Stockholm.","url":"/aktuellt/handelser/2026/augusti/3/3-augusti-21.04-trafikolycka-personskada-stockholm/","type":"Trafikolycka,
+        personskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":648546,"datetime":"2026-08-03
+        18:16:18 \u002B02:00","name":"3 augusti 17.39, Trafikolycka, personskada,
+        Stockholm","summary":"Tv\u00E5 personer som f\u00E4rdades p\u00E5 en cykel
+        har blivit p\u00E5k\u00F6rda av en bilist p\u00E5 S\u00F6dermalm i Stockholm.","url":"/aktuellt/handelser/2026/augusti/3/3-augusti-17.39-trafikolycka-personskada-stockholm/","type":"Trafikolycka,
+        personskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":648400,"datetime":"2026-08-01
+        17:28:38 \u002B02:00","name":"1 augusti 16.31, Misshandel, Stockholm","summary":"En
+        man i 50-\u00E5rs\u00E5ldern blir slagen i ansiktet av en annan person i Skrubba.","url":"/aktuellt/handelser/2026/augusti/1/1-augusti-16.31-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":648388,"datetime":"2026-08-01
+        12:40:52 \u002B02:00","name":"1 augusti 12.39, Mord/dr\u00E5p, f\u00F6rs\u00F6k,
+        Stockholm","summary":"Tv\u00E5 personer i S\u00E4tra skadade med vasst f\u00F6rem\u00E5l.","url":"/aktuellt/handelser/2026/augusti/1/1-augusti-12.39-morddrap-forsok-stockholm/","type":"Mord/dr\u00E5p,
+        f\u00F6rs\u00F6k","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":648316,"datetime":"2026-07-31
+        11:03:00 \u002B02:00","name":"31 juli 10.49, Kontroll, Stockholm","summary":"Polis
+        och ambulans kontrollerar just nu en kvinna som \u00E4r v\u00E4ldigt ut\u00E5tagerande
+        i Tallkrogen. Hon bl\u00F6der fr\u00E5n hu","url":"/aktuellt/handelser/2026/juli/31/31-juli-10.49-kontroll-stockholm/","type":"Kontroll","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":648363,"datetime":"2026-08-01
+        7:54:27 \u002B02:00","name":"1 augusti 03.05, Misshandel, Stockholm","summary":"Man
+        greps efter misshandel vid Hornstull.","url":"/aktuellt/handelser/2026/augusti/1/1-augusti-03.05-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":648349,"datetime":"2026-07-31
+        21:35:15 \u002B02:00","name":"31 juli 20.28, Misshandel, Stockholm","summary":"En
+        p\u00E5verkad man hotar personal p\u00E5 en restaurang p\u00E5 S\u00F6dermalm.","url":"/aktuellt/handelser/2026/juli/31/31-juli-20.28-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":648315,"datetime":"2026-07-31
+        10:43:38 \u002B02:00","name":"31 juli 10.30, \u00D6vrigt, Stockholm","summary":"Polisen
+        och F\u00F6rsvarsmakten \u00F6var tillsammans i Diplomatstaden","url":"/aktuellt/handelser/2026/juli/31/31-juli-10.30-ovrigt-stockholm/","type":"\u00D6vrigt","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":648214,"datetime":"2026-07-30
+        8:12:59 \u002B02:00","name":"30 juli 07.43, Misshandel, Stockholm","summary":"Polisen
+        har gripit en man som tagit sig in i en villa och d\u00E4r slagit till en
+        kvinna som bodde i fastigheten.","url":"/aktuellt/handelser/2026/juli/30/30-juli-07.43-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":648178,"datetime":"2026-07-29
+        20:34:30 \u002B02:00","name":"29 juli 18.43, St\u00F6ld, Stockholm","summary":"Tv\u00E5
+        rapporterades f\u00F6r ringa st\u00F6ld p\u00E5 systembolaget.","url":"/aktuellt/handelser/2026/juli/29/29-juli-18.43-stold-stockholm/","type":"St\u00F6ld","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":648133,"datetime":"2026-07-29
+        8:12:53 \u002B02:00","name":"29 juli 03.20, Brand, Stockholm","summary":"Larm
+        om brand under Skanstullsbron p\u00E5 S\u00F6dermalm.","url":"/aktuellt/handelser/2026/juli/29/29-juli-032.20-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":648116,"datetime":"2026-07-29
+        7:26:38 \u002B02:00","name":"29 juli 03.20, Brand, Stockholm","summary":"Larm
+        om brand under Skanstullsbron p\u00E5 S\u00F6dermalm.","url":"/aktuellt/handelser/2026/juli/29/29-juli-03.20-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647990,"datetime":"2026-07-27
+        16:48:13 \u002B02:00","name":"27 juli 16.32, Trafikolycka, Stockholm","summary":"Trafikolycka
+        p\u00E5 Essingeleden i h\u00F6jd med Karolinska, norrg\u00E5ende.","url":"/aktuellt/handelser/2026/juli/27/27-juli-16.32-trafikolycka-stockholm/","type":"Trafikolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647803,"datetime":"2026-07-24
+        20:00:33 \u002B02:00","name":"24 juli 19.47, Mord/dr\u00E5p, f\u00F6rs\u00F6k,
+        Stockholm","summary":"Man i H\u00E4sselby har skjutits.","url":"/aktuellt/handelser/2026/juli/24/24-juli-19.47-morddrap-forsok-stockholm/","type":"Mord/dr\u00E5p,
+        f\u00F6rs\u00F6k","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":647844,"datetime":"2026-07-25
+        12:13:43 \u002B02:00","name":"25 juli 12.00, Brand, Stockholm","summary":"Det
+        brinner i en restaurang i Sk\u00E4rholmen.","url":"/aktuellt/handelser/2026/juli/25/25-juli-12.00-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647784,"datetime":"2026-07-24
+        14:43:55 \u002B02:00","name":"24 juli 13.36, V\u00E5llande till kroppsskada,
+        Stockholm","summary":"En person p\u00E5 elsparkcykel blir p\u00E5k\u00F6rd
+        av en bilist p\u00E5 Rehnsgatan.","url":"/aktuellt/handelser/2026/juli/24/24-juli-13.36-vallande-till-kroppsskada-stockholm/","type":"V\u00E5llande
+        till kroppsskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":647771,"datetime":"2026-07-24
+        12:48:42 \u002B02:00","name":"24 juli 10.55, R\u00E5n, Stockholm","summary":"En
+        person grips misst\u00E4nkt f\u00F6r r\u00E5n mot en butik vid Mariatorgets
+        tunnelbana.","url":"/aktuellt/handelser/2026/juli/24/24-juli-10.55-ran-stockholm/","type":"R\u00E5n","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647761,"datetime":"2026-07-24
+        10:41:09 \u002B02:00","name":"24 juli 02.41, Mord/dr\u00E5p, f\u00F6rs\u00F6k,
+        Stockholm","summary":"En kvinna i L\u00E5ngbro blir utsatt f\u00F6r misst\u00E4nkt
+        mordf\u00F6rs\u00F6k av sin tidigare pojkv\u00E4n.","url":"/aktuellt/handelser/2026/juli/24/24-juli-02.41-morddrap-forsok-stockholm/","type":"Mord/dr\u00E5p,
+        f\u00F6rs\u00F6k","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":647756,"datetime":"2026-07-24
+        10:31:23 \u002B02:00","name":"23 juli 23.00, Skadeg\u00F6relse, Stockholm","summary":"Ordningsvakter
+        har gripit en kvinna som gjort utfall mot hotellpersonal i centrala Stockholm.","url":"/aktuellt/handelser/2026/juli/23/23-juli-23.00-skadegorelse-stockholm/","type":"Skadeg\u00F6relse","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647745,"datetime":"2026-07-24
+        8:05:14 \u002B02:00","name":"24 juli 07.44, \u00D6vrigt, Stockholm","summary":"Polisen
+        och F\u00F6rsvarsmakten genomf\u00F6r idag en \u00F6vning med helikoptrar
+        \u00F6ver bland annat Riksdagen.","url":"/aktuellt/handelser/2026/juli/24/24-juli-07.44-ovrigt-stockholm/","type":"\u00D6vrigt","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647721,"datetime":"2026-07-23
+        17:52:59 \u002B02:00","name":"23 juli 16.48, R\u00E5n, Stockholm","summary":"Polisen
+        s\u00F6ker en man som r\u00E5nat en butik i \u00C5rsta.","url":"/aktuellt/handelser/2026/juli/23/23-juli-16.48-ran-stockholm/","type":"R\u00E5n","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647679,"datetime":"2026-07-23
+        9:34:24 \u002B02:00","name":"23 juli 07.49, Trafikolycka, Stockholm","summary":"En
+        personbil blir p\u00E5k\u00F6rd i h\u00F6jd med trafikplats 156 i Hjulsta.","url":"/aktuellt/handelser/2026/juli/23/23-juli-07.49-trafikolycka-stockholm/","type":"Trafikolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647677,"datetime":"2026-07-23
+        8:54:39 \u002B02:00","name":"23 juli 04.36, Knivlagen, Stockholm","summary":"Polisen
+        f\u00E5r in tips om tv\u00E5 personer som tillgriper cyklar p\u00E5 Fr\u00E4mlingsv\u00E4gen
+        i Midsommarkransen.","url":"/aktuellt/handelser/2026/juli/23/23-juli-04.36-knivlagen-stockholm/","type":"Knivlagen","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647675,"datetime":"2026-07-23
+        8:29:18 \u002B02:00","name":"23 juli 03.10, Misshandel, Stockholm","summary":"Tv\u00E5
+        personer br\u00E5kar l\u00E4ngst bak i en SL-buss p\u00E5 v\u00E4g mot S\u00F6dert\u00E4lje.","url":"/aktuellt/handelser/2026/juli/23/23-juli-03.10-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647674,"datetime":"2026-07-23
+        8:11:22 \u002B02:00","name":"23 juli 00.59, Misshandel, Stockholm","summary":"En
+        man grips i \u00D6stberga misst\u00E4nkt f\u00F6r brott i n\u00E4ra relation.","url":"/aktuellt/handelser/2026/juli/23/23-juli-00.59-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647671,"datetime":"2026-07-23
+        7:57:21 \u002B02:00","name":"23 juli 00.51, Misshandel, Stockholm","summary":"Tv\u00E5
+        m\u00E4n sl\u00E5ss med varandra p\u00E5 Medborgarplatsens tunnelbaneperrong
+        p\u00E5 S\u00F6dermalm.","url":"/aktuellt/handelser/2026/juli/23/23-juli-00.51-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647648,"datetime":"2026-07-22
+        21:15:56 \u002B02:00","name":"22 juli 20.22, Mord/dr\u00E5p, Stockholm","summary":"Tv\u00E5
+        gripna efter att en man p\u00E5 ett just nu ok\u00E4nt s\u00E4tt fallit fr\u00E5n
+        en balkong i Rinkeby.","url":"/aktuellt/handelser/2026/juli/22/22-juli-20.22-morddrap-stockholm/","type":"Mord/dr\u00E5p","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647535,"datetime":"2026-07-21
+        17:54:34 \u002B02:00","name":"21 juli 17.14, Rattfylleri, Stockholm","summary":"Fordonsf\u00F6rare
+        i \u00C4lta rapporteras f\u00F6r drograttfylleri.","url":"/aktuellt/handelser/2026/juli/21/21-juli-17.14-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647532,"datetime":"2026-07-21
+        15:14:52 \u002B02:00","name":"21 juli 07.12, Misshandel, Stockholms l\u00E4n","summary":"Man
+        rapporteras\u00A0f\u00F6r psykiskt v\u00E5ld, grov kvinnofridskr\u00E4nkning,
+        misshandel och barnfridsbrott,.","url":"/aktuellt/handelser/2026/juli/21/21-juli-07.12-misshandel-stockholms-lan/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647503,"datetime":"2026-07-21
+        10:48:06 \u002B02:00","name":"21 juli 07.17, Rattfylleri, Stockholm","summary":"En
+        person ringer in om en bil som k\u00F6rt in i muren till en fastighet p\u00E5
+        V\u00E4rmlandsv\u00E4gen i Farsta.","url":"/aktuellt/handelser/2026/juli/21/21-juli-07.17-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647514,"datetime":"2026-07-21
+        12:34:07 \u002B02:00","name":"21 juli 11.20, Inbrott, f\u00F6rs\u00F6k, Stockholm","summary":"Polisen
+        f\u00E5r in samtal om ett inbrottsf\u00F6rs\u00F6k p\u00E5 Paketgr\u00E4nd
+        i Svedmyra.","url":"/aktuellt/handelser/2026/juli/21/21-juli-11.20-inbrott-forsok-stockholm/","type":"Inbrott,
+        f\u00F6rs\u00F6k","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":647505,"datetime":"2026-07-21
+        11:19:35 \u002B02:00","name":"21 juli 08.59, Bedr\u00E4geri, Stockholm","summary":"Polis
+        tillkallas till en adress i \u00C5rsta efter misst\u00E4nkt bedr\u00E4geri
+        mot en man i 80-\u00E5rs\u00E5ldern.","url":"/aktuellt/handelser/2026/juli/21/21-juli-08.59-bedrageri-stockholm/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647489,"datetime":"2026-07-21
+        8:49:25 \u002B02:00","name":"21 juli 07.56, Skadeg\u00F6relse, Stockholm","summary":"Samtal
+        inkommer om mindre skotth\u00E5l som uppt\u00E4ckts i en glasruta p\u00E5
+        en adress p\u00E5 \u00D6stermalm.","url":"/aktuellt/handelser/2026/juli/21/21-juli-07.56-skadegorelse-stockholm/","type":"Skadeg\u00F6relse","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647486,"datetime":"2026-07-21
+        8:14:49 \u002B02:00","name":"21 juli 03.48, Skadeg\u00F6relse, Stockholm","summary":"Polispatrull
+        p\u00E5tr\u00E4ffar en man p\u00E5 Magelungsv\u00E4gen i H\u00F6gdalen som
+        klottrat.","url":"/aktuellt/handelser/2026/juli/21/21-juli-03.48-skadegorelse-stockholm/","type":"Skadeg\u00F6relse","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647476,"datetime":"2026-07-21
+        7:29:15 \u002B02:00","name":"20 juli 22.17, Misshandel, Stockholm","summary":"En
+        kvinna ringer in till polisen om en misshandel i hemmet i R\u00E5cksta.","url":"/aktuellt/handelser/2026/juli/20/20-juli-22.17-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647471,"datetime":"2026-07-21
+        7:09:23 \u002B02:00","name":"21 juli 03.44, St\u00F6ld/inbrott, Stockholm","summary":"Tv\u00E5
+        m\u00E4n grips i Farsta efter att ha f\u00F6rs\u00F6kt bryta sig in i en fastighet
+        med en bultsax.","url":"/aktuellt/handelser/2026/juli/21/21-juli-03.44-stoldinbrott-stockholm/","type":"St\u00F6ld/inbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647454,"datetime":"2026-07-20
+        19:55:34 \u002B02:00","name":"20 juli 19.02, Trafikolycka, Stockholm","summary":"Tre
+        till sjukhus efter trafikolycka i Rinkeby.","url":"/aktuellt/handelser/2026/juli/20/20-juli-19.02-trafikolycka-stockholm/","type":"Trafikolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647449,"datetime":"2026-07-20
+        17:22:32 \u002B02:00","name":"20 juli 16.55, Kontroll, Stockholm","summary":"Polisen
+        bitr\u00E4der r\u00E4ddningstj\u00E4nsten i \u00C5rsta.","url":"/aktuellt/handelser/2026/juli/20/20-juli-16.55-kontroll-stockholm/","type":"Kontroll","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647448,"datetime":"2026-07-20
+        17:07:30 \u002B02:00","name":"20 juli 16.02, Rattfylleri, Stockholm","summary":"Fordonsf\u00F6rare
+        p\u00E5 S\u00F6dermalm misst\u00E4nks f\u00F6r drograttfylleri.","url":"/aktuellt/handelser/2026/juli/20/20-juli-16.02-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647420,"datetime":"2026-07-20
+        10:39:25 \u002B02:00","name":"20 juli 09.35, St\u00F6ld, Stockholm","summary":"En
+        person blir bestulen p\u00E5 sin ryggs\u00E4ck p\u00E5 Sm\u00E5landsgatan.","url":"/aktuellt/handelser/2026/juli/20/20-juli-09.35-stold-stockholm/","type":"St\u00F6ld","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647412,"datetime":"2026-07-20
+        8:33:43 \u002B02:00","name":"20 juli 07.12, St\u00F6ld, Stockholm","summary":"Polis
+        tillkallas till en adress i \u00C5rsta efter att en hjullastare stulits.","url":"/aktuellt/handelser/2026/juli/20/20-juli-07.12-stold-stockholm/","type":"St\u00F6ld","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647410,"datetime":"2026-07-20
+        7:49:53 \u002B02:00","name":"20 juli 03.03, Rattfylleri, Stockholm","summary":"Polispatrull
+        kontrollerar en bilist p\u00E5 Maltesholmsv\u00E4gen i H\u00E4sselby G\u00E5rd.","url":"/aktuellt/handelser/2026/juli/20/20-juli-03.03-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647343,"datetime":"2026-07-19
+        7:20:52 \u002B02:00","name":"18 juli 22.52, Mord/dr\u00E5p, f\u00F6rs\u00F6k,
+        Stockholm","summary":"Polisen har gripit en man och en kvinna som \u00E4r
+        misst\u00E4nkta f\u00F6r mordf\u00F6rs\u00F6k efter det att en man fallit
+        fr\u00E5n en b","url":"/aktuellt/handelser/2026/juli/1/18-juli-22.52-morddrap-forsok-stockholm/","type":"Mord/dr\u00E5p,
+        f\u00F6rs\u00F6k","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":647285,"datetime":"2026-07-18
+        7:19:36 \u002B02:00","name":"18 juli 02.23, Mord/dr\u00E5p, f\u00F6rs\u00F6k,
+        Stockholm","summary":"Polisen har gripit en man som \u00E4r misst\u00E4nkt
+        f\u00F6r mordf\u00F6rs\u00F6k p\u00E5 en kvinna som p\u00E5 ett just nu ok\u00E4nt
+        s\u00E4tt har falli","url":"/aktuellt/handelser/2026/juli/18/18-juli-02.23-morddrap-forsok-stockholm/","type":"Mord/dr\u00E5p,
+        f\u00F6rs\u00F6k","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":647264,"datetime":"2026-07-17
+        21:10:03 \u002B02:00","name":"17 juli 19.14, Rattfylleri, Stockholm","summary":"En
+        bilf\u00F6rare som kontrolleras i Stadshagen misst\u00E4nks f\u00F6r grov
+        olovlig k\u00F6rning och drograttfylleri och tas med ","url":"/aktuellt/handelser/2026/juli/17/17-juli-19.14-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647260,"datetime":"2026-07-17
+        20:34:28 \u002B02:00","name":"17 juli 19.54, Misshandel, Stockholm","summary":"Ett
+        vittne uppger sig ha sett en man misshandla en kvinna. Polis kontaktar paret
+        och mannen grips.","url":"/aktuellt/handelser/2026/juli/17/17-juli-19.54-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647193,"datetime":"2026-07-17
+        10:41:36 \u002B02:00","name":"17 juli 00.18, V\u00E5ld/hot mot tj\u00E4nsteman,
+        Stockholm","summary":"Ungdomar kastar sm\u00E4llar mot ordningsvakter.","url":"/aktuellt/handelser/2026/juli/17/17-juli-00.18-valdhot-mot-tjansteman-stockholm/","type":"V\u00E5ld/hot
+        mot tj\u00E4nsteman","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":647178,"datetime":"2026-07-17
+        8:37:35 \u002B02:00","name":"17 juli 03.31, Skadeg\u00F6relse, Stockholm","summary":"Tre
+        personer vandaliserar laddstolpar vid Eriksdalsbadet.","url":"/aktuellt/handelser/2026/juli/17/17-juli-03.31-skadegorelse-stockholm/","type":"Skadeg\u00F6relse","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647172,"datetime":"2026-07-17
+        8:20:12 \u002B02:00","name":"17 juli 01.32, Misshandel, Stockholm","summary":"Misst\u00E4nkt
+        v\u00E5ld i n\u00E4ra relation mellan tv\u00E5 kvinnor.","url":"/aktuellt/handelser/2026/juli/17/17-juli-01.32-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647166,"datetime":"2026-07-17
+        8:20:02 \u002B02:00","name":"16 juli 23.37, Olaga hot, Stockholm","summary":"Barn
+        flyr fr\u00E5n en hotfull man i s\u00F6dra Stockholm","url":"/aktuellt/handelser/2026/juli/16/16-juli-23.37-olaga-hot-stockholm/","type":"Olaga
+        hot","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":647138,"datetime":"2026-07-16
+        16:41:59 \u002B02:00","name":"16 juli 16.20, Trafikolycka, personskada, Stockholm","summary":"En
+        bil p\u00E5 S\u00F6dermalm har k\u00F6rt in i en framf\u00F6rvarande bil av
+        hittills oklar anledning. Ett antal personer har f\u00E5","url":"/aktuellt/handelser/2026/juli/16/16-juli-16.20-trafikolycka-personskada-stockholm/","type":"Trafikolycka,
+        personskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":647006,"datetime":"2026-07-15
+        2:29:05 \u002B02:00","name":"15 juli 00.40, Mord/dr\u00E5p, Stockholm","summary":"Polis
+        och ambulans kallas till en l\u00E4genhet i Sk\u00F6ndal med anledning av
+        att en man sticksskadats.","url":"/aktuellt/handelser/2026/juli/15/15-juli-00.40-morddrap-stockholm/","type":"Mord/dr\u00E5p","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":647005,"datetime":"2026-07-15
+        1:30:09 \u002B02:00","name":"15 juli 00.07, Explosion, Stockholm","summary":"Polis
+        kallas till H\u00E4sselby g\u00E5rd med anledning av att flera inringare h\u00F6rt
+        en h\u00F6g sm\u00E4ll i ett bostadsomr\u00E5de med","url":"/aktuellt/handelser/2026/juli/15/15-juli-00.07-explosion-stockholm/","type":"Explosion","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646999,"datetime":"2026-07-14
+        20:56:30 \u002B02:00","name":"14 juli 19.29, Sexualbrott, Stockholm","summary":"En
+        man ofredar en pojke sexuellt.","url":"/aktuellt/handelser/2026/juli/14/14-juli-19.29-sexualbrott-stockholm/","type":"Sexualbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646981,"datetime":"2026-07-14
+        18:21:00 \u002B02:00","name":"14 juli 16.03, Misshandel, Stockholm","summary":"Kvinna
+        kastar glas p\u00E5 restaurang.","url":"/aktuellt/handelser/2026/juli/14/14-juli-16.03-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646979,"datetime":"2026-07-14
+        18:11:49 \u002B02:00","name":"14 juli 14.30, St\u00F6ld/inbrott, Stockholm","summary":"Inbrott
+        i flera l\u00E4genheter p\u00E5 Selmedalsv\u00E4gen i H\u00E4gersten.","url":"/aktuellt/handelser/2026/juli/14/14-juli-14.30-stoldinbrott-stockholm/","type":"St\u00F6ld/inbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646902,"datetime":"2026-07-13
+        21:11:16 \u002B02:00","name":"13 juli 19.46, Misshandel, Stockholm","summary":"Tv\u00E5
+        personer har br\u00E5kat p\u00E5 S\u00F6dermalm och den ena parten har f\u00E5tt
+        skador och f\u00E5r \u00E5ka ambulans till sjukhus.","url":"/aktuellt/handelser/2026/juli/13/13-juli-19.46-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646874,"datetime":"2026-07-13
+        12:11:46 \u002B02:00","name":"13 juli 11.30, Farligt f\u00F6rem\u00E5l, misst\u00E4nkt,
+        Stockholm","summary":"Polisen kontrollerar ett f\u00F6rem\u00E5l i en garderob
+        i en k\u00E4llare till en flerfamiljsfastighet i Tallkrogen.","url":"/aktuellt/handelser/2026/juli/13/13-juli-11.30-farligt-foremal-misstankt-stockholm/","type":"Farligt
+        f\u00F6rem\u00E5l, misst\u00E4nkt","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":646850,"datetime":"2026-07-13
+        7:29:30 \u002B02:00","name":"13 juli 03.50, Misshandel, grov, Stockholm","summary":"Polisen
+        har under en insats p\u00E5 S\u00F6dermalm gripit en man som knivhuggit en
+        butiksanst\u00E4lld under en ett r\u00E5n.","url":"/aktuellt/handelser/2026/juli/13/13-juli-03.50-misshandel-grov-stockholm/","type":"Misshandel,
+        grov","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":646811,"datetime":"2026-07-12
+        9:16:43 \u002B02:00","name":"12 juli 02.23, Mordbrand, Stockholm","summary":"Polis
+        och r\u00E4ddningstj\u00E4nst kallades till Ulvsunda med anledning av brand
+        i tr\u00E4stuga.","url":"/aktuellt/handelser/2026/juli/12/12-juli-02.23-mordbrand-stockholm/","type":"Mordbrand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646771,"datetime":"2026-07-11
+        16:52:34 \u002B02:00","name":"11 juli 07.47, Brand, Stockholm","summary":"Brand
+        i f\u00F6rr\u00E5dsbyggnad i villaomr\u00E5de i Bromsten.","url":"/aktuellt/handelser/2026/juli/11/11-juli-07.47-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646754,"datetime":"2026-07-11
+        9:39:55 \u002B02:00","name":"11 juli 09.07, Explosion, Stockholm","summary":"Polis
+        och r\u00E4ddningstj\u00E4nst kallas till ett flerbostadshus i Marieberg med
+        uppgifter om en explosion i en l\u00E4genh","url":"/aktuellt/handelser/2026/juli/11/11-juli-09.07-explosion-stockholm/","type":"Explosion","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646744,"datetime":"2026-07-11
+        7:49:42 \u002B02:00","name":"11 juli 04.33, Brand, Stockholm","summary":"Polis
+        och r\u00E4ddningstj\u00E4nst kallas till R\u00E5cksta med anledning brand
+        i en vedbod.","url":"/aktuellt/handelser/2026/juli/11/11-juli-04.33-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646722,"datetime":"2026-07-10
+        18:22:33 \u002B02:00","name":"10 juli 14.31, Misshandel, Stockholm","summary":"Kvinna
+        \u00E5ker till sjukhus med sm\u00E4rta efter att ha skadat sig p\u00E5 ett
+        s\u00E4te p\u00E5 en buss.","url":"/aktuellt/handelser/2026/juli/10/10-juli-14.31-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646719,"datetime":"2026-07-10
+        18:22:19 \u002B02:00","name":"10 juli 13.09, Olaga intr\u00E5ng, Stockholm","summary":"Tre
+        m\u00E4n grips efter att ha brutit sig in i ett cykelf\u00F6rr\u00E5d.","url":"/aktuellt/handelser/2026/juli/10/10-juli-13.09-olaga-intrang-stockholm/","type":"Olaga
+        intr\u00E5ng","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":646659,"datetime":"2026-07-10
+        8:32:39 \u002B02:00","name":"10 juli 08.01, Trafikolycka, personskada, Stockholm","summary":"Polis
+        och ambulans kallas till L\u00F6vstav\u00E4gen i H\u00E4sselby med anledning
+        av en trafikolycka.","url":"/aktuellt/handelser/2026/juli/10/10-juli-08.01-trafikolycka-personskada-stockholm/","type":"Trafikolycka,
+        personskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":646628,"datetime":"2026-07-09
+        20:14:48 \u002B02:00","name":"9 juli 16.19, St\u00F6ld, Stockholm","summary":"Parkeringsb\u00F6ter
+        g\u00F6r att en person hittar sin stulna registreringsskylt.","url":"/aktuellt/handelser/2026/juli/9/9-juli-16.19-stold-stockholm/","type":"St\u00F6ld","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646620,"datetime":"2026-07-09
+        17:16:21 \u002B02:00","name":"9 juli 16.02, Misshandel, Stockholm","summary":"Slagsm\u00E5l
+        i V\u00E5rberg.","url":"/aktuellt/handelser/2026/juli/9/9-juli-16.02-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646623,"datetime":"2026-07-09
+        17:40:09 \u002B02:00","name":"9 juli 14.57, Arbetsplatsolycka, Stockholm","summary":"En
+        man skadar foten p\u00E5 en arbetsplats i Larsboda.","url":"/aktuellt/handelser/2026/juli/9/9-juli-14.57-arbetsplatsolycka-stockholm/","type":"Arbetsplatsolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646494,"datetime":"2026-07-08
+        11:46:30 \u002B02:00","name":"8 juli 10.32, Rattfylleri, Stockholm","summary":"En
+        bilist kontrollerades p\u00E5 Norrmalm och medtogs f\u00F6r vidare utredning,
+        misst\u00E4nkt f\u00F6r drograttfylla samt narkot","url":"/aktuellt/handelser/2026/juli/8/8-juli-10.32-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646446,"datetime":"2026-07-07
+        18:16:24 \u002B02:00","name":"7 juli 13.09, Brand, Stockholm","summary":"Polis,
+        r\u00E4ddningstj\u00E4nst och ambulans kallades till Bagarmossen med anledning
+        av en l\u00E4genhetsbrand.","url":"/aktuellt/handelser/2026/juli/7/7-juli-13.09-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646439,"datetime":"2026-07-07
+        16:16:51 \u002B02:00","name":"7 juli 15.55, Rattfylleri, Stockholm","summary":"N\u00E4r
+        en polispatrull stoppade en bil f\u00F6r kontroll av f\u00F6raren i Liljeholmen
+        uppstod misstanke om rattfylleri.","url":"/aktuellt/handelser/2026/juli/7/7-juli-15.55-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646437,"datetime":"2026-07-07
+        16:08:22 \u002B02:00","name":"7 juli 15.19, R\u00E5n, Stockholm","summary":"Polis
+        kallas till Husby med anledning av personr\u00E5n.","url":"/aktuellt/handelser/2026/juli/7/7-juli-15.19-ran-stockholm/","type":"R\u00E5n","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646422,"datetime":"2026-07-07
+        13:14:00 \u002B02:00","name":"7 juli 10.55, Narkotikabrott, Stockholm","summary":"En
+        man snattade och upptr\u00E4dde aggressivt en butik i Midsommarkransen.","url":"/aktuellt/handelser/2026/juli/7/7-juli-10.55-narkotikabrott-stockholm/","type":"Narkotikabrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646378,"datetime":"2026-07-07
+        7:10:03 \u002B02:00","name":"7 juli 03.41, St\u00F6ld, Stockholm","summary":"Tv\u00E5
+        m\u00E4ns s\u00E5g stj\u00E4la en elkabel p\u00E5 S\u00F6dermalm, och f\u00F6rsvann
+        sedan med elkabeln.","url":"/aktuellt/handelser/2026/juli/7/7-juli-03.41-stold-stockholm/","type":"St\u00F6ld","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646351,"datetime":"2026-07-06
+        18:07:00 \u002B02:00","name":"6 juli 16.26, Skadeg\u00F6relse, Stockholm","summary":"Stenkastning
+        mot l\u00E4genhet. Tv\u00E5 personer grips.","url":"/aktuellt/handelser/2026/juli/6/6-juli-16.26-skadegorelse-stockholm/","type":"Skadeg\u00F6relse","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646350,"datetime":"2026-07-06
+        18:02:16 \u002B02:00","name":"6 juli 16.00, Olaga hot, Stockholm","summary":"En
+        man frihetsber\u00F6vas efter att ha hotat en annan man i Bandhagen.","url":"/aktuellt/handelser/2026/juli/6/6-juli-16.00-olaga-hot-stockholm/","type":"Olaga
+        hot","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":646284,"datetime":"2026-07-06
+        7:34:06 \u002B02:00","name":"6 juli 03.25, Rattfylleri, Stockholm","summary":"En
+        polispatrull gjorde ett fordonsstopp p\u00E5 en bilist p\u00E5 \u00D6stermalm.
+        F\u00F6raren bl\u00E5ste positivt i s\u00E5llningsinstrume","url":"/aktuellt/handelser/2026/juli/6/6-juli-03.25-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646283,"datetime":"2026-07-06
+        7:31:30 \u002B02:00","name":"6 juli 02.05, St\u00F6ld/inbrott, Stockholm","summary":"Genom
+        \u00F6vervakningskamera s\u00E5gs personer lasta saker fr\u00E5n en byggarbetsplats
+        p\u00E5 lilla Essingen.","url":"/aktuellt/handelser/2026/juli/6/6-juli-02.05-stoldinbrott-stockholm/","type":"St\u00F6ld/inbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646282,"datetime":"2026-07-06
+        7:22:47 \u002B02:00","name":"6 juli 02.07, Misshandel, Stockholm","summary":"Ett
+        tiotal personer s\u00E5gs br\u00E5ka ute p\u00E5 en gata p\u00E5 Kungsholmen.","url":"/aktuellt/handelser/2026/juli/6/6-juli-02.07-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646240,"datetime":"2026-07-05
+        8:23:05 \u002B02:00","name":"5 juli 08.00, Bedr\u00E4geri, Stockholms l\u00E4n","summary":"Under
+        l\u00F6rdagen den 4 juli skedde \u00E5tta hittills k\u00E4nda bedr\u00E4gerier
+        alt bedr\u00E4gerif\u00F6rs\u00F6k i Stockholms l\u00E4n som hant","url":"/aktuellt/handelser/2026/juli/5/5-juli-08.00-bedrageri-stockholms-lan/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646229,"datetime":"2026-07-05
+        7:21:44 \u002B02:00","name":"5 juli 05.11, Trafikolycka, Stockholm","summary":"En
+        bil har voltat i Fredh\u00E4ll men ingen person beh\u00F6ver/vill ha sjukhusv\u00E5rd.","url":"/aktuellt/handelser/2026/juli/5/5-juli-05.11-trafikolycka-stockholm/","type":"Trafikolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646223,"datetime":"2026-07-05
+        7:10:57 \u002B02:00","name":"5 juli 00.05, V\u00E5ldt\u00E4kt, Stockholm","summary":"En
+        man misst\u00E4nks ha v\u00E5ldtagit en kvinna inne i en bostad. Mannen grips
+        och tas med f\u00F6r vidare f\u00F6rh\u00F6r.","url":"/aktuellt/handelser/2026/juli/5/5-juli-00.05-valdtakt-stockholm/","type":"V\u00E5ldt\u00E4kt","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646171,"datetime":"2026-07-04
+        7:37:00 \u002B02:00","name":"4 juli 07.14, Brand, Stockholm","summary":"Det
+        brinner i en f\u00F6rskola i Sk\u00E4rholmen och r\u00E4ddnngstj\u00E4nsten
+        leder arbetet med att sl\u00E4cka branden och polisen b","url":"/aktuellt/handelser/2026/juli/4/4-juli-07.14-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646169,"datetime":"2026-07-04
+        7:14:26 \u002B02:00","name":"4 juli 02.07, Rattfylleri, Stockholm","summary":"En
+        bilf\u00F6rare som kontrolleras p\u00E5 \u00D6stermalm misst\u00E4nks f\u00F6r
+        rattfylleri och tas med f\u00F6r provtagning.","url":"/aktuellt/handelser/2026/juli/4/4-juli-02.07-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646151,"datetime":"2026-07-03
+        21:18:00 \u002B02:00","name":"3 juli 20.05, Brand, Stockholm","summary":"Brand
+        i soprum i H\u00E4sselby\u00A0villastad.","url":"/aktuellt/handelser/2026/juli/3/3-juli-20.05-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646135,"datetime":"2026-07-03
+        15:53:20 \u002B02:00","name":"3 juli 14.59, Trafikolycka, Stockholm","summary":"Bilf\u00F6rare
+        f\u00E5r b\u00F6ter efter trafikolycka p\u00E5 Essingeleden .","url":"/aktuellt/handelser/2026/juli/3/3-juli-14.59-trafikolycka-stockholm/","type":"Trafikolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646026,"datetime":"2026-07-02
+        19:34:13 \u002B02:00","name":"2 juli 19.20, Bedr\u00E4geri, Stockholms l\u00E4n","summary":"Bedr\u00E4gerierna
+        mot personer \u00F6ver 70 \u00E5r forts\u00E4tter. I ett antal fall har personer
+        blivit bestulna p\u00E5 smycken/til","url":"/aktuellt/handelser/2026/juli/2/2-juli-19.20-bedrageri-stockholms-lan/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":646013,"datetime":"2026-07-02
+        16:13:38 \u002B02:00","name":"2 juli 14.20, Trafikolycka, smitning fr\u00E5n,
+        Stockholm","summary":"En fotg\u00E4ngare vid Mariatorget p\u00E5 S\u00F6dermalm
+        ska ha f\u00E5tt foten \u00F6verk\u00F6rd av en bilf\u00F6raren som efter
+        olyckan l\u00E4mna","url":"/aktuellt/handelser/2026/juli/2/2-juli-14.20-trafikolycka-smitning-fran-stockholm/","type":"Trafikolycka,
+        smitning fr\u00E5n","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":645827,"datetime":"2026-07-01
+        10:29:55 \u002B02:00","name":"1 juli 06.43, Trafikolycka, personskada, Stockholm","summary":"Polis
+        och ambulans kallades till korsningen Kungsgatan/Sveav\u00E4gen i Stockholms
+        innerstad med anledning av en tr","url":"/aktuellt/handelser/2026/juli/1/1-juli-06.43-trafikolycka-personskada-stockholm/","type":"Trafikolycka,
+        personskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":645803,"datetime":"2026-07-01
+        7:32:10 \u002B02:00","name":"1 juli 04.22, Trafikbrott, Stockholm","summary":"En
+        inringare fr\u00E5n Sockenv\u00E4gen i Enskede ser tv\u00E5 unga personer
+        som sitter i en bil som saknar ena framd\u00E4cket oc","url":"/aktuellt/handelser/2026/juli/1/1-juli-04.22-trafikbrott-stockholm/","type":"Trafikbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":645786,"datetime":"2026-06-30
+        21:37:54 \u002B02:00","name":"30 juni 19.14, Brand, Stockholm","summary":"Det
+        har brunnit i ett institutionsboende i Aspudden. Ingen person har skadats
+        men de boende fick evakuera.","url":"/aktuellt/handelser/2026/juni/30/30-juni-19.14-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":645781,"datetime":"2026-06-30
+        20:27:13 \u002B02:00","name":"30 juni 20.16, Bedr\u00E4geri, Stockholms l\u00E4n","summary":"Under
+        eftermiddagen/kv\u00E4llen har flera personer utsatts f\u00F6r bedr\u00E4gerier
+        eller bedr\u00E4gerif\u00F6rs\u00F6k - det har f\u00F6rekom","url":"/aktuellt/handelser/2026/juni/30/30-juni-20.16-bedrageri-stockholms-lan/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":645620,"datetime":"2026-06-30
+        7:13:45 \u002B02:00","name":"30 juni 01.57, Fylleri, Stockholm","summary":"En
+        mycket berusad man stod och skrek p\u00E5 S\u00F6dermalm. Mannen frihetsber\u00F6vades
+        enligt lagen om omh\u00E4ndertagande av ","url":"/aktuellt/handelser/2026/juni/30/30-juni-01.57-fylleri-stockholm/","type":"Fylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":644300,"datetime":"2026-06-29
+        7:11:52 \u002B02:00","name":"29 juni 02.43, Misshandel, Stockholm","summary":"En
+        man p\u00E5 en bar p\u00E5 \u00D6stermalm frihetsber\u00F6vades enligt lagen
+        om omh\u00E4ndertagande av berusade personer.","url":"/aktuellt/handelser/2026/juni/29/29-juni-02.43-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":644298,"datetime":"2026-06-29
+        7:07:14 \u002B02:00","name":"29 juni 04.47, Misshandel, Stockholm","summary":"Ett
+        antal personer stoppade ett slagsm\u00E5l mellan tv\u00E5 m\u00E4n p\u00E5
+        S\u00F6dermalm. En man blev avl\u00E4gsnad och misst\u00E4nkt f\u00F6r ","url":"/aktuellt/handelser/2026/juni/29/29-juni-04.47-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":644297,"datetime":"2026-06-29
+        7:04:02 \u002B02:00","name":"29 juni 05.47, Trafikbrott, Stockholm","summary":"En
+        bilist p\u00E5 Djurg\u00E5rden kontrollerades och medtogs f\u00F6r vidare
+        utredning, misst\u00E4nkt f\u00F6r grov olovlig k\u00F6rning.","url":"/aktuellt/handelser/2026/juni/29/29-juni-05.47-trafikbrott-stockholm/","type":"Trafikbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":644245,"datetime":"2026-06-28
+        7:35:33 \u002B02:00","name":"28 juni 01.16, Narkotikabrott, Stockholm","summary":"En
+        man i Aspudden kontrollerades och medtogs f\u00F6r vidare utredning, misst\u00E4nkt
+        f\u00F6r ringa narkotikabrott.","url":"/aktuellt/handelser/2026/juni/28/28-juni-01.16-narkotikabrott-stockholm/","type":"Narkotikabrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":644239,"datetime":"2026-06-28
+        7:22:23 \u002B02:00","name":"28 juni 05.26, Fylleri, Stockholm","summary":"En
+        kvinna p\u00E5 \u00D6stermalm frihetsber\u00F6vades enligt lagen om omh\u00E4ndertagande
+        av berusade personer d\u00E5 hon inte kunde","url":"/aktuellt/handelser/2026/juni/28/28-juni-05.26-fylleri-stockholm/","type":"Fylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":644237,"datetime":"2026-06-28
+        7:18:56 \u002B02:00","name":"28 juni 02.46, R\u00E5n, Stockholm","summary":"En
+        man p\u00E5 \u00D6stermalm blev r\u00E5nad p\u00E5 sin klocka n\u00E4r han
+        var p\u00E5 v\u00E4g hem.","url":"/aktuellt/handelser/2026/juni/28/28-juni-02.46-ran-stockholm/","type":"R\u00E5n","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":644174,"datetime":"2026-06-27
+        7:22:31 \u002B02:00","name":"27 juni 04.21, Br\u00E5k, Stockholm","summary":"Tv\u00E5
+        personer br\u00E5kade utanf\u00F6r en restaurang i Vasastan. Ingen var skadad
+        och polisen avl\u00E4gsnade en person fr\u00E5n ","url":"/aktuellt/handelser/2026/juni/27/27-juni-04.21-brak-stockholm/","type":"Br\u00E5k","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":644172,"datetime":"2026-06-27
+        7:16:15 \u002B02:00","name":"27 juni 05.31, Misshandel, Stockholm","summary":"Slagsm\u00E5l
+        uppstod p\u00E5 centrala Norrmalm mellan yngre m\u00E4n, ett tiotal personer
+        s\u00E5gs i s\u00E4llskapet.","url":"/aktuellt/handelser/2026/juni/27/27-juni-05.31-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":644140,"datetime":"2026-06-26
+        18:03:21 \u002B02:00","name":"26 juni 16.56, V\u00E5llande till kroppsskada,
+        Stockholm","summary":"Person p\u00E5 elsparkcykel p\u00E5k\u00F6rd av bilf\u00F6rare
+        i Vasastan.","url":"/aktuellt/handelser/2026/juni/26/26-juni-16.56-vallande-till-kroppsskada-stockholm/","type":"V\u00E5llande
+        till kroppsskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":644137,"datetime":"2026-06-26
+        17:52:05 \u002B02:00","name":"26 juni 16.19, Sexualbrott, Stockholm","summary":"Polisen
+        f\u00E5r samtal om att en man onanerar framf\u00F6r barn vid \u00C4ngbybadet.","url":"/aktuellt/handelser/2026/juni/26/26-juni-16.19-sexualbrott-stockholm/","type":"Sexualbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":644132,"datetime":"2026-06-26
+        17:13:12 \u002B02:00","name":"26 juni 16.15, Trafikolycka, Stockholm","summary":"Bilf\u00F6rare
+        k\u00F6r in i en bilist i \u00D6rby.","url":"/aktuellt/handelser/2026/juni/26/26-juni-16.15-trafikolycka-stockholm/","type":"Trafikolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":644106,"datetime":"2026-06-26
+        12:45:31 \u002B02:00","name":"26 juni 10.51, Arbetsplatsolycka, Stockholms
+        l\u00E4n","summary":"En man har slitit av sig ett finger i en kran under ett
+        arbete i \u00C5kersberga.","url":"/aktuellt/handelser/2026/juni/26/26-juni-10.51-arbetsplatsolycka-stockholms-lan/","type":"Arbetsplatsolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":644093,"datetime":"2026-06-26
+        10:04:00 \u002B02:00","name":"26 juni 08.25, Trafikolycka, Stockholm","summary":"Tv\u00E5
+        personbilar frontalkrockar p\u00E5 Klarastrandsleden.","url":"/aktuellt/handelser/2026/juni/26/26-juni-08.25-trafikolycka-stockholm/","type":"Trafikolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":644076,"datetime":"2026-06-26
+        8:01:06 \u002B02:00","name":"26 juni 06.38, Kontroll, Stockholms l\u00E4n","summary":"En
+        lastbil k\u00F6randes l\u00E4ngs E18\u00A0s\u00F6derg\u00E5ende\u00A0sl\u00E4pper
+        grus ifr\u00E5n sig.","url":"/aktuellt/handelser/2026/juni/26/26-juni-06.38-kontroll-stockholms-lan/","type":"Kontroll","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":644067,"datetime":"2026-06-26
+        7:21:38 \u002B02:00","name":"26 juni 03.30, Br\u00E5k, Stockholm","summary":"Ett
+        st\u00F6rre br\u00E5k bryter ut p\u00E5 G\u00F6tgatan p\u00E5 S\u00F6dermalm.","url":"/aktuellt/handelser/2026/juni/26/26-juni-03.30-brak-stockholm/","type":"Br\u00E5k","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643977,"datetime":"2026-06-25
+        11:32:01 \u002B02:00","name":"25 juni 09.39, Trafikolycka, smitning fr\u00E5n,
+        Stockholm","summary":"I samband med ett byggarbete p\u00E5 Ringv\u00E4gen
+        p\u00E5 S\u00F6dermalm blir en person p\u00E5k\u00F6rd av en bilist.","url":"/aktuellt/handelser/2026/juni/25/25-juni-09.39-trafikolycka-smitning-fran-stockholm/","type":"Trafikolycka,
+        smitning fr\u00E5n","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":643968,"datetime":"2026-06-25
+        11:04:20 \u002B02:00","name":"25 juni 09.23, V\u00E5llande till kroppsskada,
+        Stockholm","summary":"En cyklist och en personbil i krock i Vasastaden.","url":"/aktuellt/handelser/2026/juni/25/25-juni-09.23-vallande-till-kroppsskada-stockholm/","type":"V\u00E5llande
+        till kroppsskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":643961,"datetime":"2026-06-25
+        10:38:37 \u002B02:00","name":"25 juni 08.41, V\u00E5llande till kroppsskada,
+        Stockholm","summary":"En kvinna blir p\u00E5k\u00F6rd av en bil p\u00E5 ett
+        \u00F6verg\u00E5ngsst\u00E4lle p\u00E5 Hantverkargatan p\u00E5 Kungsholmen.","url":"/aktuellt/handelser/2026/juni/25/25-juni-08.41-vallande-till-kroppsskada-stockholm/","type":"V\u00E5llande
+        till kroppsskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":643945,"datetime":"2026-06-25
+        8:17:58 \u002B02:00","name":"25 juni 03.14, St\u00F6ld, Stockholm","summary":"En
+        man st\u00E5r och drar i kopparkablar p\u00E5 G\u00F6tgatan.","url":"/aktuellt/handelser/2026/juni/25/25-juni-03.14-stold-stockholm/","type":"St\u00F6ld","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643943,"datetime":"2026-06-25
+        8:01:28 \u002B02:00","name":"25 juni 02.47, Misshandel, Stockholm","summary":"En
+        person \u00E4r misst\u00E4nkt f\u00F6r misshandel efter br\u00E5k i centrala
+        Stockholm.","url":"/aktuellt/handelser/2026/juni/25/25-juni-02.47-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643868,"datetime":"2026-06-24
+        11:51:04 \u002B02:00","name":"24 juni 11.09, Skadeg\u00F6relse, Stockholm","summary":"En
+        sk\u00E5pbil i s\u00F6dra Hammarbyhamnen p\u00E5tr\u00E4ffades med en trasig
+        framruta. \u00C4garen \u00E4r kontaktad.","url":"/aktuellt/handelser/2026/juni/24/24-juni-11.09-skadegorelse-stockholm/","type":"Skadeg\u00F6relse","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643784,"datetime":"2026-06-24
+        7:21:18 \u002B02:00","name":"24 juni 03.27, Misshandel, Stockholm","summary":"En
+        kvinna blev slagen av en annan kvinna utanf\u00F6r en bar p\u00E5 centrala
+        Norrmalm.","url":"/aktuellt/handelser/2026/juni/24/24-juni-03.27-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643781,"datetime":"2026-06-24
+        7:16:19 \u002B02:00","name":"24 juni 00.55, Rattfylleri, Stockholm","summary":"En
+        man kontrollerades och greps p\u00E5 Kungsholmen, misst\u00E4nkt f\u00F6r
+        rattfylleri, olovlig k\u00F6rning samt brott mot kniv","url":"/aktuellt/handelser/2026/juni/24/24-juni-00.55-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643754,"datetime":"2026-06-23
+        20:13:41 \u002B02:00","name":"23 juni 14.55, Bedr\u00E4geri, Stockholm","summary":"Misst\u00E4nkt
+        bedr\u00E4geri p\u00E5 S\u00F6dermalm efter att en kvinna swishat ett h\u00F6gre
+        belopp \u00E4n hon avsett.","url":"/aktuellt/handelser/2026/juni/23/23-juni-14.55-bedrageri-stockholm/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643751,"datetime":"2026-06-23
+        20:13:27 \u002B02:00","name":"23 juni 18.35, Knivlagen, Stockholm","summary":"Man
+        med tillhygge sl\u00E5r s\u00F6nder ett f\u00F6nster i Farsta.","url":"/aktuellt/handelser/2026/juni/23/23-juni-18.35-knivlagen-stockholm/","type":"Knivlagen","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643632,"datetime":"2026-06-23
+        8:16:13 \u002B02:00","name":"23 juni 06.37, St\u00F6ld, Stockholm","summary":"En
+        person grips misst\u00E4nkt f\u00F6r st\u00F6ld p\u00E5 Cityterminalen.","url":"/aktuellt/handelser/2026/juni/23/23-juni-06.37-stold-stockholm/","type":"St\u00F6ld","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643545,"datetime":"2026-06-22
+        13:09:55 \u002B02:00","name":"22 juni 10.38, Narkotikabrott, Stockholm","summary":"N\u00E5gra
+        personer hittade narkotika i en p\u00E5se bland n\u00E5gra buskar i Husby.","url":"/aktuellt/handelser/2026/juni/22/22-juni-10.38-narkotikabrott-stockholm/","type":"Narkotikabrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643471,"datetime":"2026-06-21
+        13:06:30 \u002B02:00","name":"21 juni 10.39, Narkotikabrott, Stockholm","summary":"N\u00E5gra
+        personer i Sk\u00E4rholmen reagerade p\u00E5 att det odlades cannabis i en
+        kolonilott.","url":"/aktuellt/handelser/2026/juni/21/21-juni-10.39-narkotikabrott-stockholm/","type":"Narkotikabrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643454,"datetime":"2026-06-21
+        7:34:35 \u002B02:00","name":"21 juni 02.51, Olaga intr\u00E5ng, Stockholm","summary":"Ett
+        kameralarm indikerade att n\u00E5gon olovligt r\u00F6rt sig inne i en lokal
+        i s\u00F6dra \u00C4ngby.","url":"/aktuellt/handelser/2026/juni/21/21-juni-02.51-olaga-intrang-stockholm/","type":"Olaga
+        intr\u00E5ng","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":643453,"datetime":"2026-06-21
+        7:24:34 \u002B02:00","name":"21 juni 04.32, Rattfylleri, Stockholm","summary":"En
+        man i Blackeberg frihetsber\u00F6vades misst\u00E4nkt f\u00F6r drograttfylla
+        samt olovlig k\u00F6rning.","url":"/aktuellt/handelser/2026/juni/21/21-juni-04.32-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643451,"datetime":"2026-06-21
+        7:20:52 \u002B02:00","name":"21 juni 02.32, Narkotikabrott, Stockholm","summary":"En
+        man vid en tunnelbanestation p\u00E5 S\u00F6dermalm greps misst\u00E4nkt f\u00F6r
+        narkotikabrott.","url":"/aktuellt/handelser/2026/juni/21/21-juni-02.32-narkotikabrott-stockholm/","type":"Narkotikabrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643434,"datetime":"2026-06-20
+        21:12:28 \u002B02:00","name":"20 juni 19.55, Knivlagen, Stockholm","summary":"Badrockskl\u00E4dd
+        man med kniv.","url":"/aktuellt/handelser/2026/juni/20/20-juni-19.55-knivlagen-stockholm/","type":"Knivlagen","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643431,"datetime":"2026-06-20
+        19:42:04 \u002B02:00","name":"20 juni 17.16, Larm Inbrott, Stockholm","summary":"Larm
+        om p\u00E5g\u00E5ende inbrott p\u00E5 en skola.","url":"/aktuellt/handelser/2026/juni/20/20-juni-17.16-larm-inbrott-stockholm/","type":"Larm
+        Inbrott","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":643426,"datetime":"2026-06-20
+        17:06:25 \u002B02:00","name":"20 juni 16.02, Sexualbrott, Stockholm","summary":"Offentlig
+        onani i Sk\u00E4rholmen.","url":"/aktuellt/handelser/2026/juni/20/20-juni-16.02-sexualbrott-stockholm/","type":"Sexualbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643420,"datetime":"2026-06-20
+        13:02:52 \u002B02:00","name":"20 juni 12.49, Trafikhinder, Stockholm","summary":"Liljeholmsbron
+        har fastnat i uppf\u00E4llt l\u00E4ge.","url":"/aktuellt/handelser/2026/juni/20/20-juni-12.49-trafikhinder-stockholm/","type":"Trafikhinder","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643395,"datetime":"2026-06-20
+        7:42:16 \u002B02:00","name":"20 juni 07.00, Polisinsats/kommendering, Stockholms
+        l\u00E4n","summary":"Midsommarafton i Stockholms l\u00E4n och p\u00E5 Gotland
+        bed\u00F6ms som en normal midsommarafton.","url":"/aktuellt/handelser/2026/juni/20/20-juni-07.00-polisinsatskommendering-stockholms-lan/","type":"Polisinsats/kommendering","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643382,"datetime":"2026-06-19
+        22:32:59 \u002B02:00","name":"19 juni 20.49, Kontroll, Stockholm","summary":"Takfest
+        sp\u00E5rar ur p\u00E5 G\u00E4rdet.","url":"/aktuellt/handelser/2026/juni/19/19-juni-20.49-kontroll-stockholm/","type":"Kontroll","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643374,"datetime":"2026-06-19
+        21:00:36 \u002B02:00","name":"19 juni 20.38, Trafikolycka, personskada, Stockholm","summary":"Elsparkcyklist
+        k\u00F6r omkull men f\u00F6rsvinner fr\u00E5n olycksplatsen.","url":"/aktuellt/handelser/2026/juni/19/19-juni-20.38-trafikolycka-personskada-stockholm/","type":"Trafikolycka,
+        personskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":643373,"datetime":"2026-06-19
+        20:54:20 \u002B02:00","name":"19 juni 17.41, Misshandel, Stockholm","summary":"K\u00F6ttjuv
+        p\u00E5 S\u00F6dermalm sl\u00E5r butikspersonal.","url":"/aktuellt/handelser/2026/juni/19/19-juni-17.41-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643370,"datetime":"2026-06-19
+        20:39:51 \u002B02:00","name":"19 juni 20.01, Rattfylleri, Stockholm","summary":"Misst\u00E4nkt
+        rattfylleri p\u00E5 riksv\u00E4g 73.","url":"/aktuellt/handelser/2026/juni/19/19-juni-20.01-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643364,"datetime":"2026-06-19
+        19:35:18 \u002B02:00","name":"19 juni 17.21, Ofredande/f\u00F6rargelse, Stockholm","summary":"En
+        berusad man i S\u00F6dra Hammarbyhamnen.","url":"/aktuellt/handelser/2026/juni/19/19-juni-17.21-ofredandeforargelse-stockholm/","type":"Ofredande/f\u00F6rargelse","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643362,"datetime":"2026-06-19
+        19:28:33 \u002B02:00","name":"19 juni 17.37, Misshandel, Stockholm","summary":"Br\u00E5k
+        p\u00E5 en restaurang vid Gullmarsplan.","url":"/aktuellt/handelser/2026/juni/19/19-juni-17.37-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643363,"datetime":"2026-06-19
+        19:28:29 \u002B02:00","name":"19 juni 16.39, Misshandel, Stockholm","summary":"En
+        l\u00F6sspringande hund hoppar p\u00E5 ett barn p\u00E5 en f\u00F6rskola.","url":"/aktuellt/handelser/2026/juni/19/19-juni-16.39-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643351,"datetime":"2026-06-19
+        16:21:34 \u002B02:00","name":"19 juni 14.33, Sjukdom/olycksfall, Stockholm","summary":"En
+        person st\u00E5r och skriker fr\u00E5n en balkong.","url":"/aktuellt/handelser/2026/juni/19/19-juni-14.33-sjukdomolycksfall-stockholm/","type":"Sjukdom/olycksfall","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643350,"datetime":"2026-06-19
+        16:21:30 \u002B02:00","name":"19 juni 14.33, Rattfylleri, Stockholm","summary":"Misstanke
+        om rattfylleri efter krock med stolpe i Blackeberg.","url":"/aktuellt/handelser/2026/juni/19/19-juni-14.33-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643327,"datetime":"2026-06-19
+        9:44:58 \u002B02:00","name":"19 juni 09.41, Trafikhinder, Stockholm","summary":"Liljeholmsbron
+        har av ok\u00E4nd anledning fastnat i \u00F6ppet l\u00E4ge.","url":"/aktuellt/handelser/2026/juni/19/19-juni-09.41-trafikhinder-stockholm/","type":"Trafikhinder","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643323,"datetime":"2026-06-19
+        8:06:45 \u002B02:00","name":"18 juni 22.30, Polisinsats/kommendering, Stockholm","summary":"En
+        ledig polisanst\u00E4lld hamnar p\u00E5 v\u00E4g hem fr\u00E5n jobbet i allm\u00E4nna
+        kommunikationer bredvid en misst\u00E4nkt bedragare","url":"/aktuellt/handelser/2026/juni/18/18-juni-22.30-polisinsatskommendering-stockholm/","type":"Polisinsats/kommendering","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643279,"datetime":"2026-06-18
+        17:53:57 \u002B02:00","name":"18 juni 14.08, St\u00F6ld/inbrott, Stockholm","summary":"Personer
+        \u00F6verraskar inbrottstjuvar i Aspudden och blir hotade.","url":"/aktuellt/handelser/2026/juni/18/18-juni-14.08-stoldinbrott-stockholm/","type":"St\u00F6ld/inbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643202,"datetime":"2026-06-17
+        20:01:27 \u002B02:00","name":"17 juni 15.50, Ofredande/f\u00F6rargelse, Stockholm","summary":"En
+        kvinna ringer in om en man som brukar f\u00F6rf\u00F6lja henne, och nu dykt
+        upp p\u00E5 hennes arbete.","url":"/aktuellt/handelser/2026/juni/17/17-juni-15.50-ofredandeforargelse-stockholm/","type":"Ofredande/f\u00F6rargelse","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643178,"datetime":"2026-06-17
+        15:53:52 \u002B02:00","name":"17 juni 14.03, Sexualbrott, Stockholm","summary":"En
+        person som st\u00E4dar en tv\u00E4ttstuga i Bandhagen uts\u00E4tts f\u00F6r
+        blottning.","url":"/aktuellt/handelser/2026/juni/17/17-juni-14.03-sexualbrott-stockholm/","type":"Sexualbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":643109,"datetime":"2026-06-17
+        10:17:14 \u002B02:00","name":"17 juni 09.22, Knivlagen, Stockholm","summary":"Polis
+        ingriper mot en man med ett knivliknande f\u00F6rem\u00E5l p\u00E5 Klarabergsgatan.","url":"/aktuellt/handelser/2026/juni/17/17-juni-09.22-knivlagen-stockholm/","type":"Knivlagen","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":642050,"datetime":"2026-06-16
+        16:17:48 \u002B02:00","name":"16 juni 14.49, Vapenlagen, Stockholm","summary":"En
+        person tror sig ha sett en person med vapenliknande f\u00F6rem\u00E5l vid
+        skola i Kista. Skolan har s\u00F6kts igenom utan","url":"/aktuellt/handelser/2026/juni/16/16-juni-14.49-vapenlagen-stockholm/","type":"Vapenlagen","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":642038,"datetime":"2026-06-16
+        13:28:38 \u002B02:00","name":"16 juni 11.11, V\u00E5llande till kroppsskada,
+        Stockholm","summary":"En bilist i personbil backade p\u00E5 en person i Vasastaden.
+        Den p\u00E5backade beh\u00F6vde ingen ambulansv\u00E5rd.","url":"/aktuellt/handelser/2026/juni/16/16-juni-11.11-vallande-till-kroppsskada-stockholm/","type":"V\u00E5llande
+        till kroppsskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":642002,"datetime":"2026-06-16
+        10:34:52 \u002B02:00","name":"16 juni 09.32, Farligt f\u00F6rem\u00E5l, misst\u00E4nkt,
+        Stockholm","summary":"En person ringde in ang\u00E5ende ett misst\u00E4nkt
+        farligt f\u00F6rem\u00E5l som p\u00E5tr\u00E4ffades vid en byggarbetsplats
+        i Kista.","url":"/aktuellt/handelser/2026/juni/16/16-juni-09.32-farligt-foremal-misstankt-stockholm/","type":"Farligt
+        f\u00F6rem\u00E5l, misst\u00E4nkt","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":641969,"datetime":"2026-06-16
+        5:05:16 \u002B02:00","name":"16 juni 03.25, Explosion, Stockholm","summary":"Ett
+        f\u00F6rem\u00E5l har exploderat i en port till ett flerfamiljshus i Hags\u00E4tra.
+        Ingen person \u00E4r skadad och ingen miss","url":"/aktuellt/handelser/2026/juni/16/16-juni-03.25-explosion-stockholm/","type":"Explosion","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":641961,"datetime":"2026-06-15
+        20:41:04 \u002B02:00","name":"15 juni 20.01, Sexualbrott, Stockholm","summary":"En
+        man blottar sig i n\u00E4rheten av tunnelbanestationen i Farsta. Polis hittar
+        mannen och en anm\u00E4lan skrivs om se","url":"/aktuellt/handelser/2026/juni/15/15-juni-20.01-sexualbrott-stockholm/","type":"Sexualbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":641806,"datetime":"2026-06-14
+        14:10:36 \u002B02:00","name":"14 juni 13.08, Misshandel, Stockholm","summary":"Ett
+        vittne observerar en kvinna som vid flera tillf\u00E4llen sl\u00E5r en man
+        under en argumentation vid en promenad p\u00E5","url":"/aktuellt/handelser/2026/juni/14/14-juni-13.08-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":641797,"datetime":"2026-06-14
+        10:51:10 \u002B02:00","name":"14 juni 10.37, Trafikhinder, Stockholm","summary":"En
+        man som \u00E5kt cykel p\u00E5 Centralbron har stoppats av polis och kontrolleras
+        just nu.","url":"/aktuellt/handelser/2026/juni/14/14-juni-10.37-trafikhinder-stockholm/","type":"Trafikhinder","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":641749,"datetime":"2026-06-13
+        7:57:34 \u002B02:00","name":"13 juni 02.24, Mord/dr\u00E5p, f\u00F6rs\u00F6k,
+        Stockholm","summary":"En man grips misst\u00E4nkt f\u00F6r att ha knivskadat
+        tv\u00E5 personer i samband med ett br\u00E5k i en l\u00E4genhet i S\u00E4tra.","url":"/aktuellt/handelser/2026/juni/13/13-juni-02.24-morddrap-forsok-stockholm/","type":"Mord/dr\u00E5p,
+        f\u00F6rs\u00F6k","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":641709,"datetime":"2026-06-12
+        18:17:40 \u002B02:00","name":"12 juni 17.02, Brand, Stockholm","summary":"Det
+        har brunnit i en l\u00E4genhet i ett flerbostadshus i Vasastan i Stockholm.","url":"/aktuellt/handelser/2026/juni/12/12-juni-17.02-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":641555,"datetime":"2026-06-12
+        7:55:50 \u002B02:00","name":"12 juni 03.45, Rattfylleri, Stockholm","summary":"I
+        samband med att en polispatrull stoppade en bil p\u00E5 E4:an vid Lilla Essingen
+        f\u00F6r kontroll av f\u00F6raren uppstod ","url":"/aktuellt/handelser/2026/juni/12/12-juni-03.45-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":641525,"datetime":"2026-06-11
+        19:46:54 \u002B02:00","name":"11 juni 18.25, Misshandel, Stockholm","summary":"Polisen
+        larmas om slagsm\u00E5l p\u00E5 Slussbron.","url":"/aktuellt/handelser/2026/juni/11/11-juni-18.25-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":641445,"datetime":"2026-06-11
+        9:11:53 \u002B02:00","name":"11 juni 08.15, Trafikolycka, Stockholm","summary":"En
+        taxibil har k\u00F6rt in i en byggnad i Skarpn\u00E4ck i s\u00F6dra Stockholm.","url":"/aktuellt/handelser/2026/juni/11/11-juni-08.15-trafikolycka-stockholm/","type":"Trafikolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":641475,"datetime":"2026-06-11
+        13:12:31 \u002B02:00","name":"11 juni 09.02, Trafikolycka, Stockholm","summary":"En
+        lastbil har k\u00F6rt in i en villatr\u00E4dg\u00E5rd i Olovslund, i den v\u00E4stra
+        delen av Stockholms kommun.","url":"/aktuellt/handelser/2026/juni/11/11-juni-09.02-trafikolycka-stockholm/","type":"Trafikolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":641248,"datetime":"2026-06-10
+        8:02:54 \u002B02:00","name":"10 juni 02.36, Olaga hot, Stockholm","summary":"En
+        man i 20-\u00E5rs\u00E5ldern har blivit hotad med kniv av en annan man p\u00E5
+        en snabbmatsrestaurang p\u00E5 S\u00F6dermalm i Stock","url":"/aktuellt/handelser/2026/juni/10/10-juni-02.36-olaga-hot-stockholm/","type":"Olaga
+        hot","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":641175,"datetime":"2026-06-09
+        15:29:19 \u002B02:00","name":"09 juni 15.15, Brand, Stockholm","summary":"R\u00F6kutveckling
+        fr\u00E5n en l\u00E4genhet i V\u00E4stertorp.","url":"/aktuellt/handelser/2026/juni/9/09-juni-15.15-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":641142,"datetime":"2026-06-09
+        12:55:17 \u002B02:00","name":"09 juni 11.38, Vapenlagen, Stockholm","summary":"En
+        man f\u00F6rs\u00F6ker ta vapnet fr\u00E5n en skyddsvakt.","url":"/aktuellt/handelser/2026/juni/9/09-juni-11.38-vapenlagen-stockholm/","type":"Vapenlagen","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":641087,"datetime":"2026-06-09
+        8:53:20 \u002B02:00","name":"09 juni 02.25, Misshandel, grov, Stockholm","summary":"L\u00E4genhetsfest
+        sp\u00E5rar och festdeltagarna misshandlar varandra.","url":"/aktuellt/handelser/2026/juni/9/09-juni-02.25-misshandel-grov-stockholm/","type":"Misshandel,
+        grov","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":641084,"datetime":"2026-06-09
+        8:53:14 \u002B02:00","name":"09 juni 01.23, Misshandel, Stockholm","summary":"En
+        ok\u00E4nd man anv\u00E4nder en stol som tillhygge.","url":"/aktuellt/handelser/2026/juni/9/09-juni-01.23-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":641079,"datetime":"2026-06-09
+        8:53:05 \u002B02:00","name":"08 juni 23.49, Olaga hot, Stockholm","summary":"En
+        berusad man hotar sin kamrat.","url":"/aktuellt/handelser/2026/juni/8/08-juni-23.49-olaga-hot-stockholm/","type":"Olaga
+        hot","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":640916,"datetime":"2026-06-08
+        8:35:22 \u002B02:00","name":"07 juni 22.36, St\u00F6ld, Stockholm","summary":"En
+        grips f\u00F6r att ha stulit k\u00F6tt och en handv\u00E4ska.","url":"/aktuellt/handelser/2026/juni/7/07-juni-22.36-stold-stockholm/","type":"St\u00F6ld","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":640905,"datetime":"2026-06-08
+        8:15:42 \u002B02:00","name":"07 juni 18.31, R\u00E5n, f\u00F6rs\u00F6k, Stockholm","summary":"R\u00E5nf\u00F6rs\u00F6k
+        med pistolliknande f\u00F6rem\u00E5l i Sp\u00E5nga.","url":"/aktuellt/handelser/2026/juni/8/07-juni-18.31-ran-forsok-stockholm/","type":"R\u00E5n,
+        f\u00F6rs\u00F6k","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":640864,"datetime":"2026-06-07
+        8:24:26 \u002B02:00","name":"07 juni 02.29, Misshandel, Stockholm","summary":"En
+        man grips misst\u00E4nkt f\u00F6r att slagit sin fru.","url":"/aktuellt/handelser/2026/juni/7/07-juni-02.29-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":640863,"datetime":"2026-06-07
+        8:24:21 \u002B02:00","name":"06 juni 23.42, Misshandel, Stockholm","summary":"H\u00F6gljutt
+        br\u00E5k i l\u00E4genhet.","url":"/aktuellt/handelser/2026/juni/6/06-juni-23.42-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":640862,"datetime":"2026-06-07
+        8:24:16 \u002B02:00","name":"06 juni 23.39, Misshandel, Stockholm","summary":"Larm
+        om misst\u00E4nkt brott i n\u00E4ra relation.","url":"/aktuellt/handelser/2026/juni/6/06-juni-23.39-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":640859,"datetime":"2026-06-07
+        8:24:11 \u002B02:00","name":"07 juni 23.27, Misshandel, Stockholm","summary":"Slagsm\u00E5l
+        p\u00E5 Hornsgatan.","url":"/aktuellt/handelser/2026/juni/7/07-juni-23.27-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":640854,"datetime":"2026-06-07
+        8:24:01 \u002B02:00","name":"06 juni 22.29, Skadeg\u00F6relse, Stockholm","summary":"En
+        pojke klottrar p\u00E5 en v\u00E4ktarbil.","url":"/aktuellt/handelser/2026/juni/6/06-juni-22.29-skadegorelse-stockholm/","type":"Skadeg\u00F6relse","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":640853,"datetime":"2026-06-07
+        8:23:57 \u002B02:00","name":"06 juni 22.29, Knivlagen, Stockholm","summary":"Berusad
+        man blir anm\u00E4ld f\u00F6r brott mot knivlagen.","url":"/aktuellt/handelser/2026/juni/6/06-juni-22.29-knivlagen-stockholm/","type":"Knivlagen","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":640811,"datetime":"2026-06-06
+        11:36:46 \u002B02:00","name":"06 juni 07.41, Misshandel, Stockholm","summary":"En
+        man har misshandlat sin flickv\u00E4n.","url":"/aktuellt/handelser/2026/juni/6/06-juni-07.41-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":640768,"datetime":"2026-06-05
+        18:30:05 \u002B02:00","name":"05 juni 15.09, Ofredande/f\u00F6rargelse, Stockholm","summary":"En
+        man ofredas sexuellt av en annan man inne i en butik i Johanneshov.","url":"/aktuellt/handelser/2026/juni/5/05-juni-15.09-ofredandeforargelse-stockholm/","type":"Ofredande/f\u00F6rargelse","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":640666,"datetime":"2026-06-05
+        7:55:44 \u002B02:00","name":"05 juni 01.39, Rattfylleri, Stockholm","summary":"En
+        personbil stoppas i H\u00F6gdalen.","url":"/aktuellt/handelser/2026/juni/5/05-juni-01.39-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":640642,"datetime":"2026-06-04
+        20:44:20 \u002B02:00","name":"04 juni 17.26, Trafikolycka, personskada, Stockholm","summary":"\u00C4ldre
+        kvinna skadas n\u00E4r hon blir p\u00E5k\u00F6rd av en mopedist.","url":"/aktuellt/handelser/2026/juni/4/04-juni-17.26-trafikolycka-personskada-stockholm/","type":"Trafikolycka,
+        personskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":640408,"datetime":"2026-06-03
+        7:33:29 \u002B02:00","name":"03 juni 05.27, V\u00E5ld/hot mot tj\u00E4nsteman,
+        Stockholm","summary":"En man p\u00E5 T-centralen frihetsber\u00F6vades enligt
+        lagen om omh\u00E4ndertagande av berusade personer.","url":"/aktuellt/handelser/2026/juni/3/03-juni-05.27-valdhot-mot-tjansteman-stockholm/","type":"V\u00E5ld/hot
+        mot tj\u00E4nsteman","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":640407,"datetime":"2026-06-03
+        7:31:21 \u002B02:00","name":"03 juni 00.11, Misshandel, Stockholm","summary":"Flera
+        personer uppgavs vara inblandade i ett br\u00E5k p\u00E5 en nattklubb p\u00E5
+        Norrmalm.","url":"/aktuellt/handelser/2026/juni/3/03-juni-00.11-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":640394,"datetime":"2026-06-03
+        0:26:44 \u002B02:00","name":"02 juni 23.32, Skottlossning, misst\u00E4nkt,
+        Stockholm","summary":"Polisen f\u00E5r larm om att det skjutits in i en bostad
+        i H\u00E4sselby. Ingen person har skadats fysiskt.","url":"/aktuellt/handelser/2026/juni/2/02-juni-23.32-skottlossning-misstankt-stockholm/","type":"Skottlossning,
+        misst\u00E4nkt","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":640381,"datetime":"2026-06-02
+        20:40:54 \u002B02:00","name":"02 juni 16.06, Bedr\u00E4geri, Stockholm","summary":"En
+        bedragare f\u00F6rs\u00F6ker lura en kvinna i 80-\u00E5rs\u00E5ldern p\u00E5
+        pengar och smycken och grips av polis.","url":"/aktuellt/handelser/2026/juni/2/02-juni-16.06-bedrageri-stockholm/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":640296,"datetime":"2026-06-02
+        10:53:39 \u002B02:00","name":"02 juni 09.53, Luftfartslagen, Stockholm","summary":"En
+        person \u00F6verskrider till\u00E5ten flygh\u00F6jd med dr\u00F6nare vid museibyggnad\u00A0p\u00E5
+        Djurg\u00E5rden.","url":"/aktuellt/handelser/2026/juni/2/02-juni-09.53-luftfartslagen-stockholm/","type":"Luftfartslagen","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":640217,"datetime":"2026-06-01
+        18:28:37 \u002B02:00","name":"01 juni 16.36, Trafikolycka, Stockholm","summary":"En
+        buss i linjetrafik k\u00F6rde p\u00E5 parkerade bilar i Skarpn\u00E4ck.","url":"/aktuellt/handelser/2026/juni/1/01-juni-16.36-trafikolycka-stockholm/","type":"Trafikolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":639931,"datetime":"2026-05-31
+        7:22:42 \u002B02:00","name":"31 maj 02.22, Narkotikabrott, Stockholm","summary":"En
+        man i Johanneshov frihetsber\u00F6vades, misst\u00E4nkt f\u00F6r narkotikabrott,
+        eget bruk.","url":"/aktuellt/handelser/2026/maj/31/31-maj-02.22-narkotikabrott-stockholm/","type":"Narkotikabrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":639929,"datetime":"2026-05-31
+        7:20:42 \u002B02:00","name":"31 maj 03.08, Misshandel, Stockholm","summary":"En
+        man frihetsber\u00F6vades enligt lagen om omh\u00E4ndertagande av berusade
+        personer efter br\u00E5k p\u00E5 Stureplan.","url":"/aktuellt/handelser/2026/maj/31/31-maj-03.08-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":639928,"datetime":"2026-05-31
+        7:18:03 \u002B02:00","name":"31 maj 03.23, Misshandel, Stockholm","summary":"Tv\u00E5
+        personer slogs i Johanneshov. En ordningsvakt gick emellan dem, och en polispatrull
+        tillkallades.","url":"/aktuellt/handelser/2026/maj/31/31-maj-03.23-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":639853,"datetime":"2026-05-30
+        7:22:56 \u002B02:00","name":"30 maj 05.58, Ofredande/f\u00F6rargelse, Stockholm","summary":"En
+        inringare h\u00F6rde av sig ang\u00E5ende ett slagsm\u00E5l d\u00E4r en handfull
+        personer var inblandade p\u00E5 S\u00F6dermalm.","url":"/aktuellt/handelser/2026/maj/30/30-maj-05.58-ofredandeforargelse-stockholm/","type":"Ofredande/f\u00F6rargelse","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":639849,"datetime":"2026-05-30
+        7:15:23 \u002B02:00","name":"30 maj 04.59, Efterlyst person, Stockholm","summary":"Ett
+        larm i en fastighet i Farsta hade aktiverats. N\u00E4r polisen n\u00E5got
+        senare anl\u00E4nde p\u00E5tr\u00E4ffades en efterlyst pe","url":"/aktuellt/handelser/2026/maj/30/30-maj-04.59-efterlyst-person-stockholm/","type":"Efterlyst
+        person","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":639813,"datetime":"2026-05-29
+        17:54:48 \u002B02:00","name":"29 maj 16.19, Brand, Stockholm","summary":"Det
+        har brunnit i en l\u00E4genhet i ett flerv\u00E5ningshus i R\u00E5cksta.","url":"/aktuellt/handelser/2026/maj/29/29-maj-16.19-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":639777,"datetime":"2026-05-29
+        12:41:41 \u002B02:00","name":"29 maj 11.43, Narkotikabrott, Stockholm","summary":"En
+        v\u00E4ktare blir \u00F6verfallen p\u00E5 Folkungagatan av en person som omh\u00E4ndertas.","url":"/aktuellt/handelser/2026/maj/29/29-maj-11.43-narkotikabrott-stockholm/","type":"Narkotikabrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":639748,"datetime":"2026-05-29
+        7:57:46 \u002B02:00","name":"29 maj 05.51, Misshandel, grov, Stockholm","summary":"Man
+        greps f\u00F6r grov misshandel p\u00E5 boende i V\u00E4stberga.","url":"/aktuellt/handelser/2026/maj/29/29-maj-05.51-misshandel-grov-stockholm/","type":"Misshandel,
+        grov","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":639716,"datetime":"2026-05-28
+        21:30:39 \u002B02:00","name":"28 maj 20.28, Brand, Stockholm","summary":"Det
+        brinner i en industrilokal i \u00C4lvsj\u00F6. Det finns inga uppgifter om
+        skadade och r\u00E4ddningstj\u00E4nsten leder arbet","url":"/aktuellt/handelser/2026/maj/28/28-maj-20.28-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":639712,"datetime":"2026-05-28
+        21:04:15 \u002B02:00","name":"28 maj 18.08, Bedr\u00E4geri, Stockholms l\u00E4n","summary":"En
+        person i norra l\u00E4net har utsatts f\u00F6r ett bedr\u00E4gerif\u00F6rs\u00F6k
+        d\u00E4r en person kommit hem till bostaden och f\u00F6rs\u00F6kt","url":"/aktuellt/handelser/2026/maj/28/28-maj-18.08-bedrageri-stockholms-lan/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":639688,"datetime":"2026-05-28
+        17:02:44 \u002B02:00","name":"28 maj 16.25, Trafikolycka, personskada, Stockholm","summary":"Personbil
+        och MC har krockat i Larsboda. MC-f\u00F6raren f\u00E5r \u00E5ka ambulans
+        till sjukhus med oklart skadel\u00E4ge.","url":"/aktuellt/handelser/2026/maj/28/28-maj-16.25-trafikolycka-personskada-stockholm/","type":"Trafikolycka,
+        personskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":639679,"datetime":"2026-05-28
+        16:26:27 \u002B02:00","name":"28 maj 12.59, Vapenlagen, Stockholm","summary":"En
+        person ringer polisen och uppger sig ha sett en person med vapen i H\u00E4sselby
+        villastad. Ingen skadad person ","url":"/aktuellt/handelser/2026/maj/28/28-maj-12.59-vapenlagen-stockholm/","type":"Vapenlagen","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":636423,"datetime":"2026-05-26
+        12:55:34 \u002B02:00","name":"26 maj 11.40, Sexualbrott, Stockholm","summary":"En
+        man i Gamla stan visar sitt k\u00F6nsorgan.","url":"/aktuellt/handelser/2026/maj/26/26-maj-11.40-sexualbrott-stockholm/","type":"Sexualbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":636404,"datetime":"2026-05-26
+        9:53:02 \u002B02:00","name":"26 maj 09.18, Trafikolycka, personskada, Stockholm","summary":"F\u00F6raren
+        till en elsparkcykel har kolliderat med en bilist i Marieberg, Kungsholmen.","url":"/aktuellt/handelser/2026/maj/26/26-maj-09.18-trafikolycka-personskada-stockholm/","type":"Trafikolycka,
+        personskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":636039,"datetime":"2026-05-22
+        17:13:42 \u002B02:00","name":"22 maj 15.04, Narkotikabrott, Stockholm","summary":"Polisen
+        bedriver utrednings\u00E5tg\u00E4rder i ett \u00E4rende i s\u00F6dra Stockholm.
+        \u00C4rendet har sin grund i misstankar om ett ","url":"/aktuellt/handelser/2026/maj/22/22-maj-15.04-narkotikabrott-stockholm/","type":"Narkotikabrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":636251,"datetime":"2026-05-25
+        9:49:39 \u002B02:00","name":"25 maj 08.33, Trafikolycka, Stockholm","summary":"En
+        personbil blir p\u00E5k\u00F6rd bakifr\u00E5n av en lastbil i en v\u00E4gtunnel
+        i \u00C5rsta.","url":"/aktuellt/handelser/2026/maj/25/25-maj-08.33-trafikolycka-stockholm/","type":"Trafikolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":636185,"datetime":"2026-05-24
+        11:01:43 \u002B02:00","name":"24 maj 09.24, Bedr\u00E4geri, Stockholm","summary":"En
+        person i v\u00E4stra Stockholm har f\u00F6rfalskat ett handikappstillst\u00E5nd
+        f\u00F6r parkerings\u00E4ndam\u00E5l.","url":"/aktuellt/handelser/2026/maj/24/24-maj-09.24-bedrageri-stockholm/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":636165,"datetime":"2026-05-24
+        7:11:45 \u002B02:00","name":"24 maj 02.17, Misshandel, Stockholm","summary":"Ett
+        br\u00E5k uppst\u00E5r i tunnelbanan d\u00E5 en person \u00E5ker utan att
+        betala. Mannen som inte vill betala \u00E4r ocks\u00E5 misst\u00E4n","url":"/aktuellt/handelser/2026/maj/24/24-maj-02.17-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":636150,"datetime":"2026-05-23
+        20:43:36 \u002B02:00","name":"23 maj 15.09, Bedr\u00E4geri, Stockholm","summary":"\u00C4ldre
+        par utsatt f\u00F6r bedr\u00E4geri och blivit av med guldsmycken.","url":"/aktuellt/handelser/2026/maj/23/23-maj-15.09-bedrageri-stockholm/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":636115,"datetime":"2026-05-23
+        11:26:18 \u002B02:00","name":"23 maj 10.33, Mord/dr\u00E5p, f\u00F6rs\u00F6k,
+        Stockholm","summary":"Tre personer har skottskadats vid en villa i \u00C4lvsj\u00F6.
+        En misst\u00E4nkt \u00E4r gripen och ett arbete p\u00E5g\u00E5r f\u00F6r att
+        ta re","url":"/aktuellt/handelser/2026/maj/23/23-maj-10.33-morddrap-forsok-stockholm/","type":"Mord/dr\u00E5p,
+        f\u00F6rs\u00F6k","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":636082,"datetime":"2026-05-23
+        7:18:51 \u002B02:00","name":"23 maj 00.40, Bedr\u00E4geri, Stockholm","summary":"En
+        ung person ertappas med falsk legitimation och en anm\u00E4lan g\u00F6rs om
+        urkundsf\u00F6rfalskning. Kontakt tas med v\u00E5rd","url":"/aktuellt/handelser/2026/maj/23/23-maj-00.40-bedrageri-stockholm/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":636071,"datetime":"2026-05-22
+        21:47:51 \u002B02:00","name":"22 maj 20.29, Olaga intr\u00E5ng, Stockholm","summary":"Fyra
+        ungdomar \u00E4r misst\u00E4nkta f\u00F6r olaga intr\u00E5ng och skadeg\u00F6relse
+        i Farsta.","url":"/aktuellt/handelser/2026/maj/22/22-maj-20.29-olaga-intrang-stockholm/","type":"Olaga
+        intr\u00E5ng","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":635960,"datetime":"2026-05-22
+        7:12:44 \u002B02:00","name":"22 maj 04.45, Misshandel, Stockholm","summary":"En
+        granne ringer och larmar om att det \u00E4r skrik och br\u00E5k i en grannl\u00E4genhet.
+        En man grips och en kvinna f\u00E5r \u00E5k","url":"/aktuellt/handelser/2026/maj/22/22-maj-04.45-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":635936,"datetime":"2026-05-21
+        21:24:30 \u002B02:00","name":"21 maj 18.55, Trafikolycka, personskada, Stockholm","summary":"En
+        cyklist cyklar in i en bild\u00F6rr och blir p\u00E5k\u00F6rd av en mopedist.","url":"/aktuellt/handelser/2026/maj/21/21-maj-18.55-trafikolycka-personskada-stockholm/","type":"Trafikolycka,
+        personskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":635916,"datetime":"2026-05-21
+        17:07:55 \u002B02:00","name":"21 maj 15.17, Misshandel, Stockholm","summary":"En
+        ut\u00E5tagerande man vid Slussen transporteras till annan plats.","url":"/aktuellt/handelser/2026/maj/21/21-maj-15.17-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":635848,"datetime":"2026-05-21
+        9:08:33 \u002B02:00","name":"21 maj 07.12, Trafikolycka, Stockholm","summary":"En
+        trafikolycka har intr\u00E4ffat p\u00E5 E 4 vid Fru\u00E4ngen i Stockholms
+        kommun.","url":"/aktuellt/handelser/2026/maj/21/21-maj-07.12-trafikolycka-stockholm/","type":"Trafikolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":635808,"datetime":"2026-05-20
+        21:13:23 \u002B02:00","name":"20 maj 19.48, Brand, Stockholm","summary":"Misst\u00E4nkt
+        anlagd brand vid Telefonplan.","url":"/aktuellt/handelser/2026/maj/20/20-maj-19.48-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":635792,"datetime":"2026-05-20
+        19:03:17 \u002B02:00","name":"20 maj 17.35, Trafikbrott, Stockholm","summary":"F\u00F6rf\u00F6ljande
+        p\u00E5 Nyn\u00E4sv\u00E4gen.","url":"/aktuellt/handelser/2026/maj/20/20-maj-17.35-trafikbrott-stockholm/","type":"Trafikbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":635777,"datetime":"2026-05-20
+        16:48:50 \u002B02:00","name":"20 maj 11.40, St\u00F6ld/inbrott, Stockholm","summary":"En
+        man har stulit en v\u00E4ska ur en bil men uppt\u00E4cks av bilens \u00E4gare.","url":"/aktuellt/handelser/2026/maj/20/20-maj-11.40-stoldinbrott-stockholm/","type":"St\u00F6ld/inbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":635665,"datetime":"2026-05-19
+        14:49:08 \u002B02:00","name":"19 maj 14.16, Brand, Stockholm","summary":"L\u00E4genhetsbrand
+        i Sk\u00E4rholmen.","url":"/aktuellt/handelser/2026/maj/19/19-maj-14.16-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":635568,"datetime":"2026-05-19
+        7:07:29 \u002B02:00","name":"19 maj 00.42, Fylleri, Stockholm","summary":"inringare
+        h\u00F6rde av sig ang\u00E5ende att en handfull personer uppf\u00F6rde sig
+        st\u00F6kigt i en park p\u00E5 S\u00F6dermalm.","url":"/aktuellt/handelser/2026/maj/19/19-maj-00.42-fylleri-stockholm/","type":"Fylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":635549,"datetime":"2026-05-18
+        21:29:47 \u002B02:00","name":"18 maj 18.59, Sexualbrott, Stockholm","summary":"En
+        man g\u00E5r omkring naken p\u00E5 ett badhus.","url":"/aktuellt/handelser/2026/maj/18/18-maj-18.59-sexualbrott-stockholm/","type":"Sexualbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":635551,"datetime":"2026-05-18
+        21:29:43 \u002B02:00","name":"18 maj 19.56, R\u00E5n, Stockholm","summary":"En
+        man anm\u00E4ler att han tidigare blivit r\u00E5nad p\u00E5 \u00C5rstaf\u00E4ltet.","url":"/aktuellt/handelser/2026/maj/18/18-maj-19.56-ran-stockholm/","type":"R\u00E5n","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":635548,"datetime":"2026-05-18
+        21:29:34 \u002B02:00","name":"18 maj 16.00, V\u00E5ld/hot mot tj\u00E4nsteman,
+        Stockholm","summary":"Bussf\u00F6rare i Kista misshandlad av passagerare.","url":"/aktuellt/handelser/2026/maj/18/18-maj-16.00-valdhot-mot-tjansteman-stockholm/","type":"V\u00E5ld/hot
+        mot tj\u00E4nsteman","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":635480,"datetime":"2026-05-18
+        12:35:18 \u002B02:00","name":"18 maj 10.27, Trafikbrott, Stockholm","summary":"En
+        cyklist hamnade under en lastbil vid ett \u00F6verg\u00E5ngst\u00E4ll p\u00E5
+        centrala Kungsholmen.","url":"/aktuellt/handelser/2026/maj/18/18-maj-10.27-trafikbrott-stockholm/","type":"Trafikbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":635427,"datetime":"2026-05-18
+        7:11:31 \u002B02:00","name":"18 maj 02.29, Ofredande/f\u00F6rargelse, Stockholm","summary":"En
+        kvinna blev ofredad p\u00E5 en krog p\u00E5 \u00D6stermalm. En v\u00E4ktare
+        ingrep tills polispatrull anl\u00E4nde.","url":"/aktuellt/handelser/2026/maj/18/18-maj-02.29-ofredandeforargelse-stockholm/","type":"Ofredande/f\u00F6rargelse","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":635351,"datetime":"2026-05-16
+        18:44:39 \u002B02:00","name":"16 maj 18.33, Trafikhinder, Stockholm","summary":"En
+        bilist har stannat p\u00E5 en avfart till E4 mot S\u00F6dra L\u00E4nken f\u00F6r
+        att s\u00E4tta upp en banderoll p\u00E5 ett bror\u00E4cke.","url":"/aktuellt/handelser/2026/maj/16/16-maj-18.33-trafikhinder-stockholm/","type":"Trafikhinder","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":635323,"datetime":"2026-05-16
+        7:42:18 \u002B02:00","name":"15 maj 23.28, Olaga intr\u00E5ng, Stockholm","summary":"Polis
+        larmas till ett flerfamiljshus p\u00E5 S\u00F6dermalm med anledning av att
+        obeh\u00F6riga tagit sig in i fastighetens t","url":"/aktuellt/handelser/2026/maj/15/15-maj-23.28-olaga-intrang-stockholm/","type":"Olaga
+        intr\u00E5ng","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":635299,"datetime":"2026-05-15
+        19:22:59 \u002B02:00","name":"15 maj 19.05, Kontroll, Stockholm","summary":"Polispatrull
+        genomf\u00F6r en kontroll av ett f\u00F6rem\u00E5l som \u00E4r antr\u00E4ffat
+        p\u00E5 V\u00E4llingby torg.","url":"/aktuellt/handelser/2026/maj/15/15-maj-19.05-kontroll-stockholm/","type":"Kontroll","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":635292,"datetime":"2026-05-15
+        18:12:38 \u002B02:00","name":"15 maj 18.04, Larm \u00D6verfall, Stockholm","summary":"En
+        restaurang i city har utl\u00F6st \u00F6verfallslarm. Polis \u00E4r p\u00E5
+        v\u00E4g fram f\u00F6r att kontrollera vad det \u00E4r som kan ha ","url":"/aktuellt/handelser/2026/maj/15/15-maj-18.04-larm-overfall-stockholm/","type":"Larm
+        \u00D6verfall","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":635016,"datetime":"2026-05-15
+        7:39:47 \u002B02:00","name":"15 maj 06.30, Motorfordon, st\u00F6ld, Stockholm","summary":"En
+        kvinna p\u00E5 S\u00F6dermalm iakttogs n\u00E4r hon f\u00F6rs\u00F6kte dyrka
+        upp ett l\u00E5s p\u00E5 en moped.","url":"/aktuellt/handelser/2026/maj/15/15-maj-06.30-motorfordon-stold-stockholm/","type":"Motorfordon,
+        st\u00F6ld","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":635000,"datetime":"2026-05-14
+        19:33:48 \u002B02:00","name":"14 maj 18.03, Misshandel, grov, Stockholm","summary":"En
+        pojke i 15-\u00E5rs\u00E5ldern har blivit nedslagen och d\u00E4refter sparkad
+        p\u00E5 i H\u00E4sselby Villastad.","url":"/aktuellt/handelser/2026/maj/14/14-maj-18.03-misshandel-grov-stockholm/","type":"Misshandel,
+        grov","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":634966,"datetime":"2026-05-14
+        7:36:22 \u002B02:00","name":"14 maj 00.33, Rattfylleri, Stockholm","summary":"En
+        inringare i Vasastaden s\u00E5g en bilist med ett vinglas i handen. Bilisten
+        kontrollerades och frihetsber\u00F6vades","url":"/aktuellt/handelser/2026/maj/14/14-maj-00.33-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":634965,"datetime":"2026-05-14
+        7:33:27 \u002B02:00","name":"14 maj 01.56, Misshandel, Stockholm","summary":"En
+        kvinna p\u00E5 Kungsholmen misshandlades utomhus av tv\u00E5 andra kvinnor.","url":"/aktuellt/handelser/2026/maj/14/14-maj-01.56-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":634961,"datetime":"2026-05-14
+        7:23:18 \u002B02:00","name":"14 maj 02.42, V\u00E5ld/hot mot tj\u00E4nsteman,
+        Stockholm","summary":"En man i i Liseberg frihetsber\u00F6vades enligt lagen
+        om omh\u00E4ndertagande av berusade personer.","url":"/aktuellt/handelser/2026/maj/14/14-maj-02.42-valdhot-mot-tjansteman-stockholm/","type":"V\u00E5ld/hot
+        mot tj\u00E4nsteman","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":634929,"datetime":"2026-05-13
+        17:51:45 \u002B02:00","name":"13 maj 16.04, R\u00E5n, Stockholm","summary":"En
+        kvinna i 85-\u00E5rs\u00E5ldern som bor p\u00E5 \u00D6stermalm har efter ett
+        bedr\u00E4gerif\u00F6rs\u00F6k blivit r\u00E5nad p\u00E5 smycken.","url":"/aktuellt/handelser/2026/maj/13/13-maj-16.04-ran-stockholm/","type":"R\u00E5n","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":634788,"datetime":"2026-05-12
+        14:31:01 \u002B02:00","name":"12 maj 13.43, Trafikolycka, Stockholm","summary":"Polis
+        kallas till G\u00E4rdestunneln i riktning mot Liding\u00F6 med anledning av
+        att en bil k\u00F6rt in i tunnelv\u00E4ggen.","url":"/aktuellt/handelser/2026/maj/12/12-maj-13.43-trafikolycka-stockholm/","type":"Trafikolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":634577,"datetime":"2026-05-11
+        10:07:11 \u002B02:00","name":"11 maj 09.45, Trafikolycka, Stockholms l\u00E4n","summary":"Polis,
+        ambulans och r\u00E4ddningstj\u00E4nst kallas till Liljeholmen med anledning
+        av att en sp\u00E5rvagn och en lastbil ko","url":"/aktuellt/handelser/2026/maj/11/11-maj-09.45-trafikolycka-stockholms-lan/","type":"Trafikolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":634503,"datetime":"2026-05-10
+        9:53:27 \u002B02:00","name":"10 maj 08.59, Rattfylleri, Stockholm","summary":"Fordonsf\u00F6rare
+        i Stora Mossen rapporteras f\u00F6r rattfylleri.","url":"/aktuellt/handelser/2026/maj/10/10-maj-08.59-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":634475,"datetime":"2026-05-09
+        19:33:12 \u002B02:00","name":"09 maj 18.17, Trafikolycka, personskada, Stockholm","summary":"Elspark\u00E5kare
+        och bilf\u00F6rare i krock p\u00E5 Drottningholmsv\u00E4gen.","url":"/aktuellt/handelser/2026/maj/9/09-maj-18.17-trafikolycka-personskada-stockholm/","type":"Trafikolycka,
+        personskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":634449,"datetime":"2026-05-09
+        11:02:19 \u002B02:00","name":"09 maj 10.48, Trafikhinder, Stockholm","summary":"Liljeholmsbron
+        har fastnat i \u00F6ppet l\u00E4ge.","url":"/aktuellt/handelser/2026/maj/9/09-maj-10.48-trafikhinder-stockholm/","type":"Trafikhinder","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":634435,"datetime":"2026-05-09
+        8:01:26 \u002B02:00","name":"09 maj 06.37, Rattfylleri, Stockholm","summary":"Misst\u00E4nkt
+        rattfyllerist p\u00E5 \u00D6stermalm.","url":"/aktuellt/handelser/2026/maj/9/09-maj-06.37-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":634431,"datetime":"2026-05-09
+        7:40:33 \u002B02:00","name":"09 maj 05.12, Skadeg\u00F6relse, Stockholm","summary":"Man
+        greps efter skadeg\u00F6relse i city.","url":"/aktuellt/handelser/2026/maj/9/09-maj-05.12-skadegorelse-stockholm/","type":"Skadeg\u00F6relse","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":634408,"datetime":"2026-05-08
+        19:55:22 \u002B02:00","name":"08 maj 18.06, Brand, Stockholm","summary":"Fyra
+        personer till sjukhus efter en l\u00E4genhetsbrand i Farsta.","url":"/aktuellt/handelser/2026/maj/8/08-maj-18.06-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":634325,"datetime":"2026-05-08
+        10:40:16 \u002B02:00","name":"08 maj 06.01, V\u00E5ldt\u00E4kt, f\u00F6rs\u00F6k,
+        Stockholm","summary":"Tv\u00E5 personer befann sig i en lokal i centrala Stockholm
+        n\u00E4r mannen misst\u00E4nks f\u00F6r att ha visat ett fysiskt sexu","url":"/aktuellt/handelser/2026/maj/8/08-maj-06.01-valdtakt-forsok-stockholm/","type":"V\u00E5ldt\u00E4kt,
+        f\u00F6rs\u00F6k","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":634307,"datetime":"2026-05-08
+        7:22:00 \u002B02:00","name":"08 maj 00.10, Ofredande/f\u00F6rargelse, Stockholm","summary":"En
+        taxichauff\u00F6r ringde in om att en kund slagit p\u00E5 taxibilen och skrikit
+        \u00E5t honom.","url":"/aktuellt/handelser/2026/maj/8/08-maj-00.10-ofredandeforargelse-stockholm/","type":"Ofredande/f\u00F6rargelse","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":634278,"datetime":"2026-05-07
+        20:54:24 \u002B02:00","name":"07 maj 19.13, Brand, Stockholm","summary":"L\u00E4genhetsbrand
+        i Akalla.","url":"/aktuellt/handelser/2026/maj/7/07-maj-19.13-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":634275,"datetime":"2026-05-07
+        20:16:50 \u002B02:00","name":"07 maj 17.06, Misshandel, grov, Stockholm","summary":"En
+        man som misst\u00E4nks ha blivit misshandlad i Grimsta f\u00F6rs till sjukhus.","url":"/aktuellt/handelser/2026/maj/7/07-maj-17.06-misshandel-grov-stockholm/","type":"Misshandel,
+        grov","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":634270,"datetime":"2026-05-07
+        18:30:43 \u002B02:00","name":"07 maj 17.27, Br\u00E5k, Stockholm","summary":"En
+        kvinna i Farsta misshandlar en annan kvinna utomhus.","url":"/aktuellt/handelser/2026/maj/7/07-maj-17.27-brak-stockholm/","type":"Br\u00E5k","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":634261,"datetime":"2026-05-07
+        18:05:26 \u002B02:00","name":"07 maj 14.35, St\u00F6ld, Stockholm","summary":"Flera
+        f\u00F6rem\u00E5l stulna ur en parkerad bil.","url":"/aktuellt/handelser/2026/maj/7/07-maj-14.35-stold-stockholm/","type":"St\u00F6ld","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":634265,"datetime":"2026-05-07
+        18:05:21 \u002B02:00","name":"07 maj 16.45, Larm \u00D6verfall, Stockholm","summary":"\u00D6verfallslarm
+        fr\u00E5n kiosk vid Fridhemsplan.","url":"/aktuellt/handelser/2026/maj/7/07-maj-16.45-larm-overfall-stockholm/","type":"Larm
+        \u00D6verfall","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":634267,"datetime":"2026-05-07
+        18:05:17 \u002B02:00","name":"07 maj 16.05, Narkotikabrott, Stockholm","summary":"Samtal
+        om p\u00E5g\u00E5ende cykelst\u00F6ld p\u00E5 S\u00F6dermalm.","url":"/aktuellt/handelser/2026/maj/7/07-maj-16.05-narkotikabrott-stockholm/","type":"Narkotikabrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":634264,"datetime":"2026-05-07
+        18:05:12 \u002B02:00","name":"07 maj 15.23, Narkotikabrott, Stockholm","summary":"En
+        inringare tror sig se en klottrare under Tranbergsbron.","url":"/aktuellt/handelser/2026/maj/7/07-maj-15.23-narkotikabrott-stockholm/","type":"Narkotikabrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":634260,"datetime":"2026-05-07
+        18:05:09 \u002B02:00","name":"07 maj 15.32, St\u00F6ld/inbrott, Stockholm","summary":"Ett
+        \u00E4ldre par hittar en fr\u00E4mling bakom soffan.","url":"/aktuellt/handelser/2026/maj/7/07-maj-15.32-stoldinbrott-stockholm/","type":"St\u00F6ld/inbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":634096,"datetime":"2026-05-06
+        14:50:24 \u002B02:00","name":"06 maj 13.41, Farligt f\u00F6rem\u00E5l, misst\u00E4nkt,
+        Stockholm","summary":"Polis sp\u00E4rrar av ett omr\u00E5de vid Wallingatan
+        och V\u00E4stmannagatan.","url":"/aktuellt/handelser/2026/maj/6/06-maj-13.41-farligt-foremal-misstankt-stockholm/","type":"Farligt
+        f\u00F6rem\u00E5l, misst\u00E4nkt","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":633987,"datetime":"2026-05-05
+        15:36:13 \u002B02:00","name":"05 maj 13.39, St\u00F6ld/inbrott, Stockholm","summary":"Tv\u00E5
+        personer har brutit sig in i en bostad p\u00E5 \u00D6stermalm.","url":"/aktuellt/handelser/2026/maj/5/05-maj-13.39-stoldinbrott-stockholm/","type":"St\u00F6ld/inbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":633945,"datetime":"2026-05-05
+        8:40:45 \u002B02:00","name":"05 maj 07.18, Trafikolycka, personskada, Stockholms
+        l\u00E4n","summary":"En cyklist k\u00F6rde in i en annan cyklist p\u00E5 en
+        cykelv\u00E4g vid L\u00F6vstav\u00E4gen i H\u00E4sselby g\u00E5rd.","url":"/aktuellt/handelser/2026/maj/5/05-maj-07.18-trafikolycka-personskada-stockholms-lan/","type":"Trafikolycka,
+        personskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":633932,"datetime":"2026-05-05
+        7:04:44 \u002B02:00","name":"05 maj 04.50, Skadeg\u00F6relse, Stockholm","summary":"Personal
+        ringde fr\u00E5n ett hotell p\u00E5 Kungsholmen, efter att en man ska ha slagit
+        s\u00F6nder bland annat en dusch.","url":"/aktuellt/handelser/2026/maj/5/05-maj-04.50-skadegorelse-stockholm/","type":"Skadeg\u00F6relse","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":633892,"datetime":"2026-05-04
+        17:46:15 \u002B02:00","name":"04 maj 14.58, St\u00F6ld/inbrott, Stockholm","summary":"Flera
+        personer har gjort inbrott i en bostad i Kista.","url":"/aktuellt/handelser/2026/maj/4/04-maj-14.58-stoldinbrott-stockholm/","type":"St\u00F6ld/inbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":633898,"datetime":"2026-05-04
+        17:21:35 \u002B02:00","name":"04 maj 16.08, Sexualbrott, Stockholm","summary":"En
+        man har ofredat en kvinna p\u00E5 en simhall i Sk\u00E4rholmen.","url":"/aktuellt/handelser/2026/maj/4/04-maj-16.08-sexualbrott-stockholm/","type":"Sexualbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":633853,"datetime":"2026-05-04
+        11:31:15 \u002B02:00","name":"04 maj 08.02, Trafikolycka, personskada, Stockholm","summary":"En
+        pojke blir p\u00E5k\u00F6rd av en personbil vid ett \u00F6verg\u00E5ngsst\u00E4lle
+        i Sk\u00E4rholmen.","url":"/aktuellt/handelser/2026/maj/4/04-maj-08.02-trafikolycka-personskada-stockholm/","type":"Trafikolycka,
+        personskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":633808,"datetime":"2026-05-03
+        22:48:00 \u002B02:00","name":"03 maj 22.27, Explosion, Stockholm","summary":"Ett
+        ok\u00E4nt f\u00F6rem\u00E5l har exploderat i en port i Tensta. Polisen genomf\u00F6r
+        en omfattande insats i norra Stockholm.","url":"/aktuellt/handelser/2026/maj/3/03-maj-22.27-explosion-stockholm/","type":"Explosion","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":633801,"datetime":"2026-05-03
+        19:20:08 \u002B02:00","name":"03 maj 18.00, Polisinsats/kommendering, Stockholm","summary":"Polisen
+        har omh\u00E4ndertagit och avl\u00E4gsnat fyra personer som har st\u00F6rt
+        den allm\u00E4nna ordningen utanf\u00F6r entr\u00E9n till","url":"/aktuellt/handelser/2026/maj/3/03-maj-18.00-polisinsatskommendering-stockholm/","type":"Polisinsats/kommendering","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":633741,"datetime":"2026-05-02
+        21:13:43 \u002B02:00","name":"02 maj 21.10, Polisinsats/kommendering, Stockholm","summary":"En
+        person har frihetsber\u00F6vats i polisens utredning av den senaste tidens
+        br\u00E4nder p\u00E5 Stora Essingen.","url":"/aktuellt/handelser/2026/maj/2/02-maj-21.10-polisinsatskommendering-stockholm/","type":"Polisinsats/kommendering","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":633710,"datetime":"2026-05-02
+        9:20:34 \u002B02:00","name":"02 maj 08.33, Brand, Stockholm","summary":"Polis
+        och r\u00E4ddningstj\u00E4nst kallas till Ulvsunda industriomr\u00E5de med
+        anledning av brand i ett hostel.","url":"/aktuellt/handelser/2026/maj/2/02-maj-08.33-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":633613,"datetime":"2026-04-30
+        22:13:14 \u002B02:00","name":"30 april 22.00, Polisinsats/kommendering, Stockholm","summary":"Polis,
+        ordningsvakter, f\u00E4ltassistenter med flera \u00E4r fortsatt kvar i R\u00E5lambshovsparken
+        med anledning stort anta","url":"/aktuellt/handelser/2026/april/30/30-april-22.00-polisinsatskommendering-stockholm/","type":"Polisinsats/kommendering","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":633606,"datetime":"2026-04-30
+        18:37:47 \u002B02:00","name":"30 april 17.54, Brand, Stockholm","summary":"Det
+        brinner i en l\u00E4genhet i Blackeberg, Bromma.","url":"/aktuellt/handelser/2026/april/30/30-april-17.54-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":633566,"datetime":"2026-04-30
+        12:58:18 \u002B02:00","name":"30 april 10.11, Trafikolycka, personskada, Stockholm","summary":"Fotg\u00E4ngare
+        p\u00E5k\u00F6rd av buss.","url":"/aktuellt/handelser/2026/april/30/30-april-10.11-trafikolycka-personskada-stockholm/","type":"Trafikolycka,
+        personskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":633523,"datetime":"2026-04-30
+        8:13:57 \u002B02:00","name":"30 april 07.46, Trafikolycka, personskada, Stockholm","summary":"Frontalkrock
+        mellan buss och sk\u00E5pbil p\u00E5 Hornsgatan.","url":"/aktuellt/handelser/2026/april/30/30-april-07.46-trafikolycka-personskada-stockholm/","type":"Trafikolycka,
+        personskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":633508,"datetime":"2026-04-30
+        8:01:51 \u002B02:00","name":"29 april 22.30, Knivlagen, Stockholm","summary":"En
+        man g\u00E5r omkring med en sl\u00E4gga.","url":"/aktuellt/handelser/2026/april/29/29-april-22.30-knivlagen-stockholm/","type":"Knivlagen","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":633476,"datetime":"2026-04-29
+        19:23:42 \u002B02:00","name":"29 april 15.26, Bedr\u00E4geri, Stockholm","summary":"En
+        kvinna i 60-\u00E5rss\u00E5ldern blir bestulen p\u00E5 \u00F6ver 100 000 kronor
+        via ett fj\u00E4rrstyrningsprogram p\u00E5 datorn.","url":"/aktuellt/handelser/2026/april/29/29-april-15.26-bedrageri-stockholm/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":633436,"datetime":"2026-04-29
+        14:28:38 \u002B02:00","name":"29 april 13.37, Sexualbrott, Stockholm","summary":"Kontroll
+        av misst\u00E4nkt blottare.","url":"/aktuellt/handelser/2026/april/29/29-april-13.37-sexualbrott-stockholm/","type":"Sexualbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":633422,"datetime":"2026-04-29
+        13:04:55 \u002B02:00","name":"29 april 12.06, Narkotikabrott, Stockholm","summary":"En
+        person ringde in till polisen ang\u00E5ende att en p\u00E5se med misst\u00E4nkt
+        narkotika p\u00E5tr\u00E4ffats i en sandl\u00E5da i Bj\u00F6rk","url":"/aktuellt/handelser/2026/april/29/29-april-12.06-narkotikabrott-stockholm/","type":"Narkotikabrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":633398,"datetime":"2026-04-29
+        10:05:20 \u002B02:00","name":"29 april 10.15, \u00D6vrigt, Stockholms l\u00E4n","summary":"Polisen
+        \u00F6var i sk\u00E4rg\u00E5rden.","url":"/aktuellt/handelser/2026/april/29/29-april-10.15-ovrigt-stockholms-lan/","type":"\u00D6vrigt","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":633243,"datetime":"2026-04-28
+        7:36:04 \u002B02:00","name":"28 april 01.33, Larm Inbrott, Stockholm","summary":"Inbrott
+        p\u00E5 bensinstation i Bromma.","url":"/aktuellt/handelser/2026/april/28/28-april-01.33-larm-inbrott-stockholm/","type":"Larm
+        Inbrott","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":633213,"datetime":"2026-04-27
+        19:33:59 \u002B02:00","name":"27 april 19.30, \u00D6vrigt, Stockholm","summary":"Idag
+        \u00E4r polisen ute i Farsta och H\u00F6kar\u00E4ngen och pratar med boende
+        om v\u00E5ld i n\u00E4ra relation i brottsf\u00F6rebyggande","url":"/aktuellt/handelser/2026/april/27/27-april-19.30-ovrigt-stockholm/","type":"\u00D6vrigt","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":633198,"datetime":"2026-04-27
+        16:44:36 \u002B02:00","name":"27 april 15.17, Brand, Stockholm","summary":"Det
+        har brunnit i k\u00F6ket till ett radhus i Vinsta och branden \u00E4r sl\u00E4ckt.
+        En anm\u00E4lan om allm\u00E4nfarlig v\u00E5rdsl\u00F6shet","url":"/aktuellt/handelser/2026/april/27/27-april-15.17-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":633080,"datetime":"2026-04-27
+        7:16:49 \u002B02:00","name":"27 april 00.41, Brand, Stockholms l\u00E4n","summary":"En
+        matta innanf\u00F6r en entred\u00F6rr till en fastighet i H\u00E4sselby villastad
+        b\u00F6rjade brinna.","url":"/aktuellt/handelser/2026/april/27/27-april-00.41-brand-stockholms-lan/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":632954,"datetime":"2026-04-25
+        7:10:31 \u002B02:00","name":"25 april 07.00, Fylleri, Stockholms l\u00E4n","summary":"Sedan
+        midnatt har polisen hanterat 26 fyllerier - vilket i de flesta fall inneb\u00E4r
+        att personer tagits om hand ","url":"/aktuellt/handelser/2026/april/25/25-april-07.00-fylleri-stockholms-lan/","type":"Fylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":632805,"datetime":"2026-04-24
+        8:00:47 \u002B02:00","name":"24 april 05.43, R\u00E5n v\u00E4pnat, Stockholm","summary":"En
+        person som \u00E4r anst\u00E4lld vid en butik i K\u00E4lvesta har genom vapenhot
+        r\u00E5nats p\u00E5 personliga tillh\u00F6righeter.","url":"/aktuellt/handelser/2026/april/24/24-april-05.43-ran-vapnat-stockholm/","type":"R\u00E5n
+        v\u00E4pnat","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":632703,"datetime":"2026-04-23
+        7:14:44 \u002B02:00","name":"23 april 02.40, Misshandel, Stockholm","summary":"En
+        taxichauff\u00F6r p\u00E5 S\u00F6dermalm ringde in ang\u00E5ende att en kund
+        slagit honom.","url":"/aktuellt/handelser/2026/april/23/23-april-02.40-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":632700,"datetime":"2026-04-23
+        7:08:03 \u002B02:00","name":"23 april 05.08, St\u00F6ld, Stockholm","summary":"En
+        man p\u00E5 S\u00F6dermalm greps misst\u00E4nkt f\u00F6r st\u00F6ld efter
+        att ha tillgripit en cykel.","url":"/aktuellt/handelser/2026/april/23/23-april-05.08-stold-stockholm/","type":"St\u00F6ld","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":632687,"datetime":"2026-04-22
+        21:46:28 \u002B02:00","name":"22 april 20.48, Misshandel, Stockholm","summary":"Man
+        greps misst\u00E4nkt f\u00F6r misshandel av kvinna.","url":"/aktuellt/handelser/2026/april/22/22-april-20.48-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":632675,"datetime":"2026-04-22
+        16:45:09 \u002B02:00","name":"22 april 14.53, Trafikolycka, Stockholm","summary":"Polisbil
+        och SL-buss kolliderade.","url":"/aktuellt/handelser/2026/april/22/22-april-14.53-trafikolycka-stockholm/","type":"Trafikolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":632633,"datetime":"2026-04-22
+        12:58:28 \u002B02:00","name":"22 april 02.58, Skyddslagen, Stockholm","summary":"Skyddsvakter
+        och v\u00E4ktare griper en man p\u00E5 ett skyddsobjekt.","url":"/aktuellt/handelser/2026/april/22/22-april-02.58-skyddslagen-stockholm/","type":"Skyddslagen","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":632625,"datetime":"2026-04-22
+        11:18:18 \u002B02:00","name":"22 april 09.37, Kontroll, Stockholm","summary":"Polisen
+        unders\u00F6ker ett misst\u00E4nkt brott p\u00E5 S\u00F6dermalm.","url":"/aktuellt/handelser/2026/april/22/22-april-09.37-kontroll-stockholm/","type":"Kontroll","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":632608,"datetime":"2026-04-22
+        8:12:25 \u002B02:00","name":"21 april 23.24, Brand, Stockholm","summary":"Brand
+        i villaomr\u00E5de i Kista.","url":"/aktuellt/handelser/2026/april/21/21-april-23.24-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":632526,"datetime":"2026-04-21
+        12:51:11 \u002B02:00","name":"21 april 12.19, Vapenlagen, Stockholm","summary":"Larm
+        om att person skjuter mot polis.","url":"/aktuellt/handelser/2026/april/21/21-april-12.19-vapenlagen-stockholm/","type":"Vapenlagen","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":632491,"datetime":"2026-04-21
+        8:32:18 \u002B02:00","name":"20 april 22.00, Misshandel, grov, Stockholm","summary":"Man
+        misshandlad i l\u00E4genhet.","url":"/aktuellt/handelser/2026/april/20/20-april-22.00-misshandel-grov-stockholm/","type":"Misshandel,
+        grov","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":632396,"datetime":"2026-04-20
+        12:47:18 \u002B02:00","name":"20 april 08.41, Sexualbrott, Stockholms l\u00E4n","summary":"Misst\u00E4nkta
+        sexuella ofredanden i kollektivtrafiken.","url":"/aktuellt/handelser/2026/april/20/20-april-08.41-sexualbrott-stockholms-lan/","type":"Sexualbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":632372,"datetime":"2026-04-20
+        10:03:40 \u002B02:00","name":"20 april 10.00, \u00D6vrigt, Stockholm","summary":"Polisen
+        och Stockholm stad \u00F6var tillsammans i R\u00E5lambshovsparken under tisdag,
+        onsdag och torsdag.","url":"/aktuellt/handelser/2026/april/20/20-april-10.00-ovrigt-stockholm/","type":"\u00D6vrigt","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":632359,"datetime":"2026-04-20
+        8:14:02 \u002B02:00","name":"20 april 03.59, Misshandel, grov, Stockholm","summary":"Knivskadad
+        man p\u00E5 sjukhus.","url":"/aktuellt/handelser/2026/april/20/20-april-03.59-misshandel-grov-stockholm/","type":"Misshandel,
+        grov","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":632358,"datetime":"2026-04-20
+        8:13:57 \u002B02:00","name":"20 april 03.37, St\u00F6ld, Stockholm","summary":"En
+        man sliter till sig kassan p\u00E5 en krog och springer fr\u00E5n platsen.","url":"/aktuellt/handelser/2026/april/20/20-april-03.37-stold-stockholm/","type":"St\u00F6ld","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":632355,"datetime":"2026-04-20
+        8:13:47 \u002B02:00","name":"19 april 23.07, Rattfylleri, Stockholm","summary":"En
+        bilf\u00F6rare krockar parkerade bilar i Bromsten.","url":"/aktuellt/handelser/2026/april/19/19-april-23.07-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":631313,"datetime":"2026-04-19
+        11:09:06 \u002B02:00","name":"19 april 08.43, Brand, Stockholm","summary":"En
+        brand uppstod i en l\u00E4genhet i H\u00E4sselby g\u00E5rd. Branden kunde
+        sl\u00E4ckas utan att de boende beh\u00F6vde evakueras.","url":"/aktuellt/handelser/2026/april/19/19-april-08.43-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":631302,"datetime":"2026-04-19
+        7:33:26 \u002B02:00","name":"19 april 01.05, Narkotikabrott, Stockholm","summary":"Tv\u00E5
+        m\u00E4n i bil p\u00E5 \u00D6stermalm greps och medtogs f\u00F6r vidare utredning,
+        misst\u00E4nkta f\u00F6r narkotikabrott.","url":"/aktuellt/handelser/2026/april/19/19-april-01.05-narkotikabrott-stockholm/","type":"Narkotikabrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":631299,"datetime":"2026-04-19
+        7:29:17 \u002B02:00","name":"19 april 05.07, Fylleri, Stockholm","summary":"En
+        man var s\u00E5 berusad att han ramlande ner p\u00E5 ett t\u00E5gsp\u00E5r
+        p\u00E5 S\u00F6dermalm.","url":"/aktuellt/handelser/2026/april/19/19-april-05.07-fylleri-stockholm/","type":"Fylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":631295,"datetime":"2026-04-19
+        7:22:14 \u002B02:00","name":"19 april 00.09, Misshandel, grov, Stockholm","summary":"Ett
+        br\u00E5k uppstod mellan tv\u00E5 bilister p\u00E5 centrala Norrmalm. Tre
+        personer i den ena bilen misshandlade den andre","url":"/aktuellt/handelser/2026/april/19/19-april-00.09-misshandel-grov-stockholm/","type":"Misshandel,
+        grov","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":631277,"datetime":"2026-04-18
+        20:21:02 \u002B02:00","name":"18 april 20.05, Brand, Stockholm","summary":"Enligt
+        uppgift till regionledningscentralen brinner det i en bil som st\u00E5r parkerad
+        i Slakthusomr\u00E5det.","url":"/aktuellt/handelser/2026/april/18/18-april-20.05-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":631235,"datetime":"2026-04-18
+        7:18:54 \u002B02:00","name":"18 april 03.34, Fylleri, Stockholm","summary":"En
+        inringare hade befunnit sig p\u00E5 en buss i centrala Stockholm n\u00E4r
+        en man som upptr\u00E4dde obehagligt satte sig b","url":"/aktuellt/handelser/2026/april/18/18-april-03.34-fylleri-stockholm/","type":"Fylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":631231,"datetime":"2026-04-18
+        7:12:12 \u002B02:00","name":"18 april 04.02, Misshandel, Stockholm","summary":"En
+        kvinna blev sparkad av en eller tv\u00E5 m\u00E4n i centrala Norrmalm.","url":"/aktuellt/handelser/2026/april/18/18-april-04.02-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":631190,"datetime":"2026-04-17
+        17:18:25 \u002B02:00","name":"17 april 17.07, Larm \u00D6verfall, Stockholm","summary":"En
+        parkeringsvakt i R\u00E5gsved har utl\u00F6st sitt \u00F6verfallslarm.","url":"/aktuellt/handelser/2026/april/17/17-april-17.07-larm-overfall-stockholm/","type":"Larm
+        \u00D6verfall","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":631186,"datetime":"2026-04-17
+        16:27:16 \u002B02:00","name":"17 april 15.27, Polisinsats/kommendering, Stockholm","summary":"Polisen
+        har genomf\u00F6rt en insats i Hammarbyh\u00F6jden under vilken vapenliknande
+        f\u00F6rem\u00E5l har tagits i beslag efter ","url":"/aktuellt/handelser/2026/april/17/17-april-15.27-polisinsatskommendering-stockholm/","type":"Polisinsats/kommendering","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":631074,"datetime":"2026-04-16
+        20:39:11 \u002B02:00","name":"16 april 20.11, Br\u00E5k, Stockholm","summary":"Polisen
+        kontrollerar just nu tv\u00E5 m\u00E4n i en trappuppg\u00E5ng i V\u00E4stertorp
+        f\u00F6r att se vilken inblandning de kan ha ha","url":"/aktuellt/handelser/2026/april/16/16-april-20.11-brak-stockholm/","type":"Br\u00E5k","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":631067,"datetime":"2026-04-16
+        19:47:42 \u002B02:00","name":"16 april 16.32, St\u00F6ld, Stockholms l\u00E4n","summary":"Under
+        eftermiddagen har polisen gripit en anst\u00E4lld vid ett sjukhus i norra
+        Stockholm. Den gripne \u00E4r misst\u00E4nkt ","url":"/aktuellt/handelser/2026/april/16/16-april-16.32-stold-stockholms-lan/","type":"St\u00F6ld","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":631015,"datetime":"2026-04-16
+        12:37:38 \u002B02:00","name":"16 april 12.16, Trafikbrott, Stockholms l\u00E4n","summary":"Motorcykel
+        har krockat i Vanadisrondellen.","url":"/aktuellt/handelser/2026/april/16/16-april-12.16-trafikbrott-stockholms-lan/","type":"Trafikbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":631006,"datetime":"2026-04-16
+        10:17:58 \u002B02:00","name":"16 april 07.25, Trafikolycka, Stockholm","summary":"Trafikolycka
+        p\u00E5 E4 i h\u00F6jd med Nyboda, norrg\u00E5ende.","url":"/aktuellt/handelser/2026/april/16/16-april-07.25-trafikolycka-stockholm/","type":"Trafikolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":630925,"datetime":"2026-04-15
+        12:32:50 \u002B02:00","name":"15 april 12.20, Trafikbrott, Stockholm","summary":"Strax
+        f\u00F6re klockan 11 rapporterades tv\u00E5 fordonsf\u00F6rare p\u00E5 S\u00F6dermalm.","url":"/aktuellt/handelser/2026/april/15/15-april-12.20-trafikbrott-stockholm/","type":"Trafikbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":630909,"datetime":"2026-04-15
+        8:40:18 \u002B02:00","name":"15 april 07.38, Brand, Stockholm","summary":"Ingen
+        misstanke om brott kring fordonsbranden i H\u00F6gdalen.","url":"/aktuellt/handelser/2026/april/15/15-april-07.38-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":630882,"datetime":"2026-04-14
+        22:19:23 \u002B02:00","name":"14 april 16.44, Bedr\u00E4geri, Stockholm","summary":"Bedragare
+        h\u00E4mtar guld hos \u00E4ldre personer i v\u00E4stra Stockholm.","url":"/aktuellt/handelser/2026/april/14/14-april-16.44-bedrageri-stockholm/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":630876,"datetime":"2026-04-14
+        21:32:45 \u002B02:00","name":"14 april 19.53, Misshandel, Stockholm","summary":"Flera
+        personer blir vittne till hur en man misshandlas p\u00E5 V\u00E4sterl\u00E5nggatan.","url":"/aktuellt/handelser/2026/april/14/14-april-19.53-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":630859,"datetime":"2026-04-14
+        18:04:29 \u002B02:00","name":"14 april 15.22, Sexualbrott, Stockholm","summary":"En
+        kvinna blottar sig f\u00F6r barn i H\u00F6gdalen.","url":"/aktuellt/handelser/2026/april/14/14-april-15.22-sexualbrott-stockholm/","type":"Sexualbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":630753,"datetime":"2026-04-13
+        22:02:22 \u002B02:00","name":"13 april 21.26, Bedr\u00E4geri, Stockholm","summary":"Ett
+        par, en man och en kvinna, b\u00E5da i 80-\u00E5rs\u00E5ldern, i v\u00E4stra
+        Stockholm har blivit utsatt f\u00F6r ett bedr\u00E4geri.","url":"/aktuellt/handelser/2026/april/13/13-april-21.26-bedrageri-stockholm/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":630743,"datetime":"2026-04-13
+        20:26:13 \u002B02:00","name":"13 april 19.43, Bedr\u00E4geri, Stockholm","summary":"En
+        kvinna i 80-\u00E5rs\u00E5ldern i v\u00E4stra Stockholm har blivit utsatt
+        f\u00F6r ett bedr\u00E4geri.","url":"/aktuellt/handelser/2026/april/13/13-april-19.43-bedrageri-stockholm/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":630737,"datetime":"2026-04-13
+        19:50:12 \u002B02:00","name":"13 april 18.56, Bedr\u00E4geri, Stockholm","summary":"En
+        man och en kvinna i v\u00E4stra Stockholm har blivit utsatta f\u00F6r ett
+        bedr\u00E4geri.","url":"/aktuellt/handelser/2026/april/13/13-april-18.56-bedrageri-stockholm/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":630580,"datetime":"2026-04-11
+        21:26:51 \u002B02:00","name":"11 april 18.11, Bedr\u00E4geri, Stockholm","summary":"\u00C4ldre
+        kvinna haft p\u00E5h\u00E4lsning av bedragare och blivit av med guld.","url":"/aktuellt/handelser/2026/april/11/11-april-18.11-bedrageri-stockholm/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":630568,"datetime":"2026-04-11
+        15:56:49 \u002B02:00","name":"11 april 14.58, Trafikolycka, personskada, Stockholm","summary":"Barn
+        p\u00E5k\u00F6rd av bilf\u00F6rare i Vasastan.","url":"/aktuellt/handelser/2026/april/11/11-april-14.58-trafikolycka-personskada-stockholm/","type":"Trafikolycka,
+        personskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":630561,"datetime":"2026-04-11
+        14:32:59 \u002B02:00","name":"11 april 12.37, Trafikolycka, Stockholms l\u00E4n","summary":"En
+        cyklist tr\u00E4ffades av ett sl\u00E4p med en b\u00E5t p\u00E5 Rind\u00F6.","url":"/aktuellt/handelser/2026/april/11/11-april-12.37-trafikolycka-stockholms-lan/","type":"Trafikolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":630552,"datetime":"2026-04-11
+        13:04:22 \u002B02:00","name":"11 april 10.01, Bedr\u00E4geri, Stockholm","summary":"En
+        orolig anh\u00F6rig till en \u00E4ldre man i centrala Stockholm larmar om
+        att mannen utsatts f\u00F6r bedr\u00E4gerif\u00F6rs\u00F6k.","url":"/aktuellt/handelser/2026/april/11/11-april-10.01-bedrageri-stockholm/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":630546,"datetime":"2026-04-11
+        11:19:25 \u002B02:00","name":"11 april 09.57, Misshandel, Stockholm","summary":"En
+        man greps misst\u00E4nkt f\u00F6r misshandel av en kvinna i Stockholm.","url":"/aktuellt/handelser/2026/april/11/11-april-09.57-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":630502,"datetime":"2026-04-10
+        19:36:13 \u002B02:00","name":"10 april 18.13, Misshandel, Stockholm","summary":"En
+        kvinna i Sp\u00E5nga ringer polisen och s\u00E4ger att hennes tidigare pojkv\u00E4n
+        f\u00F6rf\u00F6ljer henne.","url":"/aktuellt/handelser/2026/april/10/10-april-18.13-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":630493,"datetime":"2026-04-10
+        17:49:49 \u002B02:00","name":"10 april 17.37, Brand, Stockholm","summary":"Det
+        brinner i ett radhus i Kista.","url":"/aktuellt/handelser/2026/april/10/10-april-17.37-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":630433,"datetime":"2026-04-10
+        8:23:37 \u002B02:00","name":"10 april 00.29, Rattfylleri, Stockholm","summary":"Fordonsf\u00F6rare
+        i Sk\u00F6ndal rapporterades f\u00F6r rattfylleri.","url":"/aktuellt/handelser/2026/april/10/10-april-00.29-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":630386,"datetime":"2026-04-09
+        17:46:03 \u002B02:00","name":"09 april 15.33, Brand, Stockholm","summary":"Brand
+        i bastu i centrala Stockholm.","url":"/aktuellt/handelser/2026/april/9/09-april-15.33-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":630287,"datetime":"2026-04-08
+        20:43:42 \u002B02:00","name":"08 april 20.15, Trafikolycka, personskada, Stockholm","summary":"En
+        motorcyklist och en bilist har kolliderat p\u00E5 \u00C5byv\u00E4gen vid \u00D6stberga.","url":"/aktuellt/handelser/2026/april/8/08-april-20.15-trafikolycka-personskada-stockholm/","type":"Trafikolycka,
+        personskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":630280,"datetime":"2026-04-08
+        19:51:27 \u002B02:00","name":"08 april 17.23, Bedr\u00E4geri, Stockholm","summary":"En
+        \u00E4ldre man har blivit bedragen p\u00E5 v\u00E4rdef\u00F6rem\u00E5l till
+        ett stort v\u00E4rde.","url":"/aktuellt/handelser/2026/april/8/08-april-17.23-bedrageri-stockholm/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":630134,"datetime":"2026-04-08
+        7:17:38 \u002B02:00","name":"08 april 01.28, St\u00F6ld, Stockholm","summary":"En
+        man p\u00E5 Kungsholmen uppt\u00E4cke att ett par personer stal f\u00E4lgar
+        och d\u00E4ck fr\u00E5n en bil.","url":"/aktuellt/handelser/2026/april/8/08-april-01.28-stold-stockholm/","type":"St\u00F6ld","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":630101,"datetime":"2026-04-07
+        18:14:38 \u002B02:00","name":"07 april 14.57, Bedr\u00E4geri, Stockholm","summary":"Kvinna
+        utsatt f\u00F6r bedr\u00E4geri efter att ha blivit kontaktad av \u0022banken\u0022.","url":"/aktuellt/handelser/2026/april/7/07-april-14.57-bedrageri-stockholm/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":630013,"datetime":"2026-04-07
+        10:13:15 \u002B02:00","name":"07 april 08.08, Brand, Stockholm","summary":"R\u00F6kutveckling
+        i en bostad i Riksby som troligen beror p\u00E5 kvargl\u00F6md kastrull p\u00E5
+        spisen leder till en anm\u00E4lan om","url":"/aktuellt/handelser/2026/april/7/07-april-08.08-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":629944,"datetime":"2026-04-06
+        12:10:41 \u002B02:00","name":"06 april 11.30, Skadeg\u00F6relse, Stockholm","summary":"Anm\u00E4lan
+        om skadeg\u00F6relse efter krossad port i Gr\u00F6ndal.","url":"/aktuellt/handelser/2026/april/6/06-april-11.30-skadegorelse-stockholm/","type":"Skadeg\u00F6relse","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":629864,"datetime":"2026-04-05
+        7:54:52 \u002B02:00","name":"05 april 02.45, Misshandel, Stockholm","summary":"Man
+        greps f\u00F6r misshandel av kvinna han har relation med.","url":"/aktuellt/handelser/2026/april/5/05-april-02.45-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":629839,"datetime":"2026-04-05
+        0:29:54 \u002B02:00","name":"04 april 21.47, Misshandel, Stockholm","summary":"Tv\u00E5
+        m\u00E4n sl\u00E5ss utanf\u00F6r en butik i Hammarbyh\u00F6jden.","url":"/aktuellt/handelser/2026/april/4/04-april-21.47-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":629834,"datetime":"2026-04-04
+        16:06:46 \u002B02:00","name":"04 april 16.00, Polisinsats/kommendering, Stockholm","summary":"Den
+        icke tillst\u00E5ndsgivna offentliga tillst\u00E4llningen p\u00E5 S\u00F6dermalm
+        och arenaomr\u00E5det har genomf\u00F6rts utan allvarli","url":"/aktuellt/handelser/2026/april/4/04-april-16.00-polisinsatskommendering-stockholm/","type":"Polisinsats/kommendering","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":629752,"datetime":"2026-04-03
+        7:48:11 \u002B02:00","name":"03 april 03.30, Misshandel, Stockholm","summary":"Man
+        greps i bostad misst\u00E4nkt f\u00F6r misshandel.","url":"/aktuellt/handelser/2026/april/3/03-april-03.30-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":629724,"datetime":"2026-04-02
+        20:58:14 \u002B02:00","name":"02 april 17.40, R\u00E5n, Stockholm","summary":"Man
+        gripen misst\u00E4nkt f\u00F6r r\u00E5n\u00A0d\u00E5 han ska ha stulit varor
+        i en matbutik.","url":"/aktuellt/handelser/2026/april/2/02-april-17.40-ran-stockholm/","type":"R\u00E5n","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":629577,"datetime":"2026-04-02
+        7:32:04 \u002B02:00","name":"02 april 06.43, Rattfylleri, Stockholm","summary":"I
+        samband med att en polispatrull kontrollerade en fordonsf\u00F6rare vid Gullmarsplan
+        uppstod misstanke om rattfyl","url":"/aktuellt/handelser/2026/april/2/02-april-06.43-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":629545,"datetime":"2026-04-01
+        20:05:23 \u002B02:00","name":"01 april 18.55, Skadeg\u00F6relse, Stockholm","summary":"Ett
+        vittne ser n\u00E5gra personer klottra p\u00E5 S\u00F6dermalm.","url":"/aktuellt/handelser/2026/april/1/01-april-18.55-skadegorelse-stockholm/","type":"Skadeg\u00F6relse","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":629544,"datetime":"2026-04-01
+        19:59:32 \u002B02:00","name":"01 april 19.00, Trafikbrott, Stockholm","summary":"F\u00F6rf\u00F6ljande
+        i Solberga och H\u00E4gerstens\u00E5sen.","url":"/aktuellt/handelser/2026/april/1/01-april-19.00-trafikbrott-stockholm/","type":"Trafikbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":629528,"datetime":"2026-04-01
+        17:11:40 \u002B02:00","name":"01 april 13.37, Olaga hot, Stockholm","summary":"En
+        kvinna grips f\u00F6r att ha hotat sin bror med kniv.","url":"/aktuellt/handelser/2026/april/1/01-april-13.37-olaga-hot-stockholm/","type":"Olaga
+        hot","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":629405,"datetime":"2026-04-01
+        7:14:52 \u002B02:00","name":"01 april 03.02, Misshandel, Stockholm","summary":"En
+        man och en kvinna blev p\u00E5hoppade av ett par m\u00E4n efter att paret
+        l\u00E4mnat en krog p\u00E5 S\u00F6dermalm.","url":"/aktuellt/handelser/2026/april/1/01-april-03.02-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":629401,"datetime":"2026-04-01
+        7:06:29 \u002B02:00","name":"01 april 06.49, Narkotikabrott, Stockholm","summary":"En
+        kvinna p\u00E5 Kungsholmen frihetsber\u00F6vades enligt lagen om omh\u00E4ndertagande
+        av berusade personer.","url":"/aktuellt/handelser/2026/april/1/01-april-06.49-narkotikabrott-stockholm/","type":"Narkotikabrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":629288,"datetime":"2026-03-31
+        7:10:40 \u002B02:00","name":"31 mars 01.49, Fylleri, Stockholm","summary":"En
+        handfull m\u00E4n i Vasastaden s\u00E5gs br\u00E5ka med varandra.","url":"/aktuellt/handelser/2026/mars/31/31-mars-01.49-fylleri-stockholm/","type":"Fylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":629285,"datetime":"2026-03-31
+        7:03:50 \u002B02:00","name":"31 mars 05.50, St\u00F6ld/inbrott, Stockholm","summary":"Tv\u00E5
+        m\u00E4n med kofot s\u00E5gs f\u00F6rs\u00F6ka bryta sig in i ett k\u00E4llarf\u00F6rr\u00E5d
+        p\u00E5 S\u00F6dermalm.","url":"/aktuellt/handelser/2026/mars/31/31-mars-05.50-stoldinbrott-stockholm/","type":"St\u00F6ld/inbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":629129,"datetime":"2026-03-29
+        9:39:55 \u002B02:00","name":"29 mars 05.02, Misshandel, grov, Stockholms l\u00E4n","summary":"En
+        patrull uppm\u00E4rksammar en skadad man utanf\u00F6r en krog p\u00E5 S\u00F6dermalm.","url":"/aktuellt/handelser/2026/mars/29/29-mars-05.02-misshandel-grov-stockholms-lan/","type":"Misshandel,
+        grov","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":629013,"datetime":"2026-03-27
+        15:48:11 \u002B01:00","name":"27 mars 14.11, Farligt f\u00F6rem\u00E5l, misst\u00E4nkt,
+        Stockholm","summary":"Misst\u00E4nkt farligt f\u00F6rem\u00E5l antr\u00E4ffat
+        i Tensta.","url":"/aktuellt/handelser/2026/mars/27/27-mars-14.11-farligt-foremal-misstankt-stockholm/","type":"Farligt
+        f\u00F6rem\u00E5l, misst\u00E4nkt","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":628898,"datetime":"2026-03-26
+        20:29:10 \u002B01:00","name":"26 mars 19.42, Rattfylleri, Stockholm","summary":"En
+        bilf\u00F6rare som k\u00F6r vingligt p\u00E5 E4 i h\u00F6jd med Kista misst\u00E4nks
+        f\u00F6r rattfylleri och tas med f\u00F6r provtagning.","url":"/aktuellt/handelser/2026/mars/26/26-mars-19.42-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":628897,"datetime":"2026-03-26
+        20:25:13 \u002B01:00","name":"26 mars 18.08, Misshandel, Stockholm","summary":"En
+        man misst\u00E4nks ha utsatt en person han har en relation med f\u00F6r misshandel.
+        Mannen grips.","url":"/aktuellt/handelser/2026/mars/26/26-mars-18.08-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":628758,"datetime":"2026-03-25
+        22:59:04 \u002B01:00","name":"25 mars 19.40, R\u00E5n, f\u00F6rs\u00F6k, Stockholm","summary":"Flera
+        \u00E4ldre personer f\u00E5r bedr\u00E4geri-sms. I ett fall \u00F6verg\u00E5r
+        h\u00E4ndelsen i ett r\u00E5nf\u00F6rs\u00F6k.","url":"/aktuellt/handelser/2026/mars/25/25-mars-19.40-ran-forsok-stockholm/","type":"R\u00E5n,
+        f\u00F6rs\u00F6k","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":628719,"datetime":"2026-03-25
+        15:03:54 \u002B01:00","name":"25 mars 14.04, Trafikolycka, Stockholm","summary":"Larm
+        om trafikolycka.","url":"/aktuellt/handelser/2026/mars/25/25-mars-14.04-trafikolycka-stockholm/","type":"Trafikolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":628627,"datetime":"2026-03-24
+        22:22:56 \u002B01:00","name":"24 mars 18.01, St\u00F6ld, Stockholms l\u00E4n","summary":"Fyra
+        personer gripna f\u00F6r backspegelst\u00F6lder.","url":"/aktuellt/handelser/2026/mars/24/24-mars-18.01-stold-stockholms-lan/","type":"St\u00F6ld","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":628622,"datetime":"2026-03-24
+        21:05:49 \u002B01:00","name":"24 mars 14.01, Misshandel, Stockholm","summary":"Larm
+        om att en man sl\u00E5r en kvinna i en bostad Tensta.","url":"/aktuellt/handelser/2026/mars/24/24-mars-14.01-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":628621,"datetime":"2026-03-24
+        21:05:43 \u002B01:00","name":"24 mars 17.16, R\u00E5n, Stockholm","summary":"Ton\u00E5ring
+        r\u00E5nad p\u00E5 telefon i S\u00E4tra.","url":"/aktuellt/handelser/2026/mars/24/24-mars-17.16-ran-stockholm/","type":"R\u00E5n","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":628294,"datetime":"2026-03-23
+        7:27:40 \u002B01:00","name":"23 mars 04.21, Motorfordon, st\u00F6ld, Stockholms
+        l\u00E4n","summary":"Tv\u00E5 m\u00E4n i Larsboda iakttogs n\u00E4r de br\u00F6t
+        upp en bild\u00F6rr. De tv\u00E5 m\u00E4nnen f\u00F6rsvann sedan fr\u00E5n
+        platsen.","url":"/aktuellt/handelser/2026/mars/23/23-mars-04.21-motorfordon-stold-stockholms-lan/","type":"Motorfordon,
+        st\u00F6ld","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":628253,"datetime":"2026-03-22
+        12:49:46 \u002B01:00","name":"22 mars 12.26, Kontroll, Stockholm","summary":"Larm
+        kommer om personer med vapen i M\u00E4larh\u00F6jden. Det visar sig vara ungdomar
+        som spelar in en film. V\u00E5rdnadsha","url":"/aktuellt/handelser/2026/mars/22/22-mars-12.26-kontroll-stockholm/","type":"Kontroll","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":628233,"datetime":"2026-03-22
+        7:40:37 \u002B01:00","name":"22 mars 04.13, Sexualbrott, Stockholms l\u00E4n","summary":"En
+        man har filmat en sexuell handlin utan till\u00E5telse och detta har uppt\u00E4ckts.
+        Mannen grips som misst\u00E4nks f\u00F6r k","url":"/aktuellt/handelser/2026/mars/22/22-mars-04.13-sexualbrott-stockholms-lan/","type":"Sexualbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":628239,"datetime":"2026-03-22
+        7:40:25 \u002B01:00","name":"22 mars 03.22, Rattfylleri, Stockholm","summary":"En
+        bilf\u00F6rare som \u00E4r inblandad i en trafikolycka misst\u00E4nks f\u00F6r
+        rattfylleri och tas med f\u00F6r provtagning.","url":"/aktuellt/handelser/2026/mars/22/22-mars-03.22-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":628208,"datetime":"2026-03-21
+        20:18:32 \u002B01:00","name":"21 mars 19.41, Kontroll, Stockholm","summary":"Polispatruller
+        p\u00E5 S\u00F6dermalm s\u00F6ker efter en man som har skrikit rasistiska
+        uttryck till pojkar som spelade fotb","url":"/aktuellt/handelser/2026/mars/21/21-mars-19.41-kontroll-stockholm/","type":"Kontroll","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":628204,"datetime":"2026-03-21
+        15:39:06 \u002B01:00","name":"21 mars 15.31, Larm \u00D6verfall, Stockholm","summary":"Personalen
+        i en kiosk har utl\u00F6st \u00F6verfallslarm i Traneberg.","url":"/aktuellt/handelser/2026/mars/21/21-mars-15.31-larm-overfall-stockholm/","type":"Larm
+        \u00D6verfall","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":628159,"datetime":"2026-03-20
+        20:41:48 \u002B01:00","name":"20 mars 20.08, Misshandel, Stockholm","summary":"En
+        man har gripits av polis efter det att han har misshandlat en annan man\u00A0med
+        ett tillhygge i Farsta","url":"/aktuellt/handelser/2026/mars/20/20-mars-20.08-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":628146,"datetime":"2026-03-20
+        18:58:20 \u002B01:00","name":"20 mars 18.49, Kontroll, Stockholm","summary":"Polisen
+        har p\u00E5 uppdrag av en orolig pappa tagit hand om en 13-\u00E5rig flicka
+        som har befunnit sig p\u00E5 Centralstati","url":"/aktuellt/handelser/2026/mars/20/20-mars-18.49-kontroll-stockholm/","type":"Kontroll","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":628142,"datetime":"2026-03-20
+        17:46:15 \u002B01:00","name":"20 mars 17.36, Br\u00E5k, Stockholm","summary":"N\u00E4r
+        en polisbil patrullerar i Hornstull observerar de ett antal m\u00E4n som verkar
+        sl\u00E5ss med varandra.","url":"/aktuellt/handelser/2026/mars/20/20-mars-17.36-brak-stockholm/","type":"Br\u00E5k","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":627995,"datetime":"2026-03-19
+        19:03:35 \u002B01:00","name":"19 mars 18.57, Br\u00E5k, Stockholm","summary":"Enligt
+        ett vittne verkar det vara br\u00E5k i en l\u00E4genhet i Midsommarkransen.","url":"/aktuellt/handelser/2026/mars/19/19-mars-18.57-brak-stockholm/","type":"Br\u00E5k","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":627929,"datetime":"2026-03-19
+        7:16:06 \u002B01:00","name":"19 mars 01.25, Rattfylleri, Stockholm","summary":"Fordonsf\u00F6rare
+        p\u00E5 S\u00F6dermalm rapporterades f\u00F6r flera brott.","url":"/aktuellt/handelser/2026/mars/19/19-mars-01.25-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":627893,"datetime":"2026-03-18
+        17:50:08 \u002B01:00","name":"18 mars 17.38, Br\u00E5k, Stockholm","summary":"Ett
+        vittne i Grimsta ringer till polisen om att man h\u00F6r en kvinna skrika
+        som om hon blir slagen.","url":"/aktuellt/handelser/2026/mars/18/18-mars-17.38-brak-stockholm/","type":"Br\u00E5k","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":627807,"datetime":"2026-03-18
+        8:16:16 \u002B01:00","name":"18 mars 03.43, Olaga hot, Stockholm","summary":"F\u00E5rhuvud
+        l\u00E4mnas p\u00E5 restaurang.","url":"/aktuellt/handelser/2026/mars/18/18-mars-03.43-olaga-hot-stockholm/","type":"Olaga
+        hot","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":627806,"datetime":"2026-03-18
+        8:16:12 \u002B01:00","name":"18 mars 01.28, St\u00F6ld, f\u00F6rs\u00F6k,
+        Stockholm","summary":"F\u00F6rs\u00F6k till st\u00F6ld av katalysator i Sundby.","url":"/aktuellt/handelser/2026/mars/18/18-mars-01.28-stold-forsok-stockholm/","type":"St\u00F6ld,
+        f\u00F6rs\u00F6k","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":627771,"datetime":"2026-03-17
+        19:33:27 \u002B01:00","name":"17 mars 17.03, R\u00E5n, Stockholm","summary":"Polis
+        kallas till S\u00F6dermalm med anledning av att en man blivit utsatt f\u00F6r
+        ett r\u00E5n.","url":"/aktuellt/handelser/2026/mars/17/17-mars-17.03-ran-stockholm/","type":"R\u00E5n","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":627760,"datetime":"2026-03-17
+        16:12:18 \u002B01:00","name":"17 mars 15.22, Brand, Stockholm","summary":"Polis
+        och r\u00E4ddningstj\u00E4nst\u00A0kallas till V\u00E4rtahamnen med anledning
+        av brand p\u00E5 ett f\u00F6rt\u00F6jt passagerarfartyg.","url":"/aktuellt/handelser/2026/mars/17/17-mars-15.22-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":627733,"datetime":"2026-03-17
+        13:57:55 \u002B01:00","name":"17 mars 11.03, Knivlagen, Stockholm","summary":"Elev
+        b\u00E4r kniv p\u00E5 skola.","url":"/aktuellt/handelser/2026/mars/17/17-mars-11.03-knivlagen-stockholm/","type":"Knivlagen","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":627734,"datetime":"2026-03-17
+        13:57:50 \u002B01:00","name":"17 mars 12.34, Olaga hot, Stockholm","summary":"En
+        man beter sig st\u00F6rande p\u00E5 ett kaf\u00E9.","url":"/aktuellt/handelser/2026/mars/17/17-mars-12.34-olaga-hot-stockholm/","type":"Olaga
+        hot","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":627703,"datetime":"2026-03-17
+        7:57:47 \u002B01:00","name":"17 mars 01.41, Misshandel, Stockholm","summary":"En
+        man grips f\u00F6r att ha slagit sin fru.","url":"/aktuellt/handelser/2026/mars/17/17-mars-01.41-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":627704,"datetime":"2026-03-17
+        7:57:41 \u002B01:00","name":"17 mars 01.49, Inbrott, f\u00F6rs\u00F6k, Stockholm","summary":"Larm
+        om p\u00E5g\u00E5ende inbrott p\u00E5 byggarbetsplats i Farsta.","url":"/aktuellt/handelser/2026/mars/17/17-mars-01.49-inbrott-forsok-stockholm/","type":"Inbrott,
+        f\u00F6rs\u00F6k","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":627647,"datetime":"2026-03-16
+        18:15:53 \u002B01:00","name":"16 mars 17.29, Trafikolycka, Stockholm","summary":"Polis
+        och ambulans kallas till V\u00E4stberga all\u00E9 med anledning av att tv\u00E5
+        personbilar har kolliderat.","url":"/aktuellt/handelser/2026/mars/16/16-mars-17.29-trafikolycka-stockholm/","type":"Trafikolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":627536,"datetime":"2026-03-16
+        7:58:31 \u002B01:00","name":"16 mars 07.11, Brand, Stockholm","summary":"Polis
+        bitr\u00E4der r\u00E4ddningstj\u00E4nsten vid brand i matbutik i Vasastan.","url":"/aktuellt/handelser/2026/mars/16/16-mars-07.11-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":627524,"datetime":"2026-03-16
+        7:06:54 \u002B01:00","name":"16 mars 06.10, Farligt f\u00F6rem\u00E5l, misst\u00E4nkt,
+        Stockholm","summary":"Misst\u00E4nkt farligt f\u00F6rem\u00E5l p\u00E5 \u00D6stermalm.","url":"/aktuellt/handelser/2026/mars/16/16-mars-06.10-farligt-foremal-misstankt-stockholm/","type":"Farligt
+        f\u00F6rem\u00E5l, misst\u00E4nkt","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":627510,"datetime":"2026-03-15
+        18:21:04 \u002B01:00","name":"15 mars 18.20, Polisinsats/kommendering, Stockholms
+        l\u00E4n","summary":"Fotbollsmatchen p\u00E5 3Arena har kunnat genomf\u00F6ras
+        utan allvarliga ordningsst\u00F6rningar.","url":"/aktuellt/handelser/2026/mars/15/15-mars-18.20-polisinsatskommendering-stockholms-lan/","type":"Polisinsats/kommendering","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":627489,"datetime":"2026-03-15
+        10:32:04 \u002B01:00","name":"15 mars 08.23, Rattfylleri, Stockholm","summary":"Fordonsf\u00F6rare
+        i \u00C5gesta rapporterades f\u00F6r drograttfylleri.","url":"/aktuellt/handelser/2026/mars/15/15-mars-08.23-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":627413,"datetime":"2026-03-13
+        22:06:48 \u002B01:00","name":"13 mars 20.04, Trafikolycka, Stockholm","summary":"Person
+        p\u00E5k\u00F6rd i centrala Stockholm.","url":"/aktuellt/handelser/2026/mars/13/13-mars-20.04-trafikolycka-stockholm/","type":"Trafikolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":627247,"datetime":"2026-03-12
+        17:36:20 \u002B01:00","name":"12 mars 15.56, Sexualbrott, Stockholm","summary":"En
+        man i V\u00E4stberga onanerar framf\u00F6r barn.","url":"/aktuellt/handelser/2026/mars/12/12-mars-15.56-sexualbrott-stockholm/","type":"Sexualbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":627137,"datetime":"2026-03-11
+        21:06:26 \u002B01:00","name":"11 mars 13.40, Misshandel, Stockholm","summary":"Polisen
+        griper en kvinna som misst\u00E4nks ha misshandlat sitt barn.","url":"/aktuellt/handelser/2026/mars/11/11-mars-13.40-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":627141,"datetime":"2026-03-11
+        21:06:10 \u002B01:00","name":"11 mars 15.41, Sexualbrott, Stockholm","summary":"Samtal
+        om att en man blottar sig i Tessinparken.","url":"/aktuellt/handelser/2026/mars/11/11-mars-15.41-sexualbrott-stockholm/","type":"Sexualbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":627049,"datetime":"2026-03-11
+        7:52:27 \u002B01:00","name":"11 mars 03.00, V\u00E5ldt\u00E4kt, Stockholms
+        l\u00E4n","summary":"En man misst\u00E4nks ha v\u00E5ldtagit en kvinna p\u00E5
+        ett hotell.","url":"/aktuellt/handelser/2026/mars/11/11-mars-03.00-valdtakt-stockholms-lan/","type":"V\u00E5ldt\u00E4kt","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":627013,"datetime":"2026-03-10
+        20:21:13 \u002B01:00","name":"10 mars 19.05, Trafikolycka, Stockholm","summary":"En
+        personbil och en moped har krockat p\u00E5 Hornsgatan p\u00E5 S\u00F6dermalm.","url":"/aktuellt/handelser/2026/mars/10/10-mars-19.05-trafikolycka-stockholm/","type":"Trafikolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":627008,"datetime":"2026-03-10
+        18:19:29 \u002B01:00","name":"10 mars 17.42, Brand, Stockholm","summary":"Det
+        har brunnit i en byggnad vid J\u00E4rva begravningsplats i norra Stockholm.","url":"/aktuellt/handelser/2026/mars/10/10-mars-17.42-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":626737,"datetime":"2026-03-07
+        18:31:43 \u002B01:00","name":"07 mars 17.22, Skottlossning, Stockholm","summary":"En
+        person har p\u00E5tr\u00E4ffats skottskadad i Fagersj\u00F6 i s\u00F6dra Stockholm.","url":"/aktuellt/handelser/2026/mars/7/07-mars-17.22-skottlossning-stockholm/","type":"Skottlossning","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":626968,"datetime":"2026-03-10
+        11:03:21 \u002B01:00","name":"10 mars 09.19, Kontroll, Stockholm","summary":"En
+        man har f\u00F6rs\u00F6kt ta kontakt med en person han har kontaktf\u00F6rbud
+        gentemot. Mannen grips.","url":"/aktuellt/handelser/2026/mars/10/10-mars-09.19-kontroll-stockholm/","type":"Kontroll","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":626937,"datetime":"2026-03-10
+        8:08:43 \u002B01:00","name":"10 mars 02.04, Misshandel, grov, Stockholm","summary":"Misshandlad
+        man i trapphus i Tensta.","url":"/aktuellt/handelser/2026/mars/10/10-mars-02.04-misshandel-grov-stockholm/","type":"Misshandel,
+        grov","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":626932,"datetime":"2026-03-10
+        8:08:39 \u002B01:00","name":"09 mars 23.17, St\u00F6ld, f\u00F6rs\u00F6k,
+        Stockholm","summary":"Ok\u00E4nda personer f\u00F6rs\u00F6ker stj\u00E4la
+        en elcykel.","url":"/aktuellt/handelser/2026/mars/9/09-mars-23.17-stold-forsok-stockholm/","type":"St\u00F6ld,
+        f\u00F6rs\u00F6k","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":626905,"datetime":"2026-03-09
+        19:59:00 \u002B01:00","name":"09 mars 19.12, Brand, Stockholm","summary":"En
+        brand uppstod i ett flerbostadshus i Rinkeby.","url":"/aktuellt/handelser/2026/mars/9/09-mars-19.12-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":626853,"datetime":"2026-03-09
+        13:24:25 \u002B01:00","name":"09 mars 12.43, Trafikolycka, personskada, Stockholm","summary":"Polis
+        och ambulans kallas till Kungsbron med anledning av att en trafikolycka.","url":"/aktuellt/handelser/2026/mars/9/09-mars-12.43-trafikolycka-personskada-stockholm/","type":"Trafikolycka,
+        personskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":626787,"datetime":"2026-03-08
+        14:07:55 \u002B01:00","name":"08 mars 13.36, Farligt f\u00F6rem\u00E5l, misst\u00E4nkt,
+        Stockholm","summary":"Misst\u00E4nkt farligt f\u00F6rem\u00E5l utomhus i Husby.","url":"/aktuellt/handelser/2026/mars/8/08-mars-13.36-farligt-foremal-misstankt-stockholm/","type":"Farligt
+        f\u00F6rem\u00E5l, misst\u00E4nkt","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":626761,"datetime":"2026-03-08
+        7:39:34 \u002B01:00","name":"08 mars 03.36, Misshandel, grov, Stockholm","summary":"Tv\u00E5
+        greps misst\u00E4nka f\u00F6r grov misshandel vid tunnelbanan i Hornstull.","url":"/aktuellt/handelser/2026/mars/8/08-mars-03.36-misshandel-grov-stockholm/","type":"Misshandel,
+        grov","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":626728,"datetime":"2026-03-07
+        13:08:57 \u002B01:00","name":"07 mars 12.56, Trafikbrott, Stockholm","summary":"Ett
+        matbud p\u00E5 elsparkcykel st\u00E5r illa till p\u00E5 Centralbron i h\u00F6jd
+        med Riddarholmen och det ger st\u00F6rningar i traf","url":"/aktuellt/handelser/2026/mars/7/07-mars-12.56-trafikbrott-stockholm/","type":"Trafikbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":626725,"datetime":"2026-03-07
+        12:26:27 \u002B01:00","name":"07 mars 11.08, Trafikbrott, Stockholm","summary":"En
+        bilf\u00F6rare har svajat \u00F6ver v\u00E4gen och det visar sig att han tittat
+        i mobil samtidigt som han k\u00F6r. Bilen har d","url":"/aktuellt/handelser/2026/mars/7/07-mars-11.08-trafikbrott-stockholm/","type":"Trafikbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":626718,"datetime":"2026-03-07
+        10:46:33 \u002B01:00","name":"07 mars 10.00, Misshandel, Stockholm","summary":"Larm
+        om br\u00E5k i bostad d\u00E4r en man uppges ha slagit en kvinna. Mannen grips
+        och anm\u00E4lan om misshandel och barnfr","url":"/aktuellt/handelser/2026/mars/7/07-mars-10.00-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":626716,"datetime":"2026-03-07
+        10:36:56 \u002B01:00","name":"07 mars 10.04, Brand, Stockholm","summary":"Det
+        kommer r\u00F6k fr\u00E5n ett t\u00E5g som st\u00E5r i n\u00E4rheten av \u00C4lvsj\u00F6
+        station men ingen \u00E4r skadad. R\u00E4ddningstj\u00E4nsten leder","url":"/aktuellt/handelser/2026/mars/7/07-mars-10.04-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":626704,"datetime":"2026-03-07
+        7:27:55 \u002B01:00","name":"07 mars 03.28, Bedr\u00E4geri, Stockholm","summary":"En
+        person som varit p\u00E5 en krog vid Stureplan v\u00E4grar att betala notan.","url":"/aktuellt/handelser/2026/mars/7/07-mars-03.28-bedrageri-stockholm/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":626702,"datetime":"2026-03-07
+        7:18:30 \u002B01:00","name":"06 mars 22.37, Misshandel, Stockholm","summary":"En
+        man misst\u00E4nks ha utsatt en tidigare partner f\u00F6r misshandel och hot.
+        Mannen grips.","url":"/aktuellt/handelser/2026/mars/6/06-mars-22.37-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":626656,"datetime":"2026-03-06
+        16:35:54 \u002B01:00","name":"06 mars 15.00, Brand, Stockholm","summary":"Brand
+        i ett flerfamiljhus i Bromsten.","url":"/aktuellt/handelser/2026/mars/6/06-mars-15.00-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":626583,"datetime":"2026-03-06
+        8:47:39 \u002B01:00","name":"06 mars 08.22, Trafikolycka, personskada, Stockholm","summary":"Ett
+        barn i 10-\u00E5rs\u00E5ldern har blivit p\u00E5k\u00F6rd av en bil p\u00E5
+        Fridhemsplan.","url":"/aktuellt/handelser/2026/mars/6/06-mars-08.22-trafikolycka-personskada-stockholm/","type":"Trafikolycka,
+        personskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":626539,"datetime":"2026-03-05
+        20:21:22 \u002B01:00","name":"05 mars 19.43, Bedr\u00E4geri, Stockholm","summary":"En
+        kvinna i 85-\u00E5rs\u00E5ldern i \u00C5rsta i s\u00F6dra Stockholm har blivit
+        utsatt f\u00F6r ett bedr\u00E4geri.","url":"/aktuellt/handelser/2026/mars/5/05-mars-19.43-bedrageri-stockholm/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":626503,"datetime":"2026-03-05
+        13:02:32 \u002B01:00","name":"05 mars 10.27, \u00D6vrigt, Stockholm","summary":"Personer
+        st\u00F6r vid en konferens p\u00E5 Vasagatan.","url":"/aktuellt/handelser/2026/mars/5/05-mars-10.27-ovrigt-stockholm/","type":"\u00D6vrigt","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":626404,"datetime":"2026-03-05
+        7:56:56 \u002B01:00","name":"05 mars 04.44, Olaga hot, Stockholm","summary":"En
+        man grips f\u00F6r att hotat sin tidigare hustru.","url":"/aktuellt/handelser/2026/mars/5/05-mars-04.44-olaga-hot-stockholm/","type":"Olaga
+        hot","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":626369,"datetime":"2026-03-04
+        18:00:29 \u002B01:00","name":"04 mars 15.10, R\u00E5n \u00F6vrigt, Stockholm","summary":"I
+        samband med att en v\u00E4ktare skulle gripa en man som stulit varor i en
+        butik, i Stockholm city, uppstod tumult","url":"/aktuellt/handelser/2026/mars/4/04-mars-15.10-ran-ovrigt-stockholm/","type":"R\u00E5n
+        \u00F6vrigt","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":626325,"datetime":"2026-03-04
+        12:05:14 \u002B01:00","name":"04 mars 09.42, Vapenlagen, Stockholm","summary":"Samtal
+        om en man med vapen.","url":"/aktuellt/handelser/2026/mars/4/04-mars-09.42-vapenlagen-stockholm/","type":"Vapenlagen","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":626279,"datetime":"2026-03-03
+        18:21:18 \u002B01:00","name":"03 mars 17.51, Bedr\u00E4geri, Stockholm","summary":"Ett
+        par i 80-\u00E5rs\u00E5ldern p\u00E5 G\u00E4rdet har blivit av med v\u00E4rdef\u00F6rem\u00E5l
+        sedan en man bes\u00F6kt dem i deras l\u00E4genhet.","url":"/aktuellt/handelser/2026/mars/3/03-mars-17.51-bedrageri-stockholm/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":626264,"datetime":"2026-03-03
+        15:41:59 \u002B01:00","name":"03 mars 12.20, Trafikolycka, personskada, Stockholm","summary":"En
+        kvinna har blivit p\u00E5k\u00F6rd av en personbil p\u00E5 Norrmalm i Stockholm.","url":"/aktuellt/handelser/2026/mars/3/03-mars-12.20-trafikolycka-personskada-stockholm/","type":"Trafikolycka,
+        personskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":626118,"datetime":"2026-03-02
+        13:06:15 \u002B01:00","name":"02 mars 12.45, Sm\u00E4llar, Stockholm","summary":"Explosion
+        vid port i R\u00E5gsved.","url":"/aktuellt/handelser/2026/mars/2/02-mars-12.45-smallar-stockholm/","type":"Sm\u00E4llar","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":626160,"datetime":"2026-03-02
+        19:09:27 \u002B01:00","name":"02 mars 17.16, Misshandel, Stockholm","summary":"Polis
+        larmas till S\u00F6dermalm efter uppgifter om en ut\u00E5tagerande person.","url":"/aktuellt/handelser/2026/mars/2/02-mars-17.16-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":626054,"datetime":"2026-03-02
+        7:47:37 \u002B01:00","name":"02 mars 06.47, Trafikolycka, Stockholm","summary":"Trafikolycka
+        p\u00E5 E4 i h\u00F6jd med V\u00E4stertorp s\u00F6derg\u00E5ende.","url":"/aktuellt/handelser/2026/mars/2/02-mars-06.47-trafikolycka-stockholm/","type":"Trafikolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":626050,"datetime":"2026-03-02
+        7:27:32 \u002B01:00","name":"02 mars 01.54, Skadeg\u00F6relse, Stockholm","summary":"Anm\u00E4lan
+        om skadeg\u00F6relse efter att v\u00E4ska brunnit.","url":"/aktuellt/handelser/2026/mars/2/02-mars-01.54-skadegorelse-stockholm/","type":"Skadeg\u00F6relse","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":626009,"datetime":"2026-03-01
+        8:57:37 \u002B01:00","name":"01 mars 04.48, Misshandel, Stockholm","summary":"En
+        man i Bromma har misshandlat en kvinna han har, eller har haft, en relation
+        med.","url":"/aktuellt/handelser/2026/mars/1/01-mars-04.48-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":625990,"datetime":"2026-02-28
+        22:52:20 \u002B01:00","name":"28 februari 22.24, Kontroll, Stockholm","summary":"Polis
+        prejar personbil vid Johannes i centrala Stockholm.","url":"/aktuellt/handelser/2026/februari/28/28-februari-22.24-kontroll-stockholm/","type":"Kontroll","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":625960,"datetime":"2026-02-28
+        10:34:51 \u002B01:00","name":"28 februari 10.18, Trafikolycka, personskada,
+        Stockholm","summary":"En cyklist kolliderat med en bilist i Akalla.","url":"/aktuellt/handelser/2026/februari/28/28-februari-10.18-trafikolycka-personskada-stockholm/","type":"Trafikolycka,
+        personskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":625953,"datetime":"2026-02-28
+        7:32:53 \u002B01:00","name":"28 februari 02.27, Rattfylleri, Stockholm","summary":"En
+        ordningsvakt p\u00E5 S\u00F6dermalm ser en berusad man som s\u00E4tter sig
+        i en bil och k\u00F6r iv\u00E4g.","url":"/aktuellt/handelser/2026/februari/28/28-februari-02.27-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":625941,"datetime":"2026-02-27
+        21:33:17 \u002B01:00","name":"27 februari 20.43, Misshandel, Stockholm","summary":"Slagsm\u00E5l
+        p\u00E5 tv\u00E4rbanestationen i Globen med flera personer inblandade.","url":"/aktuellt/handelser/2026/februari/27/27-februari-20.43-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":625933,"datetime":"2026-02-27
+        18:45:34 \u002B01:00","name":"27 februari 15.35, Br\u00E5k, Stockholm","summary":"Flera
+        personer i handgem\u00E4ng p\u00E5 ett socialt boende.","url":"/aktuellt/handelser/2026/februari/27/27-februari-15.35-brak-stockholm/","type":"Br\u00E5k","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":625878,"datetime":"2026-02-27
+        11:08:49 \u002B01:00","name":"27 februari 10.07, Trafikbrott, Stockholm","summary":"En
+        trafikant kontaktar polisen med anledning av att en bilist p\u00E5 E4:an k\u00F6r
+        p\u00E5 ett trafikfarligt s\u00E4tt.","url":"/aktuellt/handelser/2026/februari/27/27-februari-10.07-trafikbrott-stockholm/","type":"Trafikbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":625856,"datetime":"2026-02-27
+        8:06:12 \u002B01:00","name":"27 februari 00.57, St\u00F6ld/inbrott, Stockholm","summary":"Flera
+        g\u00E4rningsm\u00E4n har gjort inbrott och stulit varor p\u00E5 ett elektronikf\u00F6retag
+        i Ulvsunda, Bromma.","url":"/aktuellt/handelser/2026/februari/27/27-februari-00.57-stoldinbrott-stockholm/","type":"St\u00F6ld/inbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":625828,"datetime":"2026-02-26
+        21:28:25 \u002B01:00","name":"26 februari 15.48, St\u00F6ld, Stockholm","summary":"Man
+        stj\u00E4l jackor p\u00E5 galleria.","url":"/aktuellt/handelser/2026/februari/26/26-februari-15.48-stold-stockholm/","type":"St\u00F6ld","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":625780,"datetime":"2026-02-26
+        13:10:17 \u002B01:00","name":"26 februari 12.56, Bedr\u00E4geri, Stockholm","summary":"Person
+        vid pantbank rapporteras f\u00F6r penningtv\u00E4tt.","url":"/aktuellt/handelser/2026/februari/26/26-februari-12.56-bedrageri-stockholm/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":625713,"datetime":"2026-02-25
+        21:10:35 \u002B01:00","name":"25 februari 20.09, R\u00E5n, Stockholm","summary":"Tv\u00E5
+        personer r\u00E5nas p\u00E5 sina bilar i Tensta.","url":"/aktuellt/handelser/2026/februari/25/25-februari-20.09-ran-stockholm/","type":"R\u00E5n","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":625722,"datetime":"2026-02-25
+        22:56:42 \u002B01:00","name":"25 februari 15.00, Bedr\u00E4geri, Stockholms
+        l\u00E4n","summary":"Polisen varnar f\u00F6r bedr\u00E4gerier via sms, p\u00E5
+        telefon och vid hembes\u00F6k.","url":"/aktuellt/handelser/2026/februari/25/25-februari-15.00-bedrageri-stockholms-lan/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":625692,"datetime":"2026-02-25
+        17:42:13 \u002B01:00","name":"25 februari 15.54, Brand, Stockholm","summary":"L\u00E4genhetsbrand
+        i Sk\u00E4rholmen.","url":"/aktuellt/handelser/2026/februari/25/25-februari-15.54-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":625650,"datetime":"2026-02-25
+        12:44:08 \u002B01:00","name":"25 februari 12.35, Trafikhinder, Stockholm","summary":"En
+        taxibil har k\u00F6rt upp p\u00E5 mittr\u00E4cket p\u00E5 Klarastrandsleden.","url":"/aktuellt/handelser/2026/februari/25/25-februari-12.35-trafikhinder-stockholm/","type":"Trafikhinder","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":625631,"datetime":"2026-02-25
+        8:45:31 \u002B01:00","name":"25 februari 03.54, Misshandel, Stockholm","summary":"Tv\u00E5
+        m\u00E4n misshandlar en annan man p\u00E5 Medborgarplatsen, S\u00F6dermalm.","url":"/aktuellt/handelser/2026/februari/25/25-februari-03.54-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":625609,"datetime":"2026-02-24
+        22:34:41 \u002B01:00","name":"24 februari 19.10, Bedr\u00E4geri, Stockholm","summary":"Falska
+        poliser kommer hem till en \u00E4ldre kvinna i Stora Mossen och uts\u00E4tter
+        henne f\u00F6r bedr\u00E4geri.","url":"/aktuellt/handelser/2026/februari/24/24-februari-19.10-bedrageri-stockholm/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":625603,"datetime":"2026-02-24
+        22:06:43 \u002B01:00","name":"24 februari 20.07, Trafikolycka, personskada,
+        Stockholm","summary":"Man som ramlat p\u00E5 \u00F6verg\u00E5ngsst\u00E4lle
+        blir p\u00E5k\u00F6rd.","url":"/aktuellt/handelser/2026/februari/24/24-februari-20.07-trafikolycka-personskada-stockholm/","type":"Trafikolycka,
+        personskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":625607,"datetime":"2026-02-24
+        22:06:39 \u002B01:00","name":"24 februari 17.36, Rattfylleri, Stockholm","summary":"Misst\u00E4nkt
+        rattfull bilf\u00F6rare p\u00E5 Sturegatan.","url":"/aktuellt/handelser/2026/februari/24/24-februari-17.36-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":625521,"datetime":"2026-02-24
+        7:35:43 \u002B01:00","name":"24 februari 05.00, St\u00F6ld/inbrott, Stockholm","summary":"En
+        restaurang p\u00E5 \u00D6stermalm fick d\u00F6rren uppbruten d\u00E5 n\u00E5gon
+        tagit sig in i lokalen.","url":"/aktuellt/handelser/2026/februari/24/24-februari-05.00-stoldinbrott-stockholm/","type":"St\u00F6ld/inbrott","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":625519,"datetime":"2026-02-24
+        7:32:24 \u002B01:00","name":"24 februari 00.47, Skadeg\u00F6relse, Stockholm","summary":"En
+        f\u00F6nsterruta till en aff\u00E4rslokal p\u00E5 Kungsholmen blev krossad.","url":"/aktuellt/handelser/2026/februari/24/24-februari-00.47-skadegorelse-stockholm/","type":"Skadeg\u00F6relse","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":625375,"datetime":"2026-02-23
+        4:49:23 \u002B01:00","name":"23 februari 04.14, Brand, Stockholm","summary":"Brand
+        i flerbostadshus p\u00E5 Kungsholmen.","url":"/aktuellt/handelser/2026/februari/22/23-februari-04.14-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":625312,"datetime":"2026-02-21
+        20:29:05 \u002B01:00","name":"21 februari 16.36, Brand, Stockholm","summary":"L\u00E4genhetsbrand
+        p\u00E5 G\u00E4rdet.","url":"/aktuellt/handelser/2026/februari/21/21-februari-16.36-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":625311,"datetime":"2026-02-21
+        20:27:03 \u002B01:00","name":"21 februari 19.36, R\u00E4ddningsinsats, Stockholm","summary":"Bil
+        hamnat p\u00E5 isen mellan Skeppsholmen/Kastellholmen.","url":"/aktuellt/handelser/2026/februari/21/21-februari-19.36-raddningsinsats-stockholm/","type":"R\u00E4ddningsinsats","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":625293,"datetime":"2026-02-21
+        10:46:14 \u002B01:00","name":"21 februari 10.10, Rattfylleri, Stockholm","summary":"En
+        inringare uppger att en bil bakom denne framf\u00F6rs v\u00E4ldigt vingligt
+        p\u00E5 Skanstullsbron i riktning mot Ringv\u00E4ge","url":"/aktuellt/handelser/2026/februari/21/21-februari-10.10-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":625261,"datetime":"2026-02-20
+        20:28:39 \u002B01:00","name":"20 februari 18.42, Bedr\u00E4geri, Stockholm","summary":"\u00C4ldre
+        man utsatt f\u00F6r bedr\u00E4geri och blivit av med smycken.","url":"/aktuellt/handelser/2026/februari/20/20-februari-18.42-bedrageri-stockholm/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":625197,"datetime":"2026-02-20
+        11:14:14 \u002B01:00","name":"20 februari 10.30, Bedr\u00E4geri, Stockholm","summary":"Bedr\u00E4gerierna
+        forts\u00E4tter och nya tillv\u00E4gag\u00E5ngsss\u00E4tt tillkommer hela
+        tiden. Nu kom falska telefonbolag-personer","url":"/aktuellt/handelser/2026/februari/20/20-februari-10.30-bedrageri-stockholm/","type":"Bedr\u00E4geri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":625185,"datetime":"2026-02-20
+        10:46:35 \u002B01:00","name":"20 februari 09.28, Trafikolycka, personskada,
+        Stockholm","summary":"En lastbil och en personbil har krockat i s\u00F6derg\u00E5ende
+        riktning p\u00E5 E4 i h\u00F6jd med Lilla Essingen.","url":"/aktuellt/handelser/2026/februari/20/20-februari-09.28-trafikolycka-personskada-stockholm/","type":"Trafikolycka,
+        personskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":625161,"datetime":"2026-02-20
+        7:15:42 \u002B01:00","name":"20 februari 01.51, Ofredande/f\u00F6rargelse,
+        Stockholm","summary":"En man har o\u00F6nskat tagit p\u00E5 en annan person
+        inne p\u00E5 en nattklubb i Stockholm.","url":"/aktuellt/handelser/2026/februari/20/20-februari-01.51-ofredandeforargelse-stockholm/","type":"Ofredande/f\u00F6rargelse","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":625034,"datetime":"2026-02-19
+        7:10:00 \u002B01:00","name":"19 februari 05.19, Larm Inbrott, Stockholm","summary":"En
+        inringare i Solberga h\u00F6rde av sig ang\u00E5ende att denne sett ett par
+        personer f\u00F6rsvinna efter ett misst\u00E4nkt in","url":"/aktuellt/handelser/2026/februari/19/19-februari-05.19-larm-inbrott-stockholm/","type":"Larm
+        Inbrott","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":624903,"datetime":"2026-02-18
+        3:20:17 \u002B01:00","name":"18 februari 01.35, Explosion, Stockholm","summary":"Explosion
+        i Rinkeby.","url":"/aktuellt/handelser/2026/februari/18/18-februari-01.35-explosion-stockholm/","type":"Explosion","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":624882,"datetime":"2026-02-17
+        19:46:16 \u002B01:00","name":"17 februari 19.06, Br\u00E5k, Stockholm","summary":"Ett
+        20-tal ungdomar sl\u00E5ss i V\u00E4llingby.","url":"/aktuellt/handelser/2026/februari/17/17-februari-19.06-brak-stockholm/","type":"Br\u00E5k","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":624874,"datetime":"2026-02-17
+        18:21:35 \u002B01:00","name":"17 februari 17.57, Brand, Stockholm","summary":"Polisen
+        och r\u00E4ddningstj\u00E4nsten arbetar med en brand p\u00E5 ett caf\u00E9
+        i Vasastaden.","url":"/aktuellt/handelser/2026/februari/17/17-februari-17.57-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":624778,"datetime":"2026-02-17
+        2:01:58 \u002B01:00","name":"17 februari 00.24, Brand, Stockholm","summary":"Cykelbatteri
+        orsakar brand i trapphus.","url":"/aktuellt/handelser/2026/februari/17/17-februari-00.24-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":624777,"datetime":"2026-02-17
+        1:56:07 \u002B01:00","name":"17 februari 00.46, Explosion, Stockholm","summary":"Explosion
+        f\u00F6rst\u00F6r port i Rinkeby.","url":"/aktuellt/handelser/2026/februari/17/17-februari-00.46-explosion-stockholm/","type":"Explosion","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":624725,"datetime":"2026-02-16
+        12:40:41 \u002B01:00","name":"16 februari 11.42, Brand, Stockholm","summary":"Brand
+        och r\u00F6kutveckling fr\u00E5n en bostad i Kista. R\u00E4ddningstj\u00E4nst
+        arbetar med sl\u00E4ckning och polisen bitr\u00E4der.","url":"/aktuellt/handelser/2026/februari/16/16-februari-11.42-brand-stockholm/","type":"Brand","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":624695,"datetime":"2026-02-16
+        11:09:45 \u002B01:00","name":"16 februari 09.13, Arbetsplatsolycka, Stockholm","summary":"En
+        person har ramlat fr\u00E5n h\u00F6jd p\u00E5 en byggnadsplats p\u00E5 \u00D6stermalm
+        och f\u00E5r \u00E5ka ambulans till sjukhus.","url":"/aktuellt/handelser/2026/februari/16/16-februari-09.13-arbetsplatsolycka-stockholm/","type":"Arbetsplatsolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":624686,"datetime":"2026-02-16
+        7:42:40 \u002B01:00","name":"16 februari 04.56, Rattfylleri, Stockholm","summary":"En
+        bilf\u00F6rare som kontrolleras p\u00E5 E4 i h\u00F6jd med Gr\u00F6ndal misst\u00E4nks
+        f\u00F6r rattfylleri och tas med f\u00F6r provtagning.","url":"/aktuellt/handelser/2026/februari/16/16-februari-04.56-rattfylleri-stockholm/","type":"Rattfylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":624667,"datetime":"2026-02-15
+        23:20:24 \u002B01:00","name":"15 februari 21.58, Farligt f\u00F6rem\u00E5l,
+        misst\u00E4nkt, Stockholm","summary":"Polis \u00E4r p\u00E5 plats i Farsta
+        d\u00E5 ett misst\u00E4nkt farligt f\u00F6rem\u00E5l antr\u00E4ffats utanf\u00F6r
+        en bostad.","url":"/aktuellt/handelser/2026/februari/15/15-februari-21.58-farligt-foremal-misstankt-stockholm/","type":"Farligt
+        f\u00F6rem\u00E5l, misst\u00E4nkt","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":624651,"datetime":"2026-02-15
+        12:48:44 \u002B01:00","name":"15 februari 12.39, Trafikhinder, Stockholm","summary":"En
+        bil backar mot trafiken p\u00E5 Johanneshovsbron. En polispatrull \u00E5ker
+        fram f\u00F6r att ta ett samtal med f\u00F6raren d\u00E5","url":"/aktuellt/handelser/2026/februari/15/15-februari-12.39-trafikhinder-stockholm/","type":"Trafikhinder","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":624633,"datetime":"2026-02-15
+        10:40:17 \u002B01:00","name":"15 februari 10.01, Trafikolycka, Stockholm","summary":"En
+        bil har k\u00F6rt in i r\u00E4cket p\u00E5 E18 i norrg\u00E5ende riktning
+        i h\u00F6jd med Kista. Ingen \u00E4r skadad men framkomligheten","url":"/aktuellt/handelser/2026/februari/15/15-februari-10.01-trafikolycka-stockholm/","type":"Trafikolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":624600,"datetime":"2026-02-15
+        7:17:21 \u002B01:00","name":"15 februari 07.00, Fylleri/LOB, Stockholms l\u00E4n","summary":"Sedan
+        midnatt har polisen arbetat med 20 \u00E4renden som \u00E4r rubricerade fylleri.","url":"/aktuellt/handelser/2026/februari/15/15-februari-07.00-fyllerilob-stockholms-lan/","type":"Fylleri","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":624598,"datetime":"2026-02-15
+        7:11:44 \u002B01:00","name":"15 februari 03.22, Misshandel, Stockholm","summary":"Ett
+        br\u00E5k mellan ett antal personer utanf\u00F6r en hamburgerrestaurang leder
+        till att tv\u00E5 personer grips som misst\u00E4","url":"/aktuellt/handelser/2026/februari/15/15-februari-03.22-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":624597,"datetime":"2026-02-15
+        7:06:47 \u002B01:00","name":"15 februari 00.05, Misshandel, Stockholm","summary":"En
+        kvinna misst\u00E4nks ha misshandlat en man p\u00E5 ett hotell i Stockholm.
+        Kvinnan grips.","url":"/aktuellt/handelser/2026/februari/15/15-februari-00.05-misshandel-stockholm/","type":"Misshandel","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}},{"id":624581,"datetime":"2026-02-14
+        17:01:16 \u002B01:00","name":"14 februari 15.23, Trafikolycka, personskada,
+        Stockholm","summary":"Tv\u00E5 personer ska enligt initiala uppgifter vara
+        skadade i en trafikolycka p\u00E5 E4 vid Nybohov i s\u00F6derg\u00E5ende rikt","url":"/aktuellt/handelser/2026/februari/14/14-februari-15.23-trafikolycka-personskada-stockholm/","type":"Trafikolycka,
+        personskada","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":624561,"datetime":"2026-02-14
+        9:41:17 \u002B01:00","name":"14 februari 02.28, Misshandel, grov, Stockholm","summary":"Tv\u00E5
+        kvinnor i 20-\u00E5rs\u00E5ldern grips misst\u00E4nks f\u00F6r att ha misshandlat
+        en man i 80-\u00E5rs\u00E5ldern p\u00E5 Vasagatan.","url":"/aktuellt/handelser/2026/februari/14/14-februari-02.28-misshandel-grov-stockholm/","type":"Misshandel,
+        grov","location":{"name":"Stockholms l\u00E4n","gps":"59.602496,18.138438"}},{"id":624509,"datetime":"2026-02-13
+        17:27:53 \u002B01:00","name":"13 februari 17.05, Trafikolycka, Stockholm","summary":"Tv\u00E5
+        fordon har kolliderat med varandra vid Gubb\u00E4ngsmotet vid en avfart till
+        Rv 73.","url":"/aktuellt/handelser/2026/februari/13/13-februari-17.05-trafikolycka-stockholm/","type":"Trafikolycka","location":{"name":"Stockholms
+        l\u00E4n","gps":"59.602496,18.138438"}}]'
+    headers:
+      content-security-policy:
+      - default-src 'none'; base-uri 'self'; connect-src 'self'; form-action 'self';
+        manifest-src 'self' data:; font-src 'self'; frame-ancestors 'self'; worker-src
+        'self'; img-src 'self' data:; object-src 'none'; script-src 'self' 'nonce-gIhPkxj60omUQ9osUfaXrYrUSXLVdiEHxuOSEFnt2Vw=';
+        style-src 'self'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 13 Aug 2026 15:12:05 GMT
+      referrer-policy:
+      - no-referrer, same-origin
+      strict-transport-security:
+      - max-age=31536000
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+version: 1

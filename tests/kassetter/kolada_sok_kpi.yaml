@@ -1,0 +1,104 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - api.kolada.se
+      user-agent:
+      - python-httpx/0.28.1
+    method: GET
+    uri: https://api.kolada.se/v3/kpi?title=f%C3%B6rskola&per_page=10
+  response:
+    body:
+      string: "{\"values\":[{\"id\":\"N00022\",\"title\":\"Kostnadsutj\xE4mningsnetto
+        f\xF6rskola och skolbarnsomsorg, kr/inv 1 nov fg \xE5r\",\"description\":\"Kostnadsutj\xE4mningsnetto
+        f\xF6rskola och skolbarnomsorg ber\xE4knas som kommunens standardkostnad minus
+        standardkostnaden f\xF6r riket i tkr dividerat med antal inv\xE5nare totalt
+        1/11 nov fg \xE5r. K\xE4lla: SCB.\",\"is_divided_by_gender\":false,\"municipality_type\":\"K\",\"auspice\":null,\"operating_area\":\"Kommunen,
+        \xF6vergripande\",\"perspective\":\"Resurser\",\"prel_publication_date\":\"2026-09-28\",\"publication_date\":\"2027-04-15\",\"publ_period\":\"2027\",\"has_ou_data\":false},{\"id\":\"N00108\",\"title\":\"M\xE5nadsavl\xF6nad
+        personal, kommunalt anst\xE4llda i f\xF6rskola, skola, fritids m.m., antal\",\"description\":\"Antal
+        anst\xE4llda m\xE5nadsavl\xF6nade inom skol- och barnomsorgsarbete.  Avser
+        kommunalt anst\xE4llda i november m\xE5nad enligt H\xD6K. Anst\xE4llda inom
+        kommunalf\xF6rbund/kommunala bolag ing\xE5r inte. K\xE4lla: SKR:s personalstatistik
+        (novemberstatistiken).\\\\n\",\"is_divided_by_gender\":false,\"municipality_type\":\"K\",\"auspice\":\"E\",\"operating_area\":\"F\xF6rskoleverksamhet\",\"perspective\":\"Resurser\",\"prel_publication_date\":null,\"publication_date\":\"2027-04-15\",\"publ_period\":\"2026\",\"has_ou_data\":false},{\"id\":\"N00114\",\"title\":\"\xC5rsarbetare
+        inom f\xF6rskola, skola, fritids m.m., kommun, antal\",\"description\":\"Antal
+        \xE5rsarbetare inom skol- och barnomsorgsarbete. B\xE5de m\xE5nadsavl\xF6nade
+        och timavl\xF6nade ing\xE5r. Antalet \xE5rsarbetare r\xE4knas fram med hj\xE4lp
+        av den faktiska syssels\xE4ttningsgraden f\xF6r m\xE5nadsavl\xF6nade och arbetade
+        timmar f\xF6r timavl\xF6nade. \xC5rsarbetare anger hur m\xE5nga anst\xE4llda
+        kommunen skulle ha haft om den faktiska syssels\xE4ttningsgraden f\xF6r m\xE5nadsavl\xF6nade
+        och arbetade timmar f\xF6r timavl\xF6nade summerades till heltidsanst\xE4llningar.
+        Avser kommunalt anst\xE4llda i november m\xE5nad enligt H\xD6K. Anst\xE4llda
+        inom kommunalf\xF6rbund/kommunala bolag ing\xE5r inte. K\xE4lla: SKR:s personalstatistik
+        (novemberstatistiken).\\\\n\",\"is_divided_by_gender\":false,\"municipality_type\":\"K\",\"auspice\":\"E\",\"operating_area\":\"F\xF6rskoleverksamhet\",\"perspective\":\"Resurser\",\"prel_publication_date\":null,\"publication_date\":\"2027-04-15\",\"publ_period\":\"2026\",\"has_ou_data\":false},{\"id\":\"N00530\",\"title\":\"Medborgarunders\xF6kningen
+        - F\xF6rskolan fungerar bra i kommunen, andel (%)\",\"description\":\"Andel
+        som har svarat \\\"Mycket bra\\\" eller \\\"Ganska bra\\\" p\xE5 fr\xE5gan
+        \\\"Hur tycker du att f\xF6ljande fungerar i din kommun? F\xF6rskolan\\\"
+        i SCBs medborgarunders\xF6kning. De som har svarat \\\"Vet inte\\\"/\\\"Ingen
+        \xE5sikt\\\" har exkluderats. K\xE4lla: SCBs medborgarunders\xF6kning.\",\"is_divided_by_gender\":true,\"municipality_type\":\"A\",\"auspice\":\"X\",\"operating_area\":\"Kommunen,
+        \xF6vergripande\",\"perspective\":\"Kvalitet och resultat\",\"prel_publication_date\":null,\"publication_date\":\"2026-12-15\",\"publ_period\":\"2026\",\"has_ou_data\":false},{\"id\":\"N04110\",\"title\":\"Kommunens
+        k\xF6p av f\xF6rskola totalt, andel (%)\",\"description\":\"Kommunens k\xF6p
+        av f\xF6rskola, totalt, som andel av kostnad f\xF6r eget \xE5tagande f\xF6r
+        f\xF6rskola totalt (%). K\xF6p av verksamhet \xE4r betalning f\xF6r ett offentligt
+        uppdrag (k\xE4rnverksamhet) som \xF6verl\xE4mnats till n\xE5gon annan att
+        utf\xF6ra. Kostnad f\xF6r eget \xE5tagande \xE4r bruttokostnad minus interna
+        int\xE4kter och f\xF6rs\xE4ljning till andra kommuner och regioner. K\xE4lla:
+        SCB.\",\"is_divided_by_gender\":false,\"municipality_type\":\"K\",\"auspice\":\"T\",\"operating_area\":\"F\xF6rskoleverksamhet\",\"perspective\":\"Resurser\",\"prel_publication_date\":\"2026-03-31\",\"publication_date\":\"2026-08-28\",\"publ_period\":\"2025\",\"has_ou_data\":false},{\"id\":\"N04111\",\"title\":\"Kommunens
+        k\xF6p av f\xF6rskola fr\xE5n offentliga utf\xF6rare, andel (%) (-2024)\",\"description\":\"Kommunens
+        k\xF6p av f\xF6rskola, fr\xE5n offentliga utf\xF6rare, som andel av kostnad
+        f\xF6r eget \xE5tagande f\xF6r f\xF6rskola totalt (%). K\xF6p av verksamhet
+        \xE4r betalning f\xF6r ett offentligt uppdrag (k\xE4rnverksamhet) som \xF6verl\xE4mnats
+        till n\xE5gon annan att utf\xF6ra. Kostnad f\xF6r eget \xE5tagande \xE4r bruttokostnad
+        minus interna int\xE4kter och f\xF6rs\xE4ljning till andra kommuner och regioner.
+        K\xE4lla: SCB.\",\"is_divided_by_gender\":false,\"municipality_type\":\"K\",\"auspice\":\"O\",\"operating_area\":\"F\xF6rskoleverksamhet\",\"perspective\":\"Resurser\",\"prel_publication_date\":null,\"publication_date\":null,\"publ_period\":null,\"has_ou_data\":false},{\"id\":\"N04112\",\"title\":\"Kommunens
+        k\xF6p av f\xF6rskola fr\xE5n privata utf\xF6rare, andel (%) (-2024)\",\"description\":\"Kommunens
+        k\xF6p av f\xF6rskola, fr\xE5n privata utf\xF6rare, som andel av kostnad f\xF6r
+        eget \xE5tagande f\xF6r f\xF6rskola totalt (%). K\xF6p av verksamhet \xE4r
+        betalning f\xF6r ett offentligt uppdrag (k\xE4rnverksamhet) som \xF6verl\xE4mnats
+        till n\xE5gon annan att utf\xF6ra. Kostnad f\xF6r eget \xE5tagande \xE4r bruttokostnad
+        minus interna int\xE4kter och f\xF6rs\xE4ljning till andra kommuner och regioner.
+        K\xE4lla: SCB.\",\"is_divided_by_gender\":false,\"municipality_type\":\"K\",\"auspice\":\"P\",\"operating_area\":\"F\xF6rskoleverksamhet\",\"perspective\":\"Resurser\",\"prel_publication_date\":null,\"publication_date\":null,\"publ_period\":null,\"has_ou_data\":false},{\"id\":\"N10001\",\"title\":\"Kostnad
+        f\xF6rskola och skolbarnsomsorg, kr/inv\",\"description\":\"Bruttokostnad
+        minus interna int\xE4kter och f\xF6rs\xE4ljning till andra kommuner och regioner
+        f\xF6r f\xF6rskola och skolbarnsomsorg, dividerat med antal inv\xE5nare totalt
+        31/12. Avser f\xF6rskoleverksamheten som bedrivs i form av f\xF6rskola, pedagogisk
+        omsorg och \xF6ppen f\xF6rskola och skolbarnsomsorgen bedrivs i form av fritidshem
+        och pedagogisk omsorg. F\xF6r barn mellan tio och tolv \xE5r kan skolbarnsomsorgen
+        \xE4ven bedrivas i form av \xF6ppen fritidsverksamhet. Avser samtlig regi.
+        K\xE4lla: SCB:s R\xE4kenskapssammandrag.\",\"is_divided_by_gender\":false,\"municipality_type\":\"K\",\"auspice\":\"T\",\"operating_area\":\"F\xF6rskoleverksamhet\",\"perspective\":\"Resurser\",\"prel_publication_date\":\"2026-03-31\",\"publication_date\":\"2026-08-28\",\"publ_period\":\"2025\",\"has_ou_data\":false},{\"id\":\"N10006\",\"title\":\"Kostnad
+        f\xF6rskola, fritidshem och pedagogisk omsorg, kr/inv 1-12 \xE5r\",\"description\":\"Bruttokostnad
+        minus interna int\xE4kter och f\xF6rs\xE4ljning till andra kommuner och regioner
+        f\xF6r f\xF6rskola och skolbarnsomsorg, dividerat med antal inv\xE5nare 1-12
+        \xE5r 31/12. Avser f\xF6rskoleverksamheten som bedrivs i form av f\xF6rskola,
+        pedagogisk omsorg och \xF6ppen f\xF6rskola.  i f\xF6rskola, fritidshem och
+        pedagogisk omsorg. F\xF6r barn mellan tio och tolv \xE5r omsorgen \xE4ven
+        bedrivas i form av \xF6ppen fritidsverksamhet. Avser samtlig regi. K\xE4lla:
+        SCB:s R\xE4kenskapssammandrag.\",\"is_divided_by_gender\":false,\"municipality_type\":\"K\",\"auspice\":\"T\",\"operating_area\":\"F\xF6rskoleverksamhet\",\"perspective\":\"Resurser\",\"prel_publication_date\":\"2026-03-31\",\"publication_date\":\"2026-08-28\",\"publ_period\":\"2025\",\"has_ou_data\":false},{\"id\":\"N10007\",\"title\":\"Kostnad
+        f\xF6rskola, fritidshem och pedagogisk omsorg, kr/inskrivet barn\",\"description\":\"Bruttokostnad
+        minus interna int\xE4kter och f\xF6rs\xE4ljning till andra kommuner och regioner
+        f\xF6r f\xF6rskola, fritidshem och pedagogisk omsorg, 1-12 \xE5r dividerat
+        med genomsnittligt antal inskrivna barn \xE5r t-1 och \xE5r t som var inskrivna
+        i f\xF6rskola, fritidshem och pedagogisk omsorg. F\xF6r barn mellan tio och
+        tolv \xE5r omsorgen \xE4ven bedrivas i form av \xF6ppen fritidsverksamhet.
+        Avser samtlig regi. K\xE4lla: SCB:s R\xE4kenskapssammandrag.\",\"is_divided_by_gender\":false,\"municipality_type\":\"K\",\"auspice\":\"T\",\"operating_area\":\"F\xF6rskoleverksamhet\",\"perspective\":\"Resurser\",\"prel_publication_date\":\"2026-03-31\",\"publication_date\":\"2026-08-28\",\"publ_period\":\"2025\",\"has_ou_data\":false}],\"next_url\":\"https://api.kolada.se/v3/kpi?title=f%C3%B6rskola&per_page=10&page=2\",\"previous_url\":null,\"count\":10}"
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '7487'
+      content-type:
+      - application/json
+      date:
+      - Thu, 13 Aug 2026 15:12:15 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+    status:
+      code: 200
+      message: OK
+version: 1

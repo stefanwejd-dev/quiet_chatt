@@ -1,0 +1,432 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - jobsearch.api.jobtechdev.se
+      user-agent:
+      - python-httpx/0.28.1
+    method: GET
+    uri: https://jobsearch.api.jobtechdev.se/search?q=l%C3%A4rare&limit=2
+  response:
+    body:
+      string: '{"total": {"value": 777}, "positions": 1419, "query_time_in_millis":
+        4, "result_time_in_millis": 14, "stats": [], "freetext_concepts": {"skill":
+        [], "occupation": ["l\u00e4rare"], "trait": [], "location": [], "skill_must":
+        [], "occupation_must": [], "trait_must": [], "location_must": [], "skill_must_not":
+        [], "occupation_must_not": [], "trait_must_not": [], "location_must_not":
+        []}, "hits": [{"relevance": 1.0, "id": "31325287", "external_id": null, "original_id":
+        null, "label": [], "webpage_url": "https://arbetsformedlingen.se/platsbanken/annonser/31325287",
+        "logo_url": "https://arbetsformedlingen.se/rest/employer-logo-api/api/v1/organisation/2120000035/logotyper/logo.png",
+        "headline": "L\u00e4rare", "application_deadline": "2026-08-30T23:59:59",
+        "number_of_vacancies": 1, "description": {"text": "V\u00e4rmd\u00f6 \u00e4r
+        sk\u00e4rg\u00e5rdens m\u00f6tesplats med en unik kombination av naturens
+        stilla sk\u00f6nhet och en mer stadslik livsstil. V\u00e5rt uppdrag \u00e4r
+        inte ett utan m\u00e5nga: skola, fastigheter, socialtj\u00e4nst, hamnar, v\u00e5rd,
+        bibliotek, omsorg och m\u00e5nga fler. Vi verkar f\u00f6r att alla V\u00e4rmd\u00f6bor
+        kan leva ett rikt och fritt liv. Vi vill vara de som m\u00f6jligg\u00f6r dr\u00f6mmen
+        om en livskraftig trygg milj\u00f6 f\u00f6r hem, familj och f\u00f6retag.\nSka
+        vi lyckas med det fullt ut m\u00e5ste vi ha olika kompetenser och arbeta tillsammans
+        f\u00f6r en gemensam och tillitsfull arbetskultur, byggd p\u00e5 modiga, ansvarstagande
+        medarbetare som f\u00f6rst\u00e5r inv\u00e5narnas behov och \u00f6nskem\u00e5l.\nV\u00e4rmd\u00f6
+        Sk\u00e4rg\u00e5rdsskolors rektorsomr\u00e5de \u00e4r 4 stycken F-9 skolor
+        med tillsammans cirka 320 elever som best\u00e5r av Djur\u00f6, som ligger
+        p\u00e5 fastlandet, M\u00f6ja (som \u00e4r vilande) samt Runmar\u00f6 ( som
+        \u00e4r pusad)och Svarts\u00f6 i Stockholms sk\u00e4rg\u00e5rd. Skolans geografiska
+        omr\u00e5de b\u00f6rjar vid F\u00e5gelbrolandet, i Str\u00f6mma, str\u00e4cker
+        sig ut mot havet och omfattar alla \u00f6ar utan brof\u00f6rbindelse. Du kommer
+        att jobba p\u00e5 Djur\u00f6skola.\nV\u00e5r vision:\nH\u00e4r f\u00e5r jag
+        vara den jag \u00e4r, v\u00e4xa, utvecklas och l\u00e4ra f\u00f6r livet. Tillsammans
+        bygger vi broar mellan \u00f6ar, m\u00e4nniskor och verksamheter.\n\u00c4r
+        du intresserad av sk\u00e4rg\u00e5rd och b\u00e5tliv, d\u00e5 \u00e4r det
+        hos oss du ska arbeta, d\u00e5 vi har sk\u00e4rg\u00e5rdsprofil p\u00e5 skolan.\nTill
+        v\u00e5r verksamhet s\u00f6ker vi en engagerad och ansvarsfull l\u00e4rare.\nOm
+        tj\u00e4nsten: Som mellanstadiel\u00e4rare hos oss kommer du att:\n\u00a0Planera
+        och genomf\u00f6ra undervisning f\u00f6r elever i \u00e5rskurs 4-6. \u00a0\nDu
+        ansvarar \u00e4ven f\u00f6r dokumentation och utv\u00e4rdering av undervisningen
+        i de grupper du undervisar i.\nSkapa en trygg och inspirerande l\u00e4rmilj\u00f6.\nSamarbeta
+        med kollegor och f\u00f6r\u00e4ldrar f\u00f6r att fr\u00e4mja elevernas utveckling.\nAnv\u00e4nda
+        varierade undervisningsmetoder f\u00f6r att m\u00f6ta elevernas individuella
+        behov.\u00a0\n\nDet kommer att vara du som ansvarar f\u00f6r klassen men har
+        ett n\u00e4ra samarbete med kollegorna i de andra klasserna. Ni har m\u00f6jligheten
+        att jobba med eleverna i olika gruppkonstellationer i oilka \u00e4mnen.\nDu
+        har \u00e4ven ett n\u00e4ra samarbete med \u00f6vriga i arbetslaget, som best\u00e5r
+        av spec-l\u00e4rare, fritidspersonal samt elevassistenter, N\u00e4rheten till
+        elevh\u00e4lsoteamet g\u00f6r att du snabbt kan f\u00e5 handledning i olika
+        fr\u00e5gor g\u00e4llande eleverna. Som l\u00e4rare i V\u00e4rmd\u00f6 sk\u00e4rg\u00e5rdsskola\u00e4r
+        fokus m\u00e5luppfyllelse och trygghet f\u00f6r alla elever.\nVi s\u00f6ker
+        dig som \u00e4r legitimerad l\u00e4rare med bred \u00e4mnesbeh\u00f6righet
+        f\u00f6r grundskolans \u00e5k 4-6. Har du \u00e4ven beh\u00f6righet att undervisa
+        \u00e5k 7-9 \u00e4r det meriterande. Du har v\u00e4l vitsordad erfarenhet
+        av pedagogiskt arbete med elever. Du har ett medvetet pedagogiskt arbetss\u00e4tt
+        d\u00e4r elevens delaktighet och ansvar \u00e4r en sj\u00e4lvklarhet. Det
+        \u00e4r viktigt att du \u00e4r trygg i din yrkesroll och att du \u00e4r tydlig
+        gentemot barn, f\u00f6r\u00e4ldrar och kollegor.\nVi l\u00e4gger stor vikt
+        vid sociala kompetenser och personlig l\u00e4mplighet\nF\u00f6r denna tj\u00e4nst
+        \u00e4r uppvisande av giltigt utdrag ur polisens belastningsregister en f\u00f6ruts\u00e4ttning
+        f\u00f6r anst\u00e4llning\nI V\u00e4rmd\u00f6 kommun erbjuder friskv\u00e5rdsbidrag.
+        Vi arbetar \u00e4ven aktivt f\u00f6r att skapa h\u00e4lsofr\u00e4mjande arbetsplatser
+        med en god arbetsmilj\u00f6 och till\u00e4mpar r\u00f6kfri arbetstid.\nAnst\u00e4llningen
+        omfattarheltid och \u00e4r en tillsvidareanst\u00e4llning med tilltr\u00e4de
+        snarast eller enligt \u00f6verenskommelse. Urval och intervjuer sker l\u00f6pande
+        s\u00e5 registrera g\u00e4rna din ans\u00f6kan s\u00e5 snart som m\u00f6jligt.\nAns\u00f6kan\nDu
+        s\u00f6ker tj\u00e4nsten via v\u00e5rt webbaserade rekryteringsverktyg. Klicka
+        p\u00e5 \u201ds\u00f6k tj\u00e4nst\u201d nedan och f\u00f6lj sedan instruktionerna.
+        V\u00e4lkommen med din ans\u00f6kan senast den 30 aug -26. Med tilltr\u00e4de
+        den snarast eller enligt \u00f6verenskommelse. \n\u00a0\nVill du veta mer
+        \u00e4r du v\u00e4lkommen att kontakta Aase Carlsson, bitr\u00e4dande rektor,
+        08-570\u00a0486 21 alternativt Maria Nil\u00e4ng rektor, 08-570\u00a0486 25.
+        Fackliga representanter n\u00e5s via kontaktcenter, 08-570\u00a0470 00.\n\u00a0\nVi
+        undanber oss alla erbjudanden om annonserings- och rekryteringshj\u00e4lp
+        i samband med denna annons.\n\u00a0\n\u00a0\n\u00a0\n\u00a0\n\u00a0\n\u00a0\nV\u00e4rmd\u00f6
+        kommun erbjuder friskv\u00e5rdsbidrag, SL-kort mot nettol\u00f6neavdrag och\u00a0semesterv\u00e4xling
+        till extra lediga dagar. Vi arbetar \u00e4ven aktivt f\u00f6r att skapa h\u00e4lsofr\u00e4mjande
+        arbetsplatser med en god arbetsmilj\u00f6 och till\u00e4mpar r\u00f6kfri arbetstid.\nVi
+        str\u00e4var efter en j\u00e4mn k\u00f6nsf\u00f6rdelning och ser m\u00e5ngfald
+        som en styrka och v\u00e4lkomnar d\u00e4rf\u00f6r s\u00f6kande med olika bakgrund.\u00a0\nVill
+        du veta mer \u00e4r du v\u00e4lkommen att kontakta oss, se kontaktperson nedan.\nKontaktuppgifter
+        till arbetstagarorganisationerna hittar du p\u00e5 https://www.varmdo.se/fackligaorganisationer
+        eller via Servicecenter, 08-570 470 00. Vi undanber oss alla erbjudanden om
+        annonserings- och rekryteringshj\u00e4lp i samband med denna annons.", "text_formatted":
+        "<p><p>V\u00e4rmd\u00f6 \u00e4r sk\u00e4rg\u00e5rdens m\u00f6tesplats med
+        en unik kombination av naturens stilla sk\u00f6nhet och en mer stadslik livsstil.
+        V\u00e5rt uppdrag \u00e4r inte ett utan m\u00e5nga: skola, fastigheter, socialtj\u00e4nst,
+        hamnar, v\u00e5rd, bibliotek, omsorg och m\u00e5nga fler. Vi verkar f\u00f6r
+        att alla V\u00e4rmd\u00f6bor kan leva ett rikt och fritt liv. Vi vill vara
+        de som m\u00f6jligg\u00f6r dr\u00f6mmen om en livskraftig trygg milj\u00f6
+        f\u00f6r hem, familj och f\u00f6retag.</p><p>Ska vi lyckas med det fullt ut
+        m\u00e5ste vi ha olika kompetenser och arbeta tillsammans f\u00f6r en gemensam
+        och tillitsfull arbetskultur, byggd p\u00e5 modiga, ansvarstagande medarbetare
+        som f\u00f6rst\u00e5r inv\u00e5narnas behov och \u00f6nskem\u00e5l.</p><p><strong>V\u00e4rmd\u00f6
+        Sk\u00e4rg\u00e5rdsskolors rektorsomr\u00e5de</strong> \u00e4r 4 stycken F-9
+        skolor med tillsammans cirka 320 elever som best\u00e5r av Djur\u00f6, som
+        ligger p\u00e5 fastlandet, M\u00f6ja (som \u00e4r vilande) samt Runmar\u00f6
+        ( som \u00e4r pusad)och Svarts\u00f6 i Stockholms sk\u00e4rg\u00e5rd. Skolans
+        geografiska omr\u00e5de b\u00f6rjar vid F\u00e5gelbrolandet, i Str\u00f6mma,
+        str\u00e4cker sig ut mot havet och omfattar alla \u00f6ar utan brof\u00f6rbindelse.
+        Du kommer att jobba p\u00e5 <strong>Djur\u00f6</strong><strong>skola.</strong></p><p><em>V\u00e5r
+        vision:</em></p><p>H\u00e4r f\u00e5r jag vara den jag \u00e4r, v\u00e4xa,
+        utvecklas och l\u00e4ra f\u00f6r livet. Tillsammans bygger vi broar mellan
+        \u00f6ar, m\u00e4nniskor och verksamheter.</p><p>\u00c4r du intresserad av
+        sk\u00e4rg\u00e5rd och b\u00e5tliv, d\u00e5 \u00e4r det hos oss du ska arbeta,
+        d\u00e5 vi har sk\u00e4rg\u00e5rdsprofil p\u00e5 skolan.</p><p><strong>Till
+        v\u00e5r verksamhet s\u00f6ker vi en engagerad och ansvarsfull l\u00e4rare.</strong></p><p><strong>Om
+        tj\u00e4nsten:</strong> Som mellanstadiel\u00e4rare hos oss kommer du att:</p><ul><li>\u00a0Planera
+        och genomf\u00f6ra undervisning f\u00f6r elever i \u00e5rskurs 4-6. \u00a0</li><li>Du
+        ansvarar \u00e4ven f\u00f6r dokumentation och utv\u00e4rdering av undervisningen
+        i de grupper du undervisar i.</li><li>Skapa en trygg och inspirerande l\u00e4rmilj\u00f6.</li><li>Samarbeta
+        med kollegor och f\u00f6r\u00e4ldrar f\u00f6r att fr\u00e4mja elevernas utveckling.</li><li>Anv\u00e4nda
+        varierade undervisningsmetoder f\u00f6r att m\u00f6ta elevernas individuella
+        behov.\u00a0</li></ul><p>Det kommer att vara du som ansvarar f\u00f6r klassen
+        men har ett n\u00e4ra samarbete med kollegorna i de andra klasserna. Ni har
+        m\u00f6jligheten att jobba med eleverna i olika gruppkonstellationer i oilka
+        \u00e4mnen.</p><p>Du har \u00e4ven ett n\u00e4ra samarbete med \u00f6vriga
+        i arbetslaget, som best\u00e5r av spec-l\u00e4rare, fritidspersonal samt elevassistenter,
+        N\u00e4rheten till elevh\u00e4lsoteamet g\u00f6r att du snabbt kan f\u00e5
+        handledning i olika fr\u00e5gor g\u00e4llande eleverna. Som l\u00e4rare i
+        V\u00e4rmd\u00f6 sk\u00e4rg\u00e5rdsskola<em></em>\u00e4r fokus m\u00e5luppfyllelse
+        och trygghet f\u00f6r alla elever.</p><p><strong>Vi s\u00f6ker dig som </strong>\u00e4r
+        legitimerad l\u00e4rare med bred \u00e4mnesbeh\u00f6righet f\u00f6r grundskolans
+        \u00e5k 4-6. Har du \u00e4ven beh\u00f6righet att undervisa \u00e5k 7-9 \u00e4r
+        det meriterande. Du har v\u00e4l vitsordad erfarenhet av pedagogiskt arbete
+        med elever. Du har ett medvetet pedagogiskt arbetss\u00e4tt d\u00e4r elevens
+        delaktighet och ansvar \u00e4r en sj\u00e4lvklarhet. Det \u00e4r viktigt att
+        du \u00e4r trygg i din yrkesroll och att du \u00e4r tydlig gentemot barn,
+        f\u00f6r\u00e4ldrar och kollegor.</p><p>Vi l\u00e4gger stor vikt vid sociala
+        kompetenser och personlig l\u00e4mplighet</p><p>F\u00f6r denna tj\u00e4nst
+        \u00e4r uppvisande av giltigt utdrag ur polisens belastningsregister en f\u00f6ruts\u00e4ttning
+        f\u00f6r anst\u00e4llning</p><p><strong>I V\u00e4rmd\u00f6 kommun</strong>
+        erbjuder friskv\u00e5rdsbidrag. Vi arbetar \u00e4ven aktivt f\u00f6r att skapa
+        h\u00e4lsofr\u00e4mjande arbetsplatser med en god arbetsmilj\u00f6 och till\u00e4mpar
+        r\u00f6kfri arbetstid.</p><p><strong>Anst\u00e4llningen </strong>omfattar<em></em>heltid
+        och \u00e4r en tillsvidareanst\u00e4llning med tilltr\u00e4de snarast eller
+        enligt \u00f6verenskommelse. Urval och intervjuer sker l\u00f6pande s\u00e5
+        registrera g\u00e4rna din ans\u00f6kan s\u00e5 snart som m\u00f6jligt.</p><p><strong>Ans\u00f6kan</strong></p><p>Du
+        s\u00f6ker tj\u00e4nsten via v\u00e5rt webbaserade rekryteringsverktyg. Klicka
+        p\u00e5 \u201ds\u00f6k tj\u00e4nst\u201d nedan och f\u00f6lj sedan instruktionerna.
+        V\u00e4lkommen med din ans\u00f6kan<strong> senast den 30 aug -26. Med tilltr\u00e4de
+        den snarast eller enligt \u00f6verenskommelse. </strong></p><p>\u00a0</p><p><strong>Vill
+        du veta mer </strong>\u00e4r du v\u00e4lkommen att kontakta Aase Carlsson,
+        bitr\u00e4dande rektor, 08-570\u00a0486 21 alternativt Maria Nil\u00e4ng rektor,
+        08-570\u00a0486 25. Fackliga representanter n\u00e5s via kontaktcenter, 08-570\u00a0470
+        00.</p><p>\u00a0</p><p>Vi undanber oss alla erbjudanden om annonserings- och
+        rekryteringshj\u00e4lp i samband med denna annons.</p><p>\u00a0</p><p>\u00a0</p><p>\u00a0</p><p>\u00a0</p><p>\u00a0</p><p>\u00a0</p><p><strong>V\u00e4rmd\u00f6
+        kommun</strong> erbjuder friskv\u00e5rdsbidrag, SL-kort mot nettol\u00f6neavdrag
+        och\u00a0semesterv\u00e4xling till extra lediga dagar. Vi arbetar \u00e4ven
+        aktivt f\u00f6r att skapa h\u00e4lsofr\u00e4mjande arbetsplatser med en god
+        arbetsmilj\u00f6 och till\u00e4mpar r\u00f6kfri arbetstid.</p><p><strong>Vi
+        str\u00e4var</strong> efter en j\u00e4mn k\u00f6nsf\u00f6rdelning och ser
+        m\u00e5ngfald som en styrka och v\u00e4lkomnar d\u00e4rf\u00f6r s\u00f6kande
+        med olika bakgrund.\u00a0</p><p><strong>Vill du veta mer</strong> \u00e4r
+        du v\u00e4lkommen att kontakta oss, se kontaktperson nedan.</p><p>Kontaktuppgifter
+        till arbetstagarorganisationerna hittar du p\u00e5 https://www.varmdo.se/fackligaorganisationer
+        eller via Servicecenter, 08-570 470 00. Vi undanber oss alla erbjudanden om
+        annonserings- och rekryteringshj\u00e4lp i samband med denna annons.</p></p>",
+        "company_information": null, "needs": null, "requirements": null, "conditions":
+        null}, "employment_type": {"concept_id": "PFZr_Syz_cUq", "label": "Vanlig
+        anst\u00e4llning", "legacy_ams_taxonomy_id": "1"}, "salary_type": {"concept_id":
+        "oG8G_9cW_nRf", "label": "Fast m\u00e5nads- vecko- eller timl\u00f6n", "legacy_ams_taxonomy_id":
+        "1"}, "salary_description": null, "duration": {"concept_id": "a7uU_j21_mkL",
+        "label": "Tills vidare", "legacy_ams_taxonomy_id": "1"}, "working_hours_type":
+        {"concept_id": "6YE1_gAC_R2G", "label": "Heltid", "legacy_ams_taxonomy_id":
+        "1"}, "scope_of_work": {"min": 100, "max": 100}, "access": null, "employer":
+        {"phone_number": null, "email": null, "url": "https://www.varmdo.se/", "organization_number":
+        "2120000035", "name": "V\u00c4RMD\u00d6 KOMMUN", "workplace": "Utbildningskontoret,
+        Skolavdelningen, Djur\u00f6 skola"}, "application_details": {"information":
+        null, "reference": null, "email": null, "via_af": false, "url": "https://varmdo.varbi.com/se/what:job/jobID:957860/type:job/where:125/apply:1",
+        "other": null}, "experience_required": true, "access_to_own_car": false, "driving_license_required":
+        false, "driving_license": null, "occupation": {"concept_id": "Nzmh_iTb_z7h",
+        "label": "L\u00e4rare i grundskolan, \u00e5rskurs 4-6", "legacy_ams_taxonomy_id":
+        "7653"}, "occupation_group": {"concept_id": "oQUQ_D11_HPx", "label": "Grundskoll\u00e4rare",
+        "legacy_ams_taxonomy_id": "2341"}, "occupation_field": {"concept_id": "MVqp_eS8_kDZ",
+        "label": "Pedagogik", "legacy_ams_taxonomy_id": "15"}, "workplace_address":
+        {"municipality": "V\u00e4rmd\u00f6", "municipality_code": "0120", "municipality_concept_id":
+        "15nx_Vut_GrH", "region": "Stockholms l\u00e4n", "region_code": "01", "region_concept_id":
+        "CifL_Rzy_Mku", "country": "Sverige", "country_code": "199", "country_concept_id":
+        "i46j_HmG_v64", "street_address": "Skogsbov\u00e4gen 9", "postcode": "13430",
+        "city": "Gustavsberg", "coordinates": [18.3992545165523, 59.3227413262476]},
+        "must_have": {"skills": [], "languages": [], "work_experiences": [], "education":
+        [], "education_level": []}, "nice_to_have": {"skills": [], "languages": [],
+        "work_experiences": [{"weight": 5, "concept_id": "Nzmh_iTb_z7h", "label":
+        "L\u00e4rare i grundskolan, \u00e5rskurs 4-6", "legacy_ams_taxonomy_id": "7653"}],
+        "education": [], "education_level": []}, "application_contacts": [{"name":
+        "Aase Carlsson", "description": null, "email": "aase.carlsson@varmdo.se",
+        "telephone": "08-57048621", "contact_type": null}, {"name": "Maria Nil\u00e4ng",
+        "description": null, "email": "maria.nilang@varmdo.se", "telephone": "08-57048625",
+        "contact_type": null}], "publication_date": "2026-08-06T13:24:22", "last_publication_date":
+        "2026-08-30T23:59:59", "removed": false, "removed_date": null, "source_type":
+        "VIA_JOBPOSTING", "timestamp": 1786015462869}, {"relevance": 0.9575174661118515,
+        "id": "31347044", "external_id": null, "original_id": null, "label": [], "webpage_url":
+        "https://arbetsformedlingen.se/platsbanken/annonser/31347044", "logo_url":
+        "https://arbetsformedlingen.se/rest/employer-logo-api/api/v1/organisation/2120001140/logotyper/logo.png",
+        "headline": "L\u00e4rare mellanstadiet", "application_deadline": "2026-08-19T23:59:59",
+        "number_of_vacancies": 1, "description": {"text": "Landskrona \u00e4r p\u00e5
+        frammarsch p\u00e5 m\u00e5nga plan. Nya omr\u00e5den med havsn\u00e4ra boende
+        v\u00e4xer fram och allt fler f\u00f6retag v\u00e4ljer att etablera sig just
+        h\u00e4r. L\u00e4get mitt i \u00d6resundsregionen med n\u00e4rhet till bad
+        och stad, natur och kultur lockar allt fler till inflyttning, etablering och
+        bes\u00f6k.\n\nI Landskrona stad med drygt 3300 medarbetare arbetar vi efter
+        v\u00e5r v\u00e4rdegrund BRA, d\u00e4r B st\u00e5r f\u00f6r bem\u00f6tande,
+        R f\u00f6r resultat och A f\u00f6r ansvar. V\u00e5r v\u00e4rdegrund ska genomsyra
+        all v\u00e5r verksamhet och vi ska vara en arbetsplats d\u00e4r du k\u00e4nner
+        arbetsgl\u00e4dje och stolthet. H\u00e4r finns utrymme f\u00f6r dig med mod
+        och handlingskraft och du f\u00e5r m\u00f6jlighet att utvecklas.\n\nVill du
+        vara med och p\u00e5verka utvecklingen i en av Sk\u00e5nes mest sp\u00e4nnande
+        st\u00e4der? V\u00e4lkommen med din ans\u00f6kan!\r\n\r\n1 plats(er). \r\n\r\nARBETSUPPGIFTER\r\nVill
+        du vara en del av en verksamhet d\u00e4r kvalitet, tydlighet och elevens b\u00e4sta
+        st\u00e5r i centrum?\n\nI rollen som l\u00e4rare i \u00e5rskurs 4-6 undervisar
+        du elever som \u00e4r i b\u00f6rjan av sin mellanstadietid och som utvecklar
+        allt st\u00f6rre f\u00f6rm\u00e5ga att ta ansvar f\u00f6r sitt l\u00e4rande.
+        Du skapar en strukturerad och stimulerande undervisning som ger eleverna goda
+        f\u00f6ruts\u00e4ttningar att n\u00e5 sina kunskapsm\u00e5l och st\u00e4rkas
+        socialt. Tillsammans med erfarna och engagerade kollegor bidrar du till en
+        trygg och v\u00e4lfungerande l\u00e4rmilj\u00f6 d\u00e4r elevernas utveckling
+        st\u00e5r i fokus.\n\nArbetsuppgifterna innefattar bland annat:\u00a0\n\n\t\u2022
+        Planera, genomf\u00f6ra och f\u00f6lja upp undervisning utifr\u00e5n g\u00e4llande
+        styrdokument.\n\t\u2022 St\u00f6dja elevernas kunskapsutveckling genom varierade
+        arbetss\u00e4tt och tydlig struktur.\n\t\u2022 Bed\u00f6ma, dokumentera och
+        ge \u00e5terkoppling p\u00e5 elevernas l\u00e4rande.\n\t\u2022 Skapa en trygg
+        och inkluderande milj\u00f6 d\u00e4r eleverna k\u00e4nner motivation och studiero.\n\t\u2022
+        Arbeta med anpassningar och extra st\u00f6d utifr\u00e5n elevers olika behov.\n\t\u2022
+        Samarbeta i arbetslag och bidra till skolans utvecklingsarbete.\n\nV\u00e5rt
+        erbjudande:\u00a0\n\nHos oss f\u00e5r du m\u00f6jlighet att utvecklas i din
+        yrkesroll, p\u00e5verka undervisningen och bidra till skolans fortsatta kvalitetsarbete.
+        Vi v\u00e4rnar om en trygg och inkluderande kultur d\u00e4r b\u00e5de personal
+        och elever f\u00e5r r\u00e4tt f\u00f6ruts\u00e4ttningar att lyckas och trivas.\r\n\r\nKVALIFIKATIONER\r\nVi
+        s\u00f6ker dig som arbetar strukturerat och m\u00e5lmedvetet, med f\u00f6rm\u00e5ga
+        att planera och organisisera ditt arbete med kvalitet. Du \u00e4r stabil och
+        hanterar stressade situationer professionellt, samtidigt som du beh\u00e5ller
+        ett positivt bem\u00f6tande. Som person \u00e4r du relationsskapande och tar
+        naturligt initiativ i m\u00f6tet med b\u00e5de elever och kollegor, vilket
+        bidrar till ett \u00f6ppet och f\u00f6rtroendefullt klimat. Du \u00e4r ocks\u00e5
+        samarbetsorienterad, prestigel\u00f6s och har l\u00e4tt f\u00f6r att hitta
+        l\u00f6sningar tillsammans med andra med fokus p\u00e5 det gemensamma m\u00e5let.\n\nKrav
+        f\u00f6r tj\u00e4nsten:\u00a0\n\n\t\u2022 Aktuell kunskap om styrdokument,
+        s\u00e5som l\u00e4roplan, kursplaner och bed\u00f6mningskriterier\n\t\u2022
+        Beh\u00e4rskar det svenska spr\u00e5ket i tal och skrift\n\t\u2022 Erfarenhet
+        av undervisning under minimum 3 \u00e5r i \u00e4mnena matematik, NO och teknik.\n\t\u2022
+        L\u00e5ng erfarenhet av praktiskt arbete som l\u00e4rare i grundskola, minimum
+        10 \u00e5r.\u00a0\n\t\u2022 Goda referenser fr\u00e5n tidigare skolledare
+        (chef) p\u00e5 arbetsplatsen du arbetat under minimum 3 \u00e5rs tid.\u00a0\n\nVi
+        \u00e4r i behov av en erfaren l\u00e4rare med goda referenser fr\u00e5n l\u00e5ngvarigt
+        arbete inom skola. Vi l\u00e4gger d\u00e4rf\u00f6r stor vikt vid personliga
+        egenskaper och erfarenheter i rekryteringsprocess och urval.\u00a0\n\nI denna
+        rekrytering ber vi dig att bifoga ditt CV samt besvara ett antal urvalsfr\u00e5gor.\u00a0\n\nSyftet
+        med urvalsfr\u00e5gorna \u00e4r att skapa en effektivare och mer r\u00e4ttvis
+        rekryteringsprocess, d\u00e4r alla kandidater bed\u00f6ms utifr\u00e5n samma
+        kompetensbaserade kriterier. \u00a0\n\nV\u00e4lkommen med din ans\u00f6kan!\r\n\r\nL\u00f6neform:
+        M\u00e5nadsl\u00f6n.\r\nAnst\u00e4llningsform: Tidsbegr\u00e4nsad anst\u00e4llning.\r\nVaraktighet:
+        3-6 m\u00e5nader, tilltr\u00e4de: 2026-08-19  , upph\u00f6r: 2026-12-31  .\r\nArbetstid:
+        Dagtid.\r\n\r\nArbetsgivarinformation:  https://www.landskrona.se/jobbailandskronastad\n\nF\u00f6r
+        att kvalitetss\u00e4kra rekryteringsprocessen i Landskrona stad anv\u00e4nder
+        vi rekryteringsverktyget Visma Recruit. D\u00e4rf\u00f6r ber vi dig att skicka
+        in din ans\u00f6kan via Visma Recruit genom att klicka p\u00e5 ans\u00f6kningsl\u00e4nken
+        i annonsen. En ans\u00f6kan till Landskrona stad \u00e4r en allm\u00e4n handling
+        och dina personuppgifter hanteras enligt GDPR.\n\nD\u00e5 vi inf\u00f6r denna
+        rekrytering redan tagit st\u00e4llning till de rekryteringskanaler vi \u00f6nskar
+        anv\u00e4nda undanber vi oss att bli kontaktade f\u00f6r ytterligare erbjudanden
+        om kompetensf\u00f6rmedling samt annonserings- och rekryteringshj\u00e4lp.\n\nOm
+        du som s\u00f6kande har skyddade personuppgifter, beh\u00f6ver du kontakta
+        rekryterande chef f\u00f6r att f\u00e5 tillg\u00e5ng till urvalsfr\u00e5gorna.
+        Du skickar din ans\u00f6kan till HR-avdelningen via post eller l\u00e4mnar
+        in den i receptionen, st\u00e4lld till HR-enheten d\u00e4r du ocks\u00e5 anger
+        vilket referensnummer annonsen har.\n\nI din ans\u00f6kan beh\u00f6ver du
+        ange hur du vill bli kontaktad av rekryterande chef. Din ans\u00f6kan kommer
+        sekretessmarkeras och bevaras i tv\u00e5 \u00e5r \u00e4ven om du inte blir
+        anst\u00e4lld hos oss. D\u00e4refter gallras handlingarna. Du kan l\u00e4sa
+        mer om hur vi behandlar dina personuppgifter p\u00e5 https://www.landskrona.se/kommun-och-politik/sa-behandlar-landskrona-stad-personuppgifter/.",
+        "text_formatted": "Landskrona \u00e4r p\u00e5 frammarsch p\u00e5 m\u00e5nga
+        plan. Nya omr\u00e5den med havsn\u00e4ra boende v\u00e4xer fram och allt fler
+        f\u00f6retag v\u00e4ljer att etablera sig just h\u00e4r. L\u00e4get mitt i
+        \u00d6resundsregionen med n\u00e4rhet till bad och stad, natur och kultur
+        lockar allt fler till inflyttning, etablering och bes\u00f6k.\n\nI Landskrona
+        stad med drygt 3300 medarbetare arbetar vi efter v\u00e5r v\u00e4rdegrund
+        BRA, d\u00e4r B st\u00e5r f\u00f6r bem\u00f6tande, R f\u00f6r resultat och
+        A f\u00f6r ansvar. V\u00e5r v\u00e4rdegrund ska genomsyra all v\u00e5r verksamhet
+        och vi ska vara en arbetsplats d\u00e4r du k\u00e4nner arbetsgl\u00e4dje och
+        stolthet. H\u00e4r finns utrymme f\u00f6r dig med mod och handlingskraft och
+        du f\u00e5r m\u00f6jlighet att utvecklas.\n\nVill du vara med och p\u00e5verka
+        utvecklingen i en av Sk\u00e5nes mest sp\u00e4nnande st\u00e4der? V\u00e4lkommen
+        med din ans\u00f6kan!\r\n\r\n1 plats(er). \r\n\r\nARBETSUPPGIFTER\r\nVill
+        du vara en del av en verksamhet d\u00e4r kvalitet, tydlighet och elevens b\u00e4sta
+        st\u00e5r i centrum?\n\nI rollen som l\u00e4rare i \u00e5rskurs 4-6 undervisar
+        du elever som \u00e4r i b\u00f6rjan av sin mellanstadietid och som utvecklar
+        allt st\u00f6rre f\u00f6rm\u00e5ga att ta ansvar f\u00f6r sitt l\u00e4rande.
+        Du skapar en strukturerad och stimulerande undervisning som ger eleverna goda
+        f\u00f6ruts\u00e4ttningar att n\u00e5 sina kunskapsm\u00e5l och st\u00e4rkas
+        socialt. Tillsammans med erfarna och engagerade kollegor bidrar du till en
+        trygg och v\u00e4lfungerande l\u00e4rmilj\u00f6 d\u00e4r elevernas utveckling
+        st\u00e5r i fokus.\n\nArbetsuppgifterna innefattar bland annat:\u00a0\n\n\t\u2022
+        Planera, genomf\u00f6ra och f\u00f6lja upp undervisning utifr\u00e5n g\u00e4llande
+        styrdokument.\n\t\u2022 St\u00f6dja elevernas kunskapsutveckling genom varierade
+        arbetss\u00e4tt och tydlig struktur.\n\t\u2022 Bed\u00f6ma, dokumentera och
+        ge \u00e5terkoppling p\u00e5 elevernas l\u00e4rande.\n\t\u2022 Skapa en trygg
+        och inkluderande milj\u00f6 d\u00e4r eleverna k\u00e4nner motivation och studiero.\n\t\u2022
+        Arbeta med anpassningar och extra st\u00f6d utifr\u00e5n elevers olika behov.\n\t\u2022
+        Samarbeta i arbetslag och bidra till skolans utvecklingsarbete.\n\nV\u00e5rt
+        erbjudande:\u00a0\n\nHos oss f\u00e5r du m\u00f6jlighet att utvecklas i din
+        yrkesroll, p\u00e5verka undervisningen och bidra till skolans fortsatta kvalitetsarbete.
+        Vi v\u00e4rnar om en trygg och inkluderande kultur d\u00e4r b\u00e5de personal
+        och elever f\u00e5r r\u00e4tt f\u00f6ruts\u00e4ttningar att lyckas och trivas.\r\n\r\nKVALIFIKATIONER\r\nVi
+        s\u00f6ker dig som arbetar strukturerat och m\u00e5lmedvetet, med f\u00f6rm\u00e5ga
+        att planera och organisisera ditt arbete med kvalitet. Du \u00e4r stabil och
+        hanterar stressade situationer professionellt, samtidigt som du beh\u00e5ller
+        ett positivt bem\u00f6tande. Som person \u00e4r du relationsskapande och tar
+        naturligt initiativ i m\u00f6tet med b\u00e5de elever och kollegor, vilket
+        bidrar till ett \u00f6ppet och f\u00f6rtroendefullt klimat. Du \u00e4r ocks\u00e5
+        samarbetsorienterad, prestigel\u00f6s och har l\u00e4tt f\u00f6r att hitta
+        l\u00f6sningar tillsammans med andra med fokus p\u00e5 det gemensamma m\u00e5let.\n\nKrav
+        f\u00f6r tj\u00e4nsten:\u00a0\n\n\t\u2022 Aktuell kunskap om styrdokument,
+        s\u00e5som l\u00e4roplan, kursplaner och bed\u00f6mningskriterier\n\t\u2022
+        Beh\u00e4rskar det svenska spr\u00e5ket i tal och skrift\n\t\u2022 Erfarenhet
+        av undervisning under minimum 3 \u00e5r i \u00e4mnena matematik, NO och teknik.\n\t\u2022
+        L\u00e5ng erfarenhet av praktiskt arbete som l\u00e4rare i grundskola, minimum
+        10 \u00e5r.\u00a0\n\t\u2022 Goda referenser fr\u00e5n tidigare skolledare
+        (chef) p\u00e5 arbetsplatsen du arbetat under minimum 3 \u00e5rs tid.\u00a0\n\nVi
+        \u00e4r i behov av en erfaren l\u00e4rare med goda referenser fr\u00e5n l\u00e5ngvarigt
+        arbete inom skola. Vi l\u00e4gger d\u00e4rf\u00f6r stor vikt vid personliga
+        egenskaper och erfarenheter i rekryteringsprocess och urval.\u00a0\n\nI denna
+        rekrytering ber vi dig att bifoga ditt CV samt besvara ett antal urvalsfr\u00e5gor.\u00a0\n\nSyftet
+        med urvalsfr\u00e5gorna \u00e4r att skapa en effektivare och mer r\u00e4ttvis
+        rekryteringsprocess, d\u00e4r alla kandidater bed\u00f6ms utifr\u00e5n samma
+        kompetensbaserade kriterier. \u00a0\n\nV\u00e4lkommen med din ans\u00f6kan!\r\n\r\nL\u00f6neform:
+        M\u00e5nadsl\u00f6n.\r\nAnst\u00e4llningsform: Tidsbegr\u00e4nsad anst\u00e4llning.\r\nVaraktighet:
+        3-6 m\u00e5nader, tilltr\u00e4de: 2026-08-19  , upph\u00f6r: 2026-12-31  .\r\nArbetstid:
+        Dagtid.\r\n\r\nArbetsgivarinformation:  https://www.landskrona.se/jobbailandskronastad\n\nF\u00f6r
+        att kvalitetss\u00e4kra rekryteringsprocessen i Landskrona stad anv\u00e4nder
+        vi rekryteringsverktyget Visma Recruit. D\u00e4rf\u00f6r ber vi dig att skicka
+        in din ans\u00f6kan via Visma Recruit genom att klicka p\u00e5 ans\u00f6kningsl\u00e4nken
+        i annonsen. En ans\u00f6kan till Landskrona stad \u00e4r en allm\u00e4n handling
+        och dina personuppgifter hanteras enligt GDPR.\n\nD\u00e5 vi inf\u00f6r denna
+        rekrytering redan tagit st\u00e4llning till de rekryteringskanaler vi \u00f6nskar
+        anv\u00e4nda undanber vi oss att bli kontaktade f\u00f6r ytterligare erbjudanden
+        om kompetensf\u00f6rmedling samt annonserings- och rekryteringshj\u00e4lp.\n\nOm
+        du som s\u00f6kande har skyddade personuppgifter, beh\u00f6ver du kontakta
+        rekryterande chef f\u00f6r att f\u00e5 tillg\u00e5ng till urvalsfr\u00e5gorna.
+        Du skickar din ans\u00f6kan till HR-avdelningen via post eller l\u00e4mnar
+        in den i receptionen, st\u00e4lld till HR-enheten d\u00e4r du ocks\u00e5 anger
+        vilket referensnummer annonsen har.\n\nI din ans\u00f6kan beh\u00f6ver du
+        ange hur du vill bli kontaktad av rekryterande chef. Din ans\u00f6kan kommer
+        sekretessmarkeras och bevaras i tv\u00e5 \u00e5r \u00e4ven om du inte blir
+        anst\u00e4lld hos oss. D\u00e4refter gallras handlingarna. Du kan l\u00e4sa
+        mer om hur vi behandlar dina personuppgifter p\u00e5 https://www.landskrona.se/kommun-och-politik/sa-behandlar-landskrona-stad-personuppgifter/.",
+        "company_information": null, "needs": null, "requirements": null, "conditions":
+        null}, "employment_type": {"concept_id": "PFZr_Syz_cUq", "label": "Vanlig
+        anst\u00e4llning", "legacy_ams_taxonomy_id": "1"}, "salary_type": {"concept_id":
+        "oG8G_9cW_nRf", "label": "Fast m\u00e5nads- vecko- eller timl\u00f6n", "legacy_ams_taxonomy_id":
+        "1"}, "salary_description": null, "duration": {"concept_id": "Xj7x_7yZ_jEn",
+        "label": "3 m\u00e5nader \u2013 upp till 6 m\u00e5nader", "legacy_ams_taxonomy_id":
+        "3"}, "working_hours_type": {"concept_id": "6YE1_gAC_R2G", "label": "Heltid",
+        "legacy_ams_taxonomy_id": "1"}, "scope_of_work": {"min": 100, "max": 100},
+        "access": null, "employer": {"phone_number": null, "email": null, "url": null,
+        "organization_number": "2120001140", "name": "LANDSKRONA KOMMUN", "workplace":
+        "Landskrona stad, Albanoskolan"}, "application_details": {"information": null,
+        "reference": "C338951", "email": null, "via_af": false, "url": "https://recruit.visma.com/spa/public/apply?guidAssignment=df8a4398-6196-4ebf-bb5d-79885d8fef48&publishCode=PB&TK=6accfd69-68e1-4c65-9103-66061dcaf40b",
+        "other": null}, "experience_required": true, "access_to_own_car": false, "driving_license_required":
+        false, "driving_license": null, "occupation": {"concept_id": "Nzmh_iTb_z7h",
+        "label": "L\u00e4rare i grundskolan, \u00e5rskurs 4-6", "legacy_ams_taxonomy_id":
+        "7653"}, "occupation_group": {"concept_id": "oQUQ_D11_HPx", "label": "Grundskoll\u00e4rare",
+        "legacy_ams_taxonomy_id": "2341"}, "occupation_field": {"concept_id": "MVqp_eS8_kDZ",
+        "label": "Pedagogik", "legacy_ams_taxonomy_id": "15"}, "workplace_address":
+        {"municipality": "Landskrona", "municipality_code": "1282", "municipality_concept_id":
+        "Yt5s_Vf9_rds", "region": "Sk\u00e5ne l\u00e4n", "region_code": "12", "region_concept_id":
+        "CaRE_1nn_cSU", "country": "Sverige", "country_code": "199", "country_concept_id":
+        "i46j_HmG_v64", "street_address": "Fabriksgatan 3", "postcode": "26137", "city":
+        "Landskrona", "coordinates": [12.8316882257928, 55.8784519738363]}, "must_have":
+        {"skills": [], "languages": [], "work_experiences": [], "education": [], "education_level":
+        []}, "nice_to_have": {"skills": [], "languages": [], "work_experiences": [],
+        "education": [], "education_level": []}, "application_contacts": [{"name":
+        "Louise   S\u00f6derblom", "description": null, "email": "louise.soderblom@landskrona.se",
+        "telephone": "+46418474195", "contact_type": "Tf bitr\u00e4dande rektor"}],
+        "publication_date": "2026-08-13T08:50:12", "last_publication_date": "2026-08-19T23:59:59",
+        "removed": false, "removed_date": null, "source_type": "VIA_JOBPOSTING", "timestamp":
+        1786603812701}]}
+
+        '
+    headers:
+      access-control-allow-headers:
+      - api-key, Content-Type, Accept, Cache-control
+      access-control-allow-methods:
+      - GET,HEAD,OPTIONS
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - Content-Length,Content-Range
+      af-responsetime:
+      - '21'
+      af-trackingid:
+      - 5f95eb70-9729-11f1-b076-0a58ac1c2803
+      content-length:
+      - '30725'
+      content-security-policy:
+      - 'default-src ''self''; script-src ''self'' ''unsafe-inline''; style-src ''self'';
+        img-src ''self'' blob: data:; connect-src ''self''; form-action ''none'';
+        font-src ''self''; frame-src ''none''; object-src ''none''; frame-ancestors
+        ''none'';'
+      content-type:
+      - application/json
+      date:
+      - Thu, 13 Aug 2026 15:12:17 GMT
+      referrer-policy:
+      - no-referrer
+      set-cookie:
+      - a0054cc410113e93556c76e2b9eb354a=c08159330581c9981632e3feb9cf68d7; path=/;
+        HttpOnly; Secure; SameSite=None
+      strict-transport-security:
+      - max-age=31536000; includeSubdomains; preload
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - DENY
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+version: 1
