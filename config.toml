@@ -1,0 +1,20 @@
+# Quiet Öppen Data — Konfiguration
+# Byt BARA här om domänen ändras (ARKITEKTUR.md §0).
+
+[site]
+domain = "quiet.nu"
+
+[modell]
+namn              = "claude-opus-5"
+effort_hamtning   = "high"
+effort_syntes     = "medium"
+max_verktygsvarv  = 8
+
+[kvot]
+fragor_per_ip_per_dygn  = 50
+fragor_totalt_per_dygn  = 2000
+
+[index]
+db = "data/index.sqlite"
+embedding_modell = "KBLab/sentence-bert-swedish-cased"
+embedding_dim = 768

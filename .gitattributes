@@ -1,0 +1,7 @@
+# Normalisera radslut till LF i repo; checkout med native endings
+* text=auto eol=lf
+*.py text eol=lf
+*.toml text eol=lf
+*.yaml text eol=lf
+*.md text eol=lf
+*.js text eol=lf
