@@ -638,6 +638,10 @@ en `<script>`-tagg på quiet.nu.
 
 ## Steg 16A — Lagkorpus, de fem huvudlagarna
 
+**Läs `ARKITEKTUR.md` §3.2b (lagindex) och §5 regel 8 (en kopia måste bära sin
+färskhetsstämpel) innan du börjar.** Steget inför systemets enda lokala kopia, och
+regel 8 är villkoret för att det ska få finnas.
+
 **Bakgrund.** Chattens publik är svenska småföretagare och deras redovisare.
 Lagtexten de faktiskt arbetar mot är ett femtiotal skatte- och
 redovisningsförfattningar. Steg 16A bygger hämtning, parsning och indexering för
@@ -709,7 +713,7 @@ Det här är **systemets första kopia**. Allt annat hämtas live; en lagtext p�
 disk kan bli inaktuell. En inaktuell SCB-siffra är pinsam, en inaktuell
 skatteparagraf leder till en felaktig deklaration.
 
-Därför, som hårt krav:
+Detta är `ARKITEKTUR.md` §5 regel 8, formulerat som krav på implementationen:
 
 * `Faktautkast.period` = konsolideringspunkten, t.ex. `"t.o.m. SFS 2026:1393"`.
 * `Faktautkast.dataset` = SFS-numret.

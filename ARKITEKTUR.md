@@ -1,10 +1,13 @@
 # Arkitektur — Quiet Öppen Data
 
-Chattfunktion på quiet.nu som besvarar frågor **enbart** med uppgifter hämtade i realtid
-från offentligt finansierade organisationers API:er, och som redovisar varje uppgift med
-fotnot och klickbar källänk.
+Chattfunktion på quiet.nu som besvarar frågor **enbart** med uppgifter från offentligt
+finansierade organisationers API:er, och som redovisar varje uppgift med fotnot och
+klickbar källänk.
 
-Version 1.0 · 2026-08-13 · Författare: arkitekturunderlag för implementerande kod-AI
+Allt hämtas i realtid, med ett undantag: lagtexten speglas lokalt (§3.2b). Den
+kopian måste bära sin färskhetsstämpel hela vägen ut i svaret — se §5 regel 8.
+
+Version 1.1 · 2026-08-14 · Författare: arkitekturunderlag för implementerande kod-AI
 
 ---
 
@@ -78,9 +81,10 @@ något det inte kan belägga, och när det inte kan belägga något säger det s
                              │
         ┌────────────────────┼────────────────────┐
         ▼                    ▼                    ▼
-   Katalogindex          Cache/kö            Myndighets-API:er
-   (SQLite + FTS5        (SQLite, TTL        (~11 direkta +
-    + embeddings)         per källa)          PxWeb/RowStore-familjer)
+   Katalog- och          Cache/kö            Myndighets-API:er
+   lagindex              (SQLite, TTL        (~11 direkta +
+   (SQLite + FTS5         per källa)          PxWeb/RowStore-familjer)
+    + embeddings)                            + Riksdagen SFS (kopia, §3.2b)
 ```
 
 ---
@@ -121,6 +125,21 @@ begreppsfrågor, sammanvägt med reciprocal rank fusion. Detta är discovery-lag
 det gör att boten kan svara "det finns hos Boverket, här är datamängden" även när
 ingen adapter kan exekvera mot den.
 
+### 3.2b Lagindex (steg 16)
+
+Samma hybridsökning, andra korpus: 62 skatte- och redovisningsförfattningar hämtade
+som **konsoliderad** text från Riksdagens öppna data. Chunk = kapitelrubrik +
+paragrafrubrik + paragraftext + ändringsmarkering (`Lag (ÅÅÅÅ:NNN)`). En paragraf
+står sällan ensam — *"Bestämmelser om skattskyldighet finns i 3–7 kap."* betyder
+ingenting utan sitt sammanhang.
+
+Riksdagen konsoliderar åt oss; dokumenthuvudet bär punkten:
+`Inkomstskattelag (1999:1229) t.o.m. SFS 2026:1393`. Systemet bygger **ingen** egen
+konsolidering ur ändringsförfattningar — en felkonsoliderad paragraf ser exakt lika
+trovärdig ut som en riktig.
+
+**Detta är systemets enda kopia.** Se §5 regel 8.
+
 ### 3.3 Adapterlager
 
 Alla adaptrar implementerar samma gränssnitt:
@@ -148,6 +167,10 @@ katalogindexets `access_url` utan ny kod per källa.
 **Nivå 3 — katalogsvar:** när ingen adapter passar returnerar `dataportal`-adaptern
 metadata om datamängden som Faktaposter. Boten svarar då *var* uppgiften finns i stället
 för *vad* den är. Det är ett giltigt svar, inte ett fel.
+
+**Utanför nivåerna — `lagtext` (steg 16):** den enda adaptern som läser ur ett lokalt
+index i stället för att anropa en källa. Den finns i sin egen kategori just för att den
+avviker; se §3.2b och §5 regel 8.
 
 ### 3.4 Faktapost
 
@@ -306,6 +329,23 @@ Regel 2 är den som skyddar mot den farligaste felmoden. Ett självsäkert felak
 värre än inget tal, och en modell som får multiplicera två hämtade värden har fem sätt
 att göra det fel. Låt den hämta och citera; låt koden räkna.
 
+### Regel 8 — en kopia måste bära sin färskhetsstämpel
+
+Allt utom lagindexet hämtas i realtid. Lagtexten är den enda kopian, och en kopia kan
+bli inaktuell utan att se inaktuell ut.
+
+Därför: varje Faktapost ur lagindexet bär konsolideringspunkten i `period`
+(`"t.o.m. SFS 2026:1393"`), SFS-numret i `dataset`, och `hamtad` = när kopian togs,
+inte när frågan ställdes. Ett svar som citerar en paragraf ska kunna visa i vilken
+lydelse, och `lank_manniska` pekar på Riksdagens sida med den nu gällande texten.
+
+Skälet är proportionerligt: en inaktuell SCB-siffra är pinsam, en inaktuell
+skatteparagraf leder till en felaktig deklaration. Färskheten kontrolleras nattligt
+genom att jämföra `systemdatum` — aldrig genom att diffa text.
+
+Regeln gäller varje framtida källa som cachas i stället för att hämtas. Det finns bara
+en i dag, och det är avsiktligt.
+
 ---
 
 ## 6. Modellval och API-användning
@@ -422,6 +462,11 @@ klientcertifikat; den anslutningen får aldrig ske från webbläsaren.
 * Skrivande operationer mot någon källa (det finns inga)
 * Koppling till sie-mcp — se nedan
 * Egen adapter per myndighet på nivå 2; katalogen plus generiska adaptrar räcker
+* Egen konsolidering av lagtext ur ändringsförfattningar — Riksdagen gör det åt oss
+  (§3.2b), och att bygga om det vore att införa en felkälla utan motsvarande vinst
+* EU-rätt och OECD-material. Sju dokument i beställarens lagförteckning ligger hos
+  EUR-Lex respektive OECD och saknas i Riksdagens SFS-data. De är en känd lucka, inte
+  något som ska smygas in i lagregistret som om de vore svenska författningar
 
 **Förhållandet till sie-mcp.** Detta system är fristående. Det delar ingen kod, ingen
 process och ingen datamodell med sie-mcp. Skälet är att sie-mcp arbetar i användarens
