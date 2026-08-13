@@ -46,7 +46,7 @@ class RiksbankenAdapter:
         url = f"{self._kalla.bas_url}/Observations/Latest/{serie}"
         
         try:
-            res = hamta_json(self._kalla, "GET", url)
+            res = hamta_json(self.id, "GET", url)
         except Exception:
             # Vid nätverksfel eller 404 (okänd serie) returnera tomt enligt protokollet.
             return []

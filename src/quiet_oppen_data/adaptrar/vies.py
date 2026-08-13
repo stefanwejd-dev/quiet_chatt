@@ -56,7 +56,7 @@ class ViesAdapter:
         url = f"{self._kalla.bas_url}/ms/{land}/vat/{momsnr}"
         
         try:
-            res = hamta_json(self._kalla, "GET", url)
+            res = hamta_json(self.id, "GET", url)
         except Exception:
             return []
             

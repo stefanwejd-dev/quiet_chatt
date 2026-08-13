@@ -174,7 +174,7 @@ Varje adapter måste:
 
 ---
 
-## Steg 5 — Kö, cache och blocklista
+## Steg 5 — Kö, cache och blocklista ✅ Godkänt 2026-08-13
 
 **Gör:** `adaptrar/transport.py`.
 
@@ -190,6 +190,8 @@ Varje adapter måste:
 - pytest: andra identiska anropet inom TTL gör noll HTTP-anrop.
 - pytest: anrop mot `polisen_efterlysta` kastar `SparradKalla` och gör noll HTTP-anrop.
 - pytest: `_generisk_json` mot `https://exempel.invalid/x` avvisas.
+
+**Utfall 2026-08-13:** Den gemensamma HTTP-klienten i `adaptrar/transport.py` har utökats. `TokenBucket` implementerades för strikt rate-limiting per källa och trådsäkerhet via locks. Svar cachas i `data/cache.sqlite` enligt källans TTL för att undvika onödiga nätverksanrop. Klienten blockerar automatiskt HTTP-anrop för källor som har `blockerad: true` (t.ex. `polisen_efterlysta`) och säkerställer via SQL mot databasen att `_generisk_json` enbart tillåts anropa indexerade värdar. Tester för ovanstående går gröna.
 
 ---
 
