@@ -128,9 +128,13 @@ Alla adaptrar implementerar samma gränssnitt:
 ```python
 class Adapter(Protocol):
     id: str
-    def beskriv(self) -> VerktygsSpec: ...          # → Claude-verktygsdefinition
-    def hamta(self, plan: Fragplan) -> list[Faktapost]: ...
+    def beskriv(self) -> list[VerktygsSpec]: ...      # → Claude-verktygsdefinitioner
+    def hamta(self, plan: Fragplan) -> list[Faktautkast]: ...
 ```
+
+**Adaptrar returnerar `Faktautkast`, aldrig `Faktapost`** (se §3.4). Vid fel loggar
+adaptern och returnerar tom lista — den skapar aldrig ett utkast som bär ett
+felmeddelande som värde. Ett fel är inte ett faktum.
 
 **Nivå 1 — handskrivna adaptrar (verifierade källor):**
 `riksbanken`, `scb_pxweb`, `ted`, `riksdagen`, `kolada`, `vies`, `dataportal`,
@@ -172,6 +176,21 @@ class Faktapost:
 
 `lank_maskin` är inte kosmetik. Den är beviset: användaren ska kunna klistra in den och
 få samma siffra. Den skrivs alltid ut i källpanelen.
+
+**`Faktautkast` — vad adaptrar returnerar.** Samma fält som `Faktapost` men utan `id`.
+Bara `Faktaregister` får mynta ett F-id, och bara registret kontrollerar att båda
+länkarna finns:
+
+```python
+poster = faktaregister.registrera_alla(adapter.hamta(plan))
+```
+
+Skälet är konkret, inte formellt. I den första implementationen byggde adaptrarna
+`Faktapost(id="", …)` direkt och tänkte fylla i id senare. Eftersom länkkontrollen bara
+låg i `registrera()` kunde en post då existera utan länkar — vilket inträffade i
+pxweb-adapterns felgren, där ett felmeddelande returnerades som ett citerbart faktum med
+tomma länkar. Med `Faktautkast` är den vägen stängd: en `Faktapost` kan inte uppstå utan
+att passera valideringen.
 
 ### 3.5 Cache och kö
 
@@ -249,7 +268,7 @@ ett obelagt svar.
 | 2 | Modellen räknar aldrig | Härledningar sker i `berakningar.py`; resultatet blir en ny Faktapost med `harledd=True` och `harledd_av=("F1","F2")`. Om modellen behöver en kvot anropar den `berakna_kvot`-verktyget. |
 | 3 | Ingen modellkunskap | Fas B:s kontextisolering |
 | 4 | Två länkar per Faktapost | Adapterkontrakt; validator kontrollerar |
-| 5 | Blocklista i kod | `kallregister.yaml` + hård kontroll i adapterlagret, inte i prompt |
+| 5 | Blocklista i kod | `kallregister.yaml` + hård kontroll i `transport.py`, inte i prompt. Tre spärrar före all nätverkstrafik: `SparradKalla` för `blockerad: true`, `EjAktiveradKalla` för `aktiverad: false`, och värdkontroll mot katalogindexet för alla `generisk: true` |
 | 6 | Frågan är synlig | `dimensioner` + `lank_maskin` renderas alltid i källpanelen |
 | 7 | Vägra hellre än gissa | Om planeraren inte kan mappa frågan till konkreta dimensioner returnerar adaptern valalternativen som Faktaposter i stället för ett gissat värde |
 
@@ -281,6 +300,22 @@ trafik. Två åtgärder är inbyggda i designen och måste vara på från dag et
 
 Om kostnaden ändå blir för hög är modellbytet beställarens beslut, inte
 implementatörens. Ändra inte modell utan att fråga.
+
+### 6a. Kostnadsspärr, beslutad 2026-08-13
+
+Beställarens hårda tak är 1 000 SEK/månad. Det upprätthålls i tre lager:
+
+1. **Anthropic-kontot är förskottsbetalt** (prepaid credits) utan auto-reload. När
+   krediten tar slut misslyckas anrop med ett faktureringsfel — kontot kan inte dra
+   mer pengar än det som satts in.
+2. `config.toml → kvot.kostnadstak_sek_per_manad` är ett sekundärt, internt larm i
+   applikationen (mätpunkt, inte betalningsspärr).
+3. Per-IP- och total-dygnskvoterna i samma sektion är den operativa begränsningen mot
+   enskild missbruk.
+
+Implementatören ska inte förvänta sig att lager 2 och 3 ensamma räcker som finansiellt
+skydd — lager 1 är den faktiska garantin och ligger utanför koden, i kontoinställningarna
+hos Anthropic.
 
 ---
 

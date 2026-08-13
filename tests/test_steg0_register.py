@@ -43,11 +43,33 @@ def test_verifierade_kallas_ar_kalla():
 
 
 def test_ej_verifierade_ar_inte_aktiverade():
-    """Ej verifierade källor ska ha aktiverad=False."""
+    """INVARIANT: ingen källa får vara aktiverad utan att vara verifierad.
+
+    Testet räknar medvetet INTE upp enskilda käll-id:n. Registret ändras varje
+    gång en källa verifieras (ARKITEKTUR.md §0), och en test som namnger källor
+    skulle fallera vid varje sådan verifiering — vilket gör den till brus i
+    stället för ett skydd. Det som ska hålla över tid är regeln, inte listan.
+
+    Generiska protokolladaptrar (generisk: true) är undantagna. De har ingen
+    bas_url och därmed ingen endpoint att verifiera — verifieringen sker per
+    instansierad värd vid körning, och deras säkerhetskontroll är att de bara
+    får anropa värdnamn som finns i katalogindexet (ARKITEKTUR.md §3.3, testas
+    i test_steg5_transport.py). Att kräva verifierad: ja av dem vore att mäta
+    fel sak.
+    """
     poster = register.las()
-    kalla_map = {p.id: p for p in poster if isinstance(p, Kalla)}
-    assert kalla_map["bolagsverket_hvd"].aktiverad is False
-    assert kalla_map["skatteverket_rowstore"].aktiverad is False
+    kallor = [p for p in poster if isinstance(p, Kalla) and not p.generisk]
+    assert kallor, "registret innehöll inga konkreta Kalla-objekt — läsningen är trasig"
+
+    overtradelser = [
+        k.id for k in kallor if not k.verifierad and k.aktiverad
+    ]
+    assert not overtradelser, (
+        "Källor är aktiverade utan att vara verifierade: "
+        f"{', '.join(sorted(overtradelser))}. "
+        "En overifierad källa har inte bekräftad sökväg eller svarsformat och "
+        "får inte anropas. Verifiera den först, eller sätt aktiverad: false."
+    )
 
 
 # ---------------------------------------------------------------------------

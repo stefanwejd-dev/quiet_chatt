@@ -1,12 +1,25 @@
-import json
-import math
-from datetime import datetime, timezone
+"""Generisk adapter för PxWeb-servrar (SCB och andra värdar).
+
+Kritiskt: en PxWeb-tabell har dimensioner, och fel skiva ger inte ett
+felmeddelande utan ett trovärdigt tal som är fel. Adaptern vägrar därför hämta
+data innan alla dimensioner är angivna, och skriver de valda dimensionerna i
+varje utkasts `dimensioner` (ARKITEKTUR.md §5 regel 6 och 7).
+"""
+
+from __future__ import annotations
+
+import logging
 from typing import Any
 
-from quiet_oppen_data.adaptrar.bas import Adapter
-from quiet_oppen_data.adaptrar.transport import hamta_json, hamta_text
-from quiet_oppen_data.modeller import Faktapost, Fragplan
+from quiet_oppen_data.adaptrar.transport import hamta_json
+from quiet_oppen_data.modeller import Faktautkast, Fragplan
 from quiet_oppen_data.register import Kalla, hamta
+
+logger = logging.getLogger(__name__)
+
+# Fler celler än så avvisas innan anropet görs. SCB rapporterar själv
+# maxDataCells 150000 via /config; registret kan sätta ett lägre tak per källa.
+STANDARD_MAXCELLER = 150_000
 
 
 class PxWebAdapter:
@@ -15,197 +28,289 @@ class PxWebAdapter:
     def __init__(self, kalla_id: str) -> None:
         k = hamta(kalla_id)
         if not isinstance(k, Kalla):
-            raise RuntimeError(f"PxWeb-källan {kalla_id} saknas eller är blockerad i registret.")
+            raise RuntimeError(
+                f"PxWeb-källan {kalla_id} saknas eller är blockerad i registret."
+            )
         self._kalla = k
 
     @property
     def id(self) -> str:
         return self._kalla.id
 
+    # ------------------------------------------------------------------
+    # Verktygsdefinitioner
+    # ------------------------------------------------------------------
+
     def beskriv(self) -> list[dict[str, Any]]:
-        # Exponerar två verktyg: ett för att lista dimensioner, ett för att hämta data
+        myndighet = self._kalla.myndighet or "PxWeb"
         return [
             {
                 "name": f"{self.id}_lista_dimensioner",
-                "description": f"Hämtar meta-information och tillgängliga dimensioner för en specifik PxWeb-tabell från {self._kalla.myndighet}.",
+                "description": (
+                    f"Listar vilka dimensioner en PxWeb-tabell hos {myndighet} har "
+                    "och vilka värdekoder som är giltiga för varje dimension. "
+                    "Anropa alltid detta före hamta_data."
+                ),
                 "input_schema": {
                     "type": "object",
                     "properties": {
                         "tabell": {
                             "type": "string",
-                            "description": "Tabellens ID (t.ex. TAB6445)"
+                            "description": "Tabellens id, t.ex. TAB6445",
                         }
                     },
-                    "required": ["tabell"]
-                }
+                    "required": ["tabell"],
+                },
             },
             {
                 "name": f"{self.id}_hamta_data",
-                "description": f"Hämtar data från en PxWeb-tabell från {self._kalla.myndighet}. Du MÅSTE ange alla dimensioner som returnerades av lista_dimensioner.",
+                "description": (
+                    f"Hämtar data ur en PxWeb-tabell hos {myndighet}. Du måste ange "
+                    "ett värde för VARJE dimension som lista_dimensioner returnerade. "
+                    "Utelämnas någon dimension hämtas ingen data — du får "
+                    "valalternativen tillbaka i stället."
+                ),
                 "input_schema": {
                     "type": "object",
                     "properties": {
-                        "tabell": {
-                            "type": "string",
-                            "description": "Tabellens ID"
-                        },
+                        "tabell": {"type": "string", "description": "Tabellens id"},
                         "dimensioner": {
                             "type": "object",
-                            "description": "En map/dictionary från dimensionskod (t.ex. 'Tid') till en lista av önskade värdekoder (t.ex. ['2026M07'])."
-                        }
+                            "description": (
+                                "Map från dimensionskod till lista av värdekoder, "
+                                "t.ex. {\"Tid\": [\"2026M07\"], \"ContentsCode\": [\"000007PK\"]}"
+                            ),
+                        },
                     },
-                    "required": ["tabell", "dimensioner"]
-                }
-            }
+                    "required": ["tabell", "dimensioner"],
+                },
+            },
         ]
 
+    # ------------------------------------------------------------------
+    # Metadata
+    # ------------------------------------------------------------------
+
+    def _metadata_url(self, tabell: str) -> str:
+        return f"{self._kalla.bas_url}/tables/{tabell}/metadata?lang=sv"
+
+    def _data_url(self, tabell: str) -> str:
+        # outputFormat MÅSTE ligga i query-strängen. Ett responseFormat i
+        # POST-kroppen ignoreras av SCB, som då svarar med PX i iso-8859-1
+        # i stället för JSON — verifierat mot api.scb.se 2026-08-13.
+        return f"{self._kalla.bas_url}/tables/{tabell}/data?lang=sv&outputFormat=json-stat2"
+
+    def _manniskolank(self, tabell: str) -> str:
+        mall = self._kalla.manniskolank_mall
+        if not mall:
+            return f"{self._kalla.bas_url}/tables/{tabell}"
+        try:
+            return mall.format(tabell=tabell)
+        except (KeyError, IndexError):
+            return mall
+
     def _las_metadata(self, tabell: str) -> dict[str, dict]:
-        """Hämtar och normaliserar dimensioner från SCB v2."""
-        url = f"{self._kalla.bas_url}/tables/{tabell}/metadata"
-        meta = hamta_json(self.id, "GET", url)
-        
-        dimensioner = {}
-        # Parsa JSON-stat 2 formatet för metadata
+        """Hämtar dimensioner ur tabellens json-stat2-metadata."""
+        meta = hamta_json(self.id, "GET", self._metadata_url(tabell))
+
+        dimensioner: dict[str, dict] = {}
         for dim_id in meta.get("id", []):
             dim = meta.get("dimension", {}).get(dim_id, {})
-            label = dim.get("label", dim_id)
-            cat = dim.get("category", {})
-            index = cat.get("index", {})
-            
-            codes = list(index.keys()) if isinstance(index, dict) else index
-            labels = cat.get("label", {})
-            texts = [labels.get(c, c) for c in codes]
-            
+            kategori = dim.get("category", {})
+            index = kategori.get("index", {})
+            koder = list(index.keys()) if isinstance(index, dict) else list(index or [])
+            etiketter = kategori.get("label", {})
             dimensioner[dim_id] = {
-                "label": label,
-                "codes": codes,
-                "texts": texts
+                "label": dim.get("label", dim_id),
+                "codes": koder,
+                "texts": [etiketter.get(k, k) for k in koder],
             }
         return dimensioner
 
-    def _formatera_valalternativ(self, tabell: str, dimensioner: dict[str, dict]) -> list[Faktapost]:
-        """Returnerar valalternativen som Faktaposter för LLM:en."""
-        poster = []
+    def _valalternativ(self, tabell: str, dimensioner: dict[str, dict]) -> list[Faktautkast]:
+        """Returnerar giltiga dimensionsvärden som utkast.
+
+        Detta är regel 7 i ARKITEKTUR.md §5: hellre visa valen än gissa en skiva.
+        """
+        utkast: list[Faktautkast] = []
         for dim_id, data in dimensioner.items():
-            kod_text = []
-            for c, t in zip(data["codes"], data["texts"]):
-                kod_text.append(f"{c} ({t})")
-            
-            # Förkorta om det är extremt många
-            if len(kod_text) > 100:
-                kod_text = kod_text[-100:] # Anta att sista 100 (tex tid) är mest relevanta
-                
-            varde_str = ", ".join(kod_text)
-            
-            manniska = ""
-            if self._kalla.manniskolank_mall:
-                manniska = self._kalla.manniskolank_mall.format(tabell=tabell)
-                
-            poster.append(
-                Faktapost(
-                    id="",
-                    etikett=f"PxWeb Dimension '{data['label']}' (kod: {dim_id}) för tabell {tabell}",
-                    varde=f"Tillåtna värden: {varde_str}",
+            par = [f"{k} ({t})" for k, t in zip(data["codes"], data["texts"])]
+            # Långa dimensioner (typiskt Tid) kortas bakifrån — de senaste
+            # värdena är nästan alltid de efterfrågade.
+            if len(par) > 100:
+                par = par[-100:]
+            utkast.append(
+                Faktautkast(
+                    etikett=(
+                        f"Giltiga värden för dimensionen '{data['label']}' "
+                        f"({dim_id}) i tabell {tabell}"
+                    ),
+                    varde=", ".join(par),
                     kalla_id=self.id,
-                    myndighet=self._kalla.myndighet or "SCB",
+                    myndighet=self._kalla.myndighet or "PxWeb",
                     licens=self._kalla.licens,
-                    hamtad=datetime.now(timezone.utc),
-                    lank_manniska=manniska,
-                    lank_maskin=f"{self._kalla.bas_url}/tables/{tabell}/metadata"
+                    attribution=self._kalla.attribution,
+                    dataset=tabell,
+                    lank_manniska=self._manniskolank(tabell),
+                    lank_maskin=self._metadata_url(tabell),
+                    dimensioner={"dimension": dim_id},
                 )
             )
-        return poster
+        return utkast
 
-    def hamta(self, plan: Fragplan) -> list[Faktapost]:
+    # ------------------------------------------------------------------
+    # Hämtning
+    # ------------------------------------------------------------------
+
+    def hamta(self, plan: Fragplan) -> list[Faktautkast]:
         tabell = plan.extra.get("tabell")
         if not tabell:
+            logger.info("%s: anrop utan tabell-id, inget att hämta", self.id)
             return []
 
-        # Identifiera om LLM försöker hämta data men missade dimensioner
-        valda_dimensioner = plan.extra.get("dimensioner", {})
-        
         try:
             meta_dim = self._las_metadata(tabell)
         except Exception:
+            logger.warning("%s: kunde inte läsa metadata för %s", self.id, tabell, exc_info=True)
             return []
 
-        # Om det är ett anrop för att lista dimensioner ELLER om man glömt dimensioner
-        if not valda_dimensioner or not all(k in valda_dimensioner for k in meta_dim.keys()):
-            return self._formatera_valalternativ(tabell, meta_dim)
+        if not meta_dim:
+            logger.warning("%s: tabell %s saknar dimensioner i metadata", self.id, tabell)
+            return []
 
-        # Beräkna antal celler
+        valda = plan.extra.get("dimensioner") or {}
+        saknade = [d for d in meta_dim if d not in valda]
+        if saknade:
+            logger.info("%s: %s saknar dimensioner %s — returnerar valalternativ",
+                        self.id, tabell, saknade)
+            return self._valalternativ(tabell, meta_dim)
+
         celler = 1
-        for dim_id, v in valda_dimensioner.items():
-            if isinstance(v, list):
-                celler *= len(v)
-            else:
-                pass # scalar, = 1
-                
-        maxceller = self._kalla.takt.get("maxceller", 150000) if hasattr(self._kalla, "takt") else 150000
-        # Wait, maxceller is actually a top-level property on Kalla? No, it's not in Kalla. 
-        # But we kan get it via kallregister / getattr.
-        maxceller = getattr(self._kalla, "maxceller", 150000)
-        
-        if celler > maxceller:
-            # Vägra, returnera tomt eller fel
-            return [
-                Faktapost(
-                    id="",
-                    etikett=f"Error för tabell {tabell}",
-                    varde=f"Uttaget överskrider 150 000 celler ({celler} begärda). Minska urvalet.",
-                    kalla_id=self.id,
-                    myndighet=self._kalla.myndighet or "SCB",
-                    licens=self._kalla.licens,
-                    hamtad=datetime.now(timezone.utc),
-                    lank_manniska="",
-                    lank_maskin=""
-                )
-            ]
+        for varden in valda.values():
+            celler *= len(varden) if isinstance(varden, list) else 1
 
-        # Bygg query
-        selection = []
-        for dim_id, values in valda_dimensioner.items():
-            selection.append({
-                "variableCode": dim_id,
-                "valueCodes": values if isinstance(values, list) else [values]
-            })
+        maxceller = getattr(self._kalla, "maxceller", None) or STANDARD_MAXCELLER
+        if celler > maxceller:
+            # Ett fel är inte ett faktum. Vi returnerar ingen post — motorn ser
+            # tom lista och loggen förklarar varför.
+            logger.warning(
+                "%s: uttag ur %s avvisat, %d celler begärda men taket är %d",
+                self.id, tabell, celler, maxceller,
+            )
+            return []
 
         payload = {
-            "selection": selection,
-            "responseFormat": "json-stat2"
+            "selection": [
+                {
+                    "variableCode": dim,
+                    "valueCodes": v if isinstance(v, list) else [v],
+                }
+                for dim, v in valda.items()
+            ]
         }
-        
-        url = f"{self._kalla.bas_url}/tables/{tabell}/data"
+
         try:
-            # SCB v2 returnerar PX-format som standard, så vi hämtar som råtext
-            raw_text = hamta_text(self.id, "POST", url, json=payload)
+            svar = hamta_json(self.id, "POST", self._data_url(tabell), json=payload)
         except Exception:
+            logger.warning("%s: datauttag ur %s misslyckades", self.id, tabell, exc_info=True)
             return []
-            
-        # Parsa PX format för data-delen:
-        # Leta efter "DATA=" och hämta allt efter tills semikolon eller slut
-        varde_str = ""
-        if "DATA=" in raw_text:
-            data_part = raw_text.split("DATA=")[-1].strip(" \r\n;")
-            varde_str = data_part
-        else:
-            varde_str = raw_text.strip()
-        
-        manniska = ""
-        if self._kalla.manniskolank_mall:
-            manniska = self._kalla.manniskolank_mall.format(tabell=tabell)
-            
-        return [
-            Faktapost(
-                id="",
-                etikett=f"PxWeb-data från tabell {tabell}",
-                varde=varde_str,
-                kalla_id=self.id,
-                myndighet=self._kalla.myndighet or "SCB",
-                licens=self._kalla.licens,
-                hamtad=datetime.now(timezone.utc),
-                lank_manniska=manniska,
-                lank_maskin=url,
-                dimensioner=valda_dimensioner
+
+        return self._tolka_jsonstat(tabell, svar)
+
+    # ------------------------------------------------------------------
+    # json-stat2 → utkast
+    # ------------------------------------------------------------------
+
+    def _tolka_jsonstat(self, tabell: str, svar: dict) -> list[Faktautkast]:
+        """Gör om ett json-stat2-svar till ett utkast per cell.
+
+        En Faktapost ska bära ETT värde med sina dimensioner utskrivna, inte en
+        datablob. Tidigare returnerade adaptern hela PX-svaret som en sträng,
+        vilket gjorde att syntesfasen fick tolka rådata — precis det som §5
+        regel 2 förbjuder.
+        """
+        varden = svar.get("value")
+        if not isinstance(varden, list) or not varden:
+            logger.warning("%s: tomt eller oväntat json-stat2-svar för %s", self.id, tabell)
+            return []
+
+        dim_ordning: list[str] = svar.get("id", [])
+        storlek: list[int] = svar.get("size", [])
+        dimension = svar.get("dimension", {})
+
+        # Koder och etiketter per dimension, i svarets egen ordning.
+        koder: list[list[str]] = []
+        etiketter: list[dict[str, str]] = []
+        for dim_id in dim_ordning:
+            kategori = dimension.get(dim_id, {}).get("category", {})
+            index = kategori.get("index", {})
+            if isinstance(index, dict):
+                # index kan vara {kod: position} — sortera på position.
+                kod_lista = [k for k, _ in sorted(index.items(), key=lambda p: p[1])]
+            else:
+                kod_lista = list(index or [])
+            koder.append(kod_lista)
+            etiketter.append(kategori.get("label", {}) or {})
+
+        tidsdim = (svar.get("role", {}) or {}).get("time", [])
+        enhet = self._enhet(svar, dim_ordning, dimension)
+        rubrik = svar.get("label") or f"Tabell {tabell}"
+
+        utkast: list[Faktautkast] = []
+        for platt_index, varde in enumerate(varden):
+            if varde is None:
+                continue
+            dim_varden = self._koordinater(platt_index, storlek)
+            beskrivning: dict[str, str] = {}
+            period: str | None = None
+            for pos, dim_id in enumerate(dim_ordning):
+                if pos >= len(dim_varden) or dim_varden[pos] >= len(koder[pos]):
+                    continue
+                kod = koder[pos][dim_varden[pos]]
+                text = etiketter[pos].get(kod, kod)
+                beskrivning[dimension.get(dim_id, {}).get("label", dim_id)] = text
+                if dim_id in tidsdim:
+                    period = kod
+
+            utkast.append(
+                Faktautkast(
+                    etikett=rubrik,
+                    varde=str(varde),
+                    enhet=enhet,
+                    period=period,
+                    kalla_id=self.id,
+                    myndighet=self._kalla.myndighet or "PxWeb",
+                    licens=self._kalla.licens,
+                    attribution=self._kalla.attribution,
+                    dataset=tabell,
+                    lank_manniska=self._manniskolank(tabell),
+                    lank_maskin=self._data_url(tabell),
+                    dimensioner=beskrivning,
+                )
             )
-        ]
+        return utkast
+
+    @staticmethod
+    def _koordinater(platt_index: int, storlek: list[int]) -> list[int]:
+        """Översätter ett platt json-stat2-index till en koordinat per dimension."""
+        koordinater: list[int] = []
+        rest = platt_index
+        for dim_pos in range(len(storlek)):
+            block = 1
+            for senare in storlek[dim_pos + 1:]:
+                block *= senare
+            koordinater.append(rest // block if block else 0)
+            rest = rest % block if block else 0
+        return koordinater
+
+    @staticmethod
+    def _enhet(svar: dict, dim_ordning: list[str], dimension: dict) -> str | None:
+        """Plockar enheten ur metric-dimensionens unit-block, om den finns."""
+        metric = (svar.get("role", {}) or {}).get("metric", [])
+        for dim_id in metric or dim_ordning:
+            enheter = dimension.get(dim_id, {}).get("category", {}).get("unit", {})
+            if isinstance(enheter, dict) and enheter:
+                forsta = next(iter(enheter.values()))
+                if isinstance(forsta, dict):
+                    return forsta.get("base") or forsta.get("unit")
+        return None

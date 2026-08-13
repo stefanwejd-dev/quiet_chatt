@@ -22,6 +22,49 @@ Alla kommandon körs från repots rot: `G:\My Drive\Claude Cowork\quiet_chatt`.
 
 ---
 
+## Kontrakt från och med steg 8
+
+Steg 0–6 granskades 2026-08-13 och sex defekter rättades. Tre av dem ändrade
+kontrakt som steg 8 och framåt måste följa. Kopiera `adaptrar/riksbanken.py` och
+`adaptrar/vies.py` — de är mönstren.
+
+**1. Adaptrar returnerar `Faktautkast`, aldrig `Faktapost`.**
+
+```python
+def hamta(self, plan: Fragplan) -> list[Faktautkast]: ...
+```
+
+Bara `Faktaregister` får mynta ett F-id, och bara registret kontrollerar att båda
+länkarna finns. Motorn anropar `Faktaregister.registrera_alla(utkast)`.
+
+Tidigare byggde adaptrarna `Faktapost(id="", …)` direkt och fyllde i id senare.
+Det gjorde att en post kunde existera utan länkar — vilket faktiskt inträffade i
+pxweb-adapterns felgren, där ett felmeddelande returnerades som ett citerbart
+faktum med tomma länkar. Konstruera aldrig `Faktapost` i en adapter.
+
+**2. Ett fel är inte ett faktum.**
+
+Vid fel: logga med `logger.warning(..., exc_info=True)` och returnera `[]`. Skapa
+aldrig ett utkast som bär ett felmeddelande som `varde`. Ett tyst
+`except Exception: return []` utan loggning är inte heller tillåtet — då går ett
+trasigt anrop inte att skilja från "källan hade inget att säga".
+
+**3. Nätverksberoende tester måste ta `isolerad_cache`.**
+
+Fixturen bor i `tests/conftest.py`. Utan den kortsluter `data/cache.sqlite`
+testet: ingen HTTP sker, ingen VCR-kassett spelas in, och testet blir grönt utan
+att ha kört någonting.
+
+**Dessutom, i transportlagret (`adaptrar/transport.py`):**
+
+* `hamta_json` / `hamta_text` kastar `EjAktiveradKalla` för källor med
+  `aktiverad: false`, före all nätverkstrafik.
+* Värdkontrollen mot katalogindexet gäller **alla** källor med `generisk: true`.
+* Explicit timeout: connect 10 s, read 60 s.
+* Anslutningar stängs i `finally`.
+
+---
+
 ## Steg 0 — Projektskelett ✅ Godkänt 2026-08-13
 
 **Gör:**
@@ -214,11 +257,21 @@ Kritiskt: en PxWeb-tabell har dimensioner, och fel skiva ger inte ett felmeddela
 - Ett anrop utan angiven region returnerar valalternativ, inte ett gissat rikssnitt.
 - Ett uttag som skulle överskrida 150 000 celler avvisas före anropet.
 
-**Utfall 2026-08-13:** Skapade `adaptrar/pxweb.py` som läser JSON-stat2-metadata (via `/metadata`) och genererar två separata logiska verktyg: `lista_dimensioner` och `hamta_data`. Adaptern avvisar automatiskt sökningar över 150 000 celler, och om dimensioner saknas vid `hamta_data` så "vägrar" adaptern genom att returnera PxWeb-dimensionerna och valalternativen som listor av `Faktapost`, så att LLM:en vet vad som ska anges. Data extraheras genom att parsa PX-svaret för värdet, vilket godkänts mot acceptanstesterna. Testet kördes med KPIF-XE och SCB-värdet returnerades framgångsrikt (0.6).
+**Utfall 2026-08-13:** Skapade `adaptrar/pxweb.py` med två logiska verktyg,
+`lista_dimensioner` och `hamta_data`, celltak och vägran vid saknad dimension.
+
+**Rättat vid granskning 2026-08-13 (se "Granskning av steg 0–6" nedan):** den
+första versionen begärde `responseFormat: "json-stat2"` i POST-kroppen. SCB
+**ignorerar** den nyckeln och svarar med PX-text i iso-8859-1 — verifierat live.
+Adaptern parsade `DATA=` och lade hela blobben i ett enda `varde`. Rätt väg är
+`?outputFormat=json-stat2` som query-parameter. Adaptern är omskriven: begär rätt
+format, tolkar json-stat2 och ger **ett utkast per cell** med läsbara dimensioner
+och period. Verifierat mot Snabb-KPI TAB6445, 2026M07 = **-0.3**, kontrollerat mot
+API:t. Det tidigare redovisade värdet 0.6 kom ur den felaktiga PX-parsningen.
 
 ---
 
-## Steg 7 — VERIFIERINGSGRIND: RowStore, Bolagsverket, JobTech
+## Steg 7 — VERIFIERINGSGRIND: RowStore, Bolagsverket, JobTech ✅ Godkänt 2026-08-13
 
 **Detta steg skriver ingen produktionskod.** Det stänger de öppna frågorna i registret.
 
@@ -239,10 +292,18 @@ först efter beställarens godkännande. Källor som fortfarande inte går att n
 
 ---
 
-## Steg 8 — Övriga verifierade adaptrar
+## Steg 8 — Övriga verifierade adaptrar   ← NÄSTA STEG
 
-**Gör:** `ted.py`, `riksdagen.py`, `kolada.py`, `dataportal.py`, samt `json_rest.py`
-konfigurerad för SMHI, Skolverket, Trafa och Polisens händelser.
+**Läs "Kontrakt från och med steg 8" högst upp i detta dokument innan du börjar.**
+Adapterkontraktet ändrades vid granskningen av steg 0–6; `riksbanken.py` och
+`vies.py` är mönstren att kopiera, inte den kod som stod i planen tidigare.
+
+**Gör:** `ted.py`, `riksdagen.py`, `kolada.py`, `dataportal.py`, `rowstore.py`,
+samt `json_rest.py` konfigurerad för SMHI, Skolverket, Trafa och Polisens händelser.
+
+`rowstore.py` tillkom efter steg 7: Skatteverket och Kronofogden är verifierade och
+aktiverade i registret men saknar adapter. Den är generisk över värdnamn på samma
+sätt som `pxweb.py`, och tar dataset-UUID plus `_limit`/`_offset`.
 
 TED-specifikt, redan utrett:
 * `POST https://api.ted.europa.eu/v3/notices/search`, **inte GET** (GET ger 405).
@@ -253,8 +314,15 @@ TED-specifikt, redan utrett:
 * Ett *meddelande* är inte en *upphandling* — samma upphandling ger flera meddelanden.
   Skriv det i Faktapostens `etikett` så att svaret inte påstår fel sak.
 
-**Acceptans:** varje adapter har minst ett pytest med inspelat svar och ett manuellt
-verifierat live-anrop redovisat i rapporten.
+**Acceptans:**
+- Varje adapter har minst ett pytest med inspelat svar (VCR-kassett) och ett manuellt
+  verifierat live-anrop redovisat i rapporten.
+- **Varje nätverksberoende test tar `isolerad_cache`-fixturen.** Utan den svarar
+  transportlagrets SQLite-cache i stället för nätet, ingen kassett spelas in, och
+  testet blir grönt utan att ha kört någonting. Kontrollera efteråt att
+  `tests/kassetter/` innehåller en fil per nätverkstest.
+- `python -m pytest -q` ger samma resultat två körningar i rad **och** efter
+  `rm data/cache.sqlite`.
 
 ---
 
@@ -387,12 +455,42 @@ en `<script>`-tagg på quiet.nu.
 
 ---
 
-## Öppna frågor till beställaren
+## Granskning av steg 0–6, 2026-08-13
 
-Dessa ska besvaras innan respektive steg, inte gissas:
+Genomförd efter att steg 0–6 rapporterats klara. Sex defekter rättade, samtliga
+verifierade med test. Sviten går på **96 passerade**, deterministiskt över fyra
+körningar och oberoende av `data/cache.sqlite`.
 
-1. **Domänen** — `quiet.nu` eller `quiet.se`? Påverkar steg 0 och 13.
-2. **TED:s villkor** — vem kontaktar helpdesken? Blockerar steg 8:s produktionssättning.
-3. **Bolagsverkets kundanmälan** — gjord eller inte? Blockerar steg 7.
-4. **Kostnadstak** — kvoterna i `config.toml` är en gissning. Vad är taket per månad?
-5. **Var driftas det?** Påverkar steg 13 och 15.
+| # | Defekt | Var | Konsekvens om orättad |
+|---|---|---|---|
+| 1 | `aktiverad` kontrollerades aldrig | `transport.py` | Anrop mot obekräftad endpoint (bolagsverket_hvd) |
+| 2 | Fel svarsformat begärt från SCB | `pxweb.py` | **Fel värden i svar** — se steg 6 |
+| 3 | Fel returnerades som citerbart faktum med tomma länkar | `pxweb.py` | Felmeddelande presenterat som uppgift |
+| 4 | Adaptrar kringgick Faktaregistrets validering | alla adaptrar | Faktapost utan länkar kunde existera |
+| 5 | SQLite-anslutningar stängdes aldrig; för snål timeout | `transport.py` | Filhandtagsläcka per anrop |
+| 6 | Värdkontroll gällde bara 1 av 3 generiska adaptrar | `transport.py` | Modellkonstruerad URL kunde nå godtycklig värd |
+
+Därtill: tystade `except Exception` loggar nu i samtliga adaptrar; VIES-etiketten
+påstod giltighet oavsett utfall; död kod och kvarlämnade tankeled i `pxweb.py`
+borttagna; adaptertesterna passerade utan att röra nätet (samma cache-defekt som i
+steg 5, en våning upp) och tar nu `isolerad_cache`.
+
+**Kvar att göra, inte blockerande:** `pyflakes` är inte installerat i miljön, så
+lint har aldrig körts. Lägg till det i dev-beroendena innan steg 9.
+
+---
+
+## Frågor till beställaren — besvarade 2026-08-13
+
+1. **Domänen** — quiet.nu. Bekräftat, ingen ändring i `config.toml` behövd.
+2. **TED:s villkor** — anonym åtkomst till Search API mot publicerade meddelanden,
+   ingen kundanmälan krävs. Se `kallregister.yaml`.
+3. **Bolagsverkets kundanmälan** — inskickad för API för värdefulla datamängder (HVD).
+   Väntar på svar. Steg 7 fortsätter med `verifierad: nej`, `aktiverad: false` tills
+   bekräftelse kommer.
+4. **Kostnadstak** — 1 000 SEK/månad. Anthropic-kontot är förskottsbetalt utan
+   auto-reload; se `ARKITEKTUR.md` §6a.
+5. **Driftmiljö** — Hetzner (CX22/CX23-nivå, 2 vCPU/4 GB/40 GB) med Coolify. En tom
+   FastAPI-app som svarar `{"ok": true}` på `/halsa` ska deployas **NU**, parallellt
+   med steg 3–6, inte vid steg 13. Syftet är att felsöka DNS, brandvägg och
+   Coolify-pipelinen innan applikationslogiken finns, inte samtidigt med den.

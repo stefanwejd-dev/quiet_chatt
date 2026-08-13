@@ -106,27 +106,25 @@ def las(registersokväg: Path | str | None = None) -> list[KallaPost]:
     sökväg = Path(registersokväg) if registersokväg else _REGISTER_FIL
 
     with open(sökväg, encoding="utf-8") as f:
-        råtext = f.read()
+        dokument = yaml.safe_load(f)
 
-    # kallregister.yaml har top-level meta-nycklar ('version:', 'uppdaterad:')
-    # följt av en sekvens med '-'. Det är inte giltig YAML (mixing av mapping
-    # och sequence på rotnivå). Vi strippar meta-raderna innan parsning.
-    import re as _re
-    # Ta bort rader som är rena skalärnycklar på rotnivå (inga mellanrum i indentering)
-    rensat = _re.sub(r"^(version|uppdaterad):.*$", "", råtext, flags=_re.MULTILINE)
-
-    dokument = yaml.safe_load(rensat)
-
-    if isinstance(dokument, list):
-        radata: list[dict] = dokument
-    elif dokument is None:
-        radata = []
+    # kallregister.yaml är vanlig YAML: en toppnivåmappning med metadata
+    # ('version', 'uppdaterad') och källorna under nyckeln 'kallor'.
+    if dokument is None:
+        radata: list[dict] = []
     elif isinstance(dokument, dict):
-        listor = [v for v in dokument.values() if isinstance(v, list)]
-        radata = [post for lst in listor for post in lst]
+        radata = dokument.get("kallor") or []
+        if not isinstance(radata, list):
+            raise ValueError(
+                f"Nyckeln 'kallor' i källregistret ska vara en lista, "
+                f"fick: {type(radata)}"
+            )
+    elif isinstance(dokument, list):
+        # Tolererar det äldre formatet (ren lista på rotnivå).
+        radata = dokument
     else:
         raise ValueError(
-            f"Källregistret förväntas vara en YAML-lista efter pre-processing, "
+            f"Källregistret förväntas vara en YAML-mappning med nyckeln 'kallor', "
             f"fick: {type(dokument)}"
         )
 

@@ -1,14 +1,19 @@
 import time
 import httpx
 import pytest
-from quiet_oppen_data.adaptrar.transport import hamta_json, SparradKalla
+from quiet_oppen_data.adaptrar.transport import (
+    EjAktiveradKalla,
+    SparradKalla,
+    hamta_json,
+)
 from quiet_oppen_data.register import Kalla
+
 
 def test_transport_sparrad_kastar_undantag():
     with pytest.raises(SparradKalla):
         hamta_json("polisen_efterlysta", "GET", "https://polisen.se/test")
 
-def test_transport_cache_fungerar(monkeypatch):
+def test_transport_cache_fungerar(monkeypatch, isolerad_cache):
     anrop = 0
     def mock_request(*args, **kwargs):
         nonlocal anrop
@@ -33,7 +38,38 @@ def test_generisk_json_avvisar_okand_vard():
     with pytest.raises(ValueError, match="tillåten"):
         hamta_json("_generisk_json", "GET", "https://exempel.invalid/x")
 
-def test_transport_ko_haller_takt(monkeypatch):
+
+@pytest.mark.parametrize("kalla_id", ["_generisk_rowstore", "_generisk_pxweb"])
+def test_alla_generiska_avvisar_okand_vard(kalla_id):
+    """Värdkontrollen gäller varje generisk adapter, inte bara _generisk_json.
+
+    Risken är densamma oavsett protokoll: URL:en kommer från modellen, och utan
+    kontrollen kan den peka på vad som helst.
+    """
+    with pytest.raises(ValueError, match="tillåten"):
+        hamta_json(kalla_id, "GET", "https://exempel.invalid/x")
+
+
+def test_ej_aktiverad_kalla_kastar(monkeypatch):
+    """En källa med aktiverad: false får inte anropas.
+
+    bolagsverket_hvd har ingen bekräftad sökväg (ARKITEKTUR.md §0). Utan den
+    här spärren skulle ett anrop gå ut mot en gissad endpoint.
+    """
+    anrop = []
+
+    def sabotage(*args, **kwargs):
+        anrop.append(args)
+        raise AssertionError("HTTP-anrop skulle aldrig ha gjorts")
+
+    monkeypatch.setattr(httpx.Client, "request", sabotage)
+
+    with pytest.raises(EjAktiveradKalla, match="inte aktiverad"):
+        hamta_json("bolagsverket_hvd", "GET", "https://gw.api.bolagsverket.se/x")
+
+    assert anrop == [], "spärren måste slå till innan nätverkstrafik"
+
+def test_transport_ko_haller_takt(monkeypatch, isolerad_cache):
     """Testar att token bucket blockerar vid för många anrop."""
     anrop = 0
     def mock_request(*args, **kwargs):
@@ -61,12 +97,8 @@ def test_transport_ko_haller_takt(monkeypatch):
     monkeypatch.setattr(time, "monotonic", mock_monotonic)
     monkeypatch.setattr(time, "sleep", mock_sleep)
     
-    import quiet_oppen_data.adaptrar.transport as transport
-    transport._buckets.clear()
-    
-    # scb_pxweb har { anrop: 30, per_sekunder: 10 } => kapacitet 30, påfyllnad 3/s
-    # Vi gör 40 anrop (samma URL för att trigga... nej vänta, cache tar den direkt!
-    # Vi måste göra 40 OLIKA anrop så de inte träffar cache)
+    # scb_pxweb har { anrop: 30, per_sekunder: 10 } => kapacitet 30, påfyllnad 3/s.
+    # 40 OLIKA URL:er, annars svarar cachen och kön testas aldrig.
     for i in range(40):
         hamta_json("scb_pxweb", "GET", f"https://api.scb.se/mock_{i}")
         

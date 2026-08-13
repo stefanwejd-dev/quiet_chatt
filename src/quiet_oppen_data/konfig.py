@@ -36,6 +36,9 @@ class ModellKonfig:
 class KvotKonfig:
     fragor_per_ip_per_dygn: int
     fragor_totalt_per_dygn: int
+    # Internt larm, inte betalningsspärr. Den faktiska garantin är att
+    # Anthropic-kontot är förskottsbetalt utan auto-reload — se ARKITEKTUR.md §6a.
+    kostnadstak_sek_per_manad: int = 1000
 
 
 @dataclass(frozen=True)

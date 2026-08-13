@@ -16,343 +16,358 @@ uppdaterad: 2026-08-13
 # SPÄRRADE KÄLLOR — ligger här enbart för att spärren ska vara explicit
 # ---------------------------------------------------------------------------
 
-- id: polisen_efterlysta
-  myndighet: Polismyndigheten
-  blockerad: true
-  skal: >
-    Personuppgifter om enskilda. Beställaren har uttryckligen uteslutit källan.
-    En fritextsökbar chattbot har annan karaktär än myndighetens egen söksida.
+kallor:
+  - id: polisen_efterlysta
+    myndighet: Polismyndigheten
+    blockerad: true
+    skal: >
+      Personuppgifter om enskilda. Beställaren har uttryckligen uteslutit källan.
+      En fritextsökbar chattbot har annan karaktär än myndighetens egen söksida.
 
-- id: bolagsverket_verkliga_huvudman
-  myndighet: Bolagsverket
-  blockerad: true
-  skal: >
-    Personuppgifter om enskilda fysiska personer. Beställaren har uttryckligen
-    uteslutit källan.
+  - id: bolagsverket_verkliga_huvudman
+    myndighet: Bolagsverket
+    blockerad: true
+    skal: >
+      Personuppgifter om enskilda fysiska personer. Beställaren har uttryckligen
+      uteslutit källan.
 
-# ---------------------------------------------------------------------------
-# NIVÅ 1 — verifierade, handskrivna adaptrar
-# ---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
+  # NIVÅ 1 — verifierade, handskrivna adaptrar
+  # ---------------------------------------------------------------------------
 
-- id: riksbanken
-  myndighet: Sveriges riksbank
-  adapter: riksbanken
-  bas_url: https://api.riksbank.se/swea/v1
-  verifierad: ja
-  verifierat_anrop: GET /Observations/Latest/SEKEURPMI -> {"date":"2026-08-12","value":10.9965}
-  autentisering: ingen
-  licens: okänd
-  attribution: "Källa: Sveriges riksbank"
-  takt: { anrop: 10, per_sekunder: 1 }
-  cache_ttl: 3600
-  manniskolank_mall: "https://www.riksbank.se/sv/statistik/rantor-och-valutakurser/"
-  tacker:
-    - valutakurser (dagliga, alla par)
-    - referensränta (grund för dröjsmålsränta)
-    - styrränta, in-/utlåningsränta
-    - statsobligationer, statsskuldväxlar
-    - penningmängd M1/M2/M3
+  - id: riksbanken
+    myndighet: Sveriges riksbank
+    adapter: riksbanken
+    bas_url: https://api.riksbank.se/swea/v1
+    verifierad: ja
+    verifierat_anrop: GET /Observations/Latest/SEKEURPMI -> {"date":"2026-08-12","value":10.9965}
+    autentisering: ingen
+    licens: okänd
+    attribution: "Källa: Sveriges riksbank"
+    takt: { anrop: 10, per_sekunder: 1 }
+    cache_ttl: 3600
+    manniskolank_mall: "https://www.riksbank.se/sv/statistik/rantor-och-valutakurser/"
+    tacker:
+      - valutakurser (dagliga, alla par)
+      - referensränta (grund för dröjsmålsränta)
+      - styrränta, in-/utlåningsränta
+      - statsobligationer, statsskuldväxlar
+      - penningmängd M1/M2/M3
 
-- id: scb_pxweb
-  myndighet: Statistikmyndigheten SCB
-  adapter: pxweb
-  bas_url: https://api.scb.se/OV0104/v2beta/api/v2
-  verifierad: ja
-  verifierat_anrop: GET /tables?lang=sv&pageSize=2 -> 200, samt /config
-  autentisering: ingen
-  licens: CC0
-  attribution: "Källa: SCB"
-  # Gränserna nedan är SCB:s egna, hämtade från /config 2026-08-13.
-  takt: { anrop: 30, per_sekunder: 10 }
-  maxceller: 150000
-  cache_ttl: 86400
-  manniskolank_mall: "https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__{tabell}"
-  tacker:
-    - KPI, KPIF, PPI
-    - löner per bransch
-    - företagsstatistik per SNI-kod
-    - befolkning, sysselsättning, BNP, utrikeshandel
+  - id: scb_pxweb
+    myndighet: Statistikmyndigheten SCB
+    adapter: pxweb
+    bas_url: https://api.scb.se/OV0104/v2beta/api/v2
+    verifierad: ja
+    verifierat_anrop: GET /tables?lang=sv&pageSize=2 -> 200, samt /config
+    autentisering: ingen
+    licens: CC0
+    attribution: "Källa: SCB"
+    # Gränserna nedan är SCB:s egna, hämtade från /config 2026-08-13.
+    takt: { anrop: 30, per_sekunder: 10 }
+    maxceller: 150000
+    cache_ttl: 86400
+    manniskolank_mall: "https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__{tabell}"
+    tacker:
+      - KPI, KPIF, PPI
+      - löner per bransch
+      - företagsstatistik per SNI-kod
+      - befolkning, sysselsättning, BNP, utrikeshandel
 
-- id: ted
-  myndighet: Europeiska unionens publikationsbyrå (TED)
-  adapter: ted
-  bas_url: https://api.ted.europa.eu/v3/notices/search
-  metod: POST
-  verifierad: ja
-  verifierat_anrop: >
-    POST med {"query":"buyer-country=SWE","limit":1} -> totalNoticeCount 208215.
-    Fältvokabulären är eForms med 1830 giltiga fältnamn; se falturval nedan.
-  autentisering: ingen
-  licens: okänd
-  attribution: "Källa: Tenders Electronic Daily (TED), Europeiska unionen"
-  takt: { anrop: 1, per_sekunder: 1 }   # konservativt: dokumentationen anger inga gränser
-  cache_ttl: 3600
-  manniskolank_mall: "https://ted.europa.eu/sv/notice/{publication_number}"
-  varning: >
-    Dokumentationen anger varken rate limits eller licensvillkor. Kontakta TED:s
-    helpdesk skriftligt innan produktionssättning. Kör konservativ takt tills dess.
-  faltval:
-    # Kurerat underval — begär ALDRIG alla fält, svaren blir flerspråkiga och enorma.
-    - publication-number
-    - publication-date
-    - notice-type
-    - notice-title
-    - buyer-name
-    - buyer-city
-    - classification-cpv
-    - procedure-type
-    - tender-value
-    - tender-value-cur
-    - winner-partname
-    - winner-country
-    - winner-size
-  sprakhantering: >
-    Textfält är flerspråkiga objekt. Plocka nyckeln "swe", fall tillbaka på "eng",
-    därefter första tillgängliga.
-  tacker:
-    - svenska upphandlingar över EU:s tröskelvärden
-    - tilldelningar med kontraktsvärde och vinnare
+  - id: ted
+    myndighet: Europeiska unionens publikationsbyrå (TED)
+    adapter: ted
+    bas_url: https://api.ted.europa.eu/v3/notices/search
+    metod: POST
+    verifierad: ja
+    verifierat_anrop: >
+      POST med {"query":"buyer-country=SWE","limit":1} -> totalNoticeCount 208215.
+      Fältvokabulären är eForms med 1830 giltiga fältnamn; se falturval nedan.
+    autentisering: ingen
+    licens: "TED Legal Notice, anonym åtkomst till publicerade meddelanden"
+    attribution: >-
+      Källa: TED (Tenders Electronic Daily), Europeiska unionens publikationsbyrå
+    # Konservativt satt. TED:s publicerade fair-usage-gräns är 700 anrop/minut och
+    # 600 nedladdningar per 6 minuter — vi ligger långt under med marginal.
+    takt: { anrop: 1, per_sekunder: 1 }
+    cache_ttl: 3600
+    manniskolank_mall: "https://ted.europa.eu/sv/notice/{publication_number}"
+    faltval:
+      # Kurerat underval — begär ALDRIG alla fält, svaren blir flerspråkiga och enorma.
+      - publication-number
+      - publication-date
+      - notice-type
+      - notice-title
+      - buyer-name
+      - buyer-city
+      - classification-cpv
+      - procedure-type
+      - tender-value
+      - tender-value-cur
+      - winner-partname
+      - winner-country
+      - winner-size
+    sprakhantering: >
+      Textfält är flerspråkiga objekt. Plocka nyckeln "swe", fall tillbaka på "eng",
+      därefter första tillgängliga.
+    tacker:
+      - svenska upphandlingar över EU:s tröskelvärden
+      - tilldelningar med kontraktsvärde och vinnare
 
-- id: riksdagen
-  myndighet: Riksdagsförvaltningen
-  adapter: riksdagen
-  bas_url: https://data.riksdagen.se
-  verifierad: ja
-  verifierat_anrop: GET /dokumentlista/?sok=moms&utformat=json&sz=1 -> 200
-  autentisering: ingen
-  licens: okänd
-  attribution: "Källa: Sveriges riksdag"
-  takt: { anrop: 5, per_sekunder: 1 }
-  cache_ttl: 86400
-  manniskolank_mall: "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/_{dok_id}/"
-  tacker:
-    - dokument (propositioner, motioner, betänkanden, SOU)
-    - SFS, ledamöter, voteringar, anföranden, kalender
+  - id: riksdagen
+    myndighet: Riksdagsförvaltningen
+    adapter: riksdagen
+    bas_url: https://data.riksdagen.se
+    verifierad: ja
+    verifierat_anrop: GET /dokumentlista/?sok=moms&utformat=json&sz=1 -> 200
+    autentisering: ingen
+    licens: okänd
+    attribution: "Källa: Sveriges riksdag"
+    takt: { anrop: 5, per_sekunder: 1 }
+    cache_ttl: 86400
+    manniskolank_mall: "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/_{dok_id}/"
+    tacker:
+      - dokument (propositioner, motioner, betänkanden, SOU)
+      - SFS, ledamöter, voteringar, anföranden, kalender
 
-- id: kolada
-  myndighet: Rådet för främjande av kommunala analyser (RKA)
-  adapter: kolada
-  bas_url: https://api.kolada.se/v3
-  verifierad: ja
-  verifierat_anrop: GET /kpi?per_page=1 -> 200 (v2 svarar 410 Gone, använd v3)
-  autentisering: ingen
-  licens: okänd
-  attribution: "Källa: Kolada (RKA)"
-  takt: { anrop: 5, per_sekunder: 1 }
-  cache_ttl: 86400
-  manniskolank_mall: "https://www.kolada.se/verktyg/fri-sokning/"
-  tacker:
-    - ca 6100 kommunala och regionala nyckeltal
+  - id: kolada
+    myndighet: Rådet för främjande av kommunala analyser (RKA)
+    adapter: kolada
+    bas_url: https://api.kolada.se/v3
+    verifierad: ja
+    verifierat_anrop: GET /kpi?per_page=1 -> 200 (v2 svarar 410 Gone, använd v3)
+    autentisering: ingen
+    licens: okänd
+    attribution: "Källa: Kolada (RKA)"
+    takt: { anrop: 5, per_sekunder: 1 }
+    cache_ttl: 86400
+    manniskolank_mall: "https://www.kolada.se/verktyg/fri-sokning/"
+    tacker:
+      - ca 6100 kommunala och regionala nyckeltal
 
-- id: vies
-  myndighet: Europeiska kommissionen (VIES)
-  adapter: vies
-  bas_url: https://ec.europa.eu/taxation_customs/vies/rest-api
-  verifierad: ja
-  verifierat_anrop: GET /ms/SE/vat/{nummer} -> JSON med isValid
-  autentisering: ingen
-  licens: okänd
-  attribution: "Källa: EU VIES"
-  takt: { anrop: 1, per_sekunder: 2 }
-  cache_ttl: 3600
-  manniskolank_mall: "https://ec.europa.eu/taxation_customs/vies/"
-  tacker:
-    - validering av EU-momsregistreringsnummer
+  - id: vies
+    myndighet: Europeiska kommissionen (VIES)
+    adapter: vies
+    bas_url: https://ec.europa.eu/taxation_customs/vies/rest-api
+    verifierad: ja
+    verifierat_anrop: GET /ms/SE/vat/{nummer} -> JSON med isValid
+    autentisering: ingen
+    licens: okänd
+    attribution: "Källa: EU VIES"
+    takt: { anrop: 1, per_sekunder: 2 }
+    cache_ttl: 3600
+    manniskolank_mall: "https://ec.europa.eu/taxation_customs/vies/"
+    tacker:
+      - validering av EU-momsregistreringsnummer
 
-- id: dataportal
-  myndighet: Myndigheten för digital förvaltning (DIGG)
-  adapter: dataportal
-  bas_url: https://admin.dataportal.se/store/search
-  verifierad: ja
-  verifierat_anrop: >
-    GET ?type=solr&query=rdfType:...Dataset AND public:true -> 23293 träffar.
-    Facett på "context" fungerar (155 utgivare); facett på "publisher" ger 400.
-  autentisering: ingen
-  licens: okänd
-  attribution: "Källa: Sveriges dataportal"
-  takt: { anrop: 5, per_sekunder: 1 }
-  cache_ttl: 604800
-  manniskolank_mall: "https://www.dataportal.se/datasets/{ctx}_{entry}"
-  roll: discovery + nivå-3-fallback
-  tacker:
-    - 23293 datamängder, 34246 distributioner, 598 dataservices, 155 utgivare
+  - id: dataportal
+    myndighet: Myndigheten för digital förvaltning (DIGG)
+    adapter: dataportal
+    bas_url: https://admin.dataportal.se/store/search
+    verifierad: ja
+    verifierat_anrop: >
+      GET ?type=solr&query=rdfType:...Dataset AND public:true -> 23293 träffar.
+      Facett på "context" fungerar (155 utgivare); facett på "publisher" ger 400.
+    autentisering: ingen
+    licens: okänd
+    attribution: "Källa: Sveriges dataportal"
+    takt: { anrop: 5, per_sekunder: 1 }
+    cache_ttl: 604800
+    manniskolank_mall: "https://www.dataportal.se/datasets/{ctx}_{entry}"
+    roll: discovery + nivå-3-fallback
+    tacker:
+      - 23293 datamängder, 34246 distributioner, 598 dataservices, 155 utgivare
 
-- id: smhi
-  myndighet: SMHI
-  adapter: json_rest
-  bas_url: https://opendata-download-metobs.smhi.se
-  verifierad: ja
-  verifierat_anrop: GET /api.json -> 200
-  autentisering: ingen
-  licens: CC-BY
-  attribution: "Källa: SMHI"
-  takt: { anrop: 5, per_sekunder: 1 }
-  cache_ttl: 3600
-  manniskolank_mall: "https://www.smhi.se/data"
+  - id: smhi
+    myndighet: SMHI
+    adapter: json_rest
+    bas_url: https://opendata-download-metobs.smhi.se
+    verifierad: ja
+    verifierat_anrop: GET /api.json -> 200
+    autentisering: ingen
+    licens: CC-BY
+    attribution: "Källa: SMHI"
+    takt: { anrop: 5, per_sekunder: 1 }
+    cache_ttl: 3600
+    manniskolank_mall: "https://www.smhi.se/data"
 
-- id: skolverket
-  myndighet: Skolverket
-  adapter: json_rest
-  bas_url: https://api.skolverket.se
-  verifierad: ja
-  verifierat_anrop: GET /skolenhetsregistret/v1/skolenhet -> 200 (1,4 MB, paginera!)
-  autentisering: ingen
-  licens: okänd
-  attribution: "Källa: Skolverket"
-  takt: { anrop: 5, per_sekunder: 1 }
-  cache_ttl: 86400
-  manniskolank_mall: "https://www.skolverket.se/skolutveckling/statistik"
-  varning: Svaren är stora. Paginera alltid; hämta aldrig hela registret i ett anrop.
+  - id: skolverket
+    myndighet: Skolverket
+    adapter: json_rest
+    bas_url: https://api.skolverket.se
+    verifierad: ja
+    verifierat_anrop: GET /skolenhetsregistret/v1/skolenhet -> 200 (1,4 MB, paginera!)
+    autentisering: ingen
+    licens: okänd
+    attribution: "Källa: Skolverket"
+    takt: { anrop: 5, per_sekunder: 1 }
+    cache_ttl: 86400
+    manniskolank_mall: "https://www.skolverket.se/skolutveckling/statistik"
+    varning: Svaren är stora. Paginera alltid; hämta aldrig hela registret i ett anrop.
 
-- id: trafa
-  myndighet: Trafikanalys
-  adapter: json_rest
-  bas_url: https://api.trafa.se/api
-  verifierad: ja
-  verifierat_anrop: GET /structure?lang=sv -> 200
-  autentisering: ingen
-  licens: okänd
-  attribution: "Källa: Trafikanalys"
-  takt: { anrop: 5, per_sekunder: 1 }
-  cache_ttl: 86400
-  manniskolank_mall: "https://www.trafa.se/sidor/oppna-data/"
+  - id: trafa
+    myndighet: Trafikanalys
+    adapter: json_rest
+    bas_url: https://api.trafa.se/api
+    verifierad: ja
+    verifierat_anrop: GET /structure?lang=sv -> 200
+    autentisering: ingen
+    licens: okänd
+    attribution: "Källa: Trafikanalys"
+    takt: { anrop: 5, per_sekunder: 1 }
+    cache_ttl: 86400
+    manniskolank_mall: "https://www.trafa.se/sidor/oppna-data/"
 
-- id: polisen_handelser
-  myndighet: Polismyndigheten
-  adapter: json_rest
-  bas_url: https://polisen.se/api/events
-  verifierad: ja
-  verifierat_anrop: GET ?locationname=Stockholm -> 200
-  autentisering: ingen
-  licens: okänd
-  attribution: "Källa: Polismyndigheten"
-  takt: { anrop: 2, per_sekunder: 1 }
-  cache_ttl: 900
-  manniskolank_mall: "https://polisen.se/aktuellt/handelser/"
-  notering: >
-    Endast händelselistan. Efterlysta personer är en SEPARAT och SPÄRRAD källa
-    (se polisen_efterlysta ovan).
+  - id: polisen_handelser
+    myndighet: Polismyndigheten
+    adapter: json_rest
+    bas_url: https://polisen.se/api/events
+    verifierad: ja
+    verifierat_anrop: GET ?locationname=Stockholm -> 200
+    autentisering: ingen
+    licens: okänd
+    attribution: "Källa: Polismyndigheten"
+    takt: { anrop: 2, per_sekunder: 1 }
+    cache_ttl: 900
+    manniskolank_mall: "https://polisen.se/aktuellt/handelser/"
+    notering: >
+      Endast händelselistan. Efterlysta personer är en SEPARAT och SPÄRRAD källa
+      (se polisen_efterlysta ovan).
 
-# ---------------------------------------------------------------------------
-# NIVÅ 1 — EJ VERIFIERADE. Måste bekräftas innan de aktiveras.
-# ---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
+  # NIVÅ 1 — EJ VERIFIERADE. Måste bekräftas innan de aktiveras.
+  # ---------------------------------------------------------------------------
 
-- id: bolagsverket_hvd
-  myndighet: Bolagsverket
-  adapter: bolagsverket
-  bas_url: https://gw.api.bolagsverket.se/foretagsinformation/v4
-  verifierad: nej
-  aktiverad: false
-  hinder: >
-    API för värdefulla datamängder (HVD) kräver kundanmälan och OAuth2 (API-nycklar).
-    Nycklarna väntas inom kort och kommer att placeras i quiet_chatt_hemligt-mappen.
-  dokumentation: https://bolagsverket.se/apierochoppnadata/hamtaforetagsinformation/vardefulladatamangder/apiforvardefulladatamangder.5513.html
-  licens: okänd
-  attribution: "Källa: Bolagsverket"
-  takt: { anrop: 2, per_sekunder: 1 }
-  cache_ttl: 86400
-  tacker:
-    - SNI-koder
-    - digitalt inlämnade årsredovisningar (iXBRL)
-    - grunddata om företag
+  - id: bolagsverket_hvd
+    myndighet: Bolagsverket
+    adapter: bolagsverket
+    bas_url: https://gw.api.bolagsverket.se/vardefulla-datamangder/v1
+    verifierad: nej
+    aktiverad: false
+    # OMFATTNING: ENBART API för värdefulla datamängder (HVD). Denna chatt ska
+    # inte använda något annat Bolagsverket-API. Företagsinformation (det
+    # avgiftsbelagda avtals-API:t på /foretagsinformation/) och Verkliga
+    # huvudmän är UTANFÖR omfattningen — den senare är dessutom blockerad,
+    # se posten bolagsverket_verkliga_huvudman överst i denna fil.
+    kommentar: >
+      Kundanmälan till API för värdefulla datamängder inskickad 2026-08-13.
+      Avgiftsfritt API, inget avtal krävs — bara kundanmälan. Väntar på
+      API-nyckel. Aktivera först när åtkomst bekräftats — gissa aldrig sökväg
+      eller svarsformat under väntetiden.
+    hinder: >
+      Bas-URL:en ovan är Bolagsverkets egen registrering av tjänsten på
+      dataportal.se, inte ett anrop vi själva har gjort. Roten svarade 404 vid
+      test 2026-08-13, vilket är väntat för en gateway som bara serverar
+      specifika sökvägar och kräver autentisering. De konkreta sökvägarna måste
+      läsas ur dokumentationen när API-nyckeln kommit — se steg 7 i PLAN.md.
+    autentisering: API-nyckel (kommer efter kundanmälan; lagras utanför repot)
+    dokumentation: https://bolagsverket.se/apierochoppnadata/hamtaforetagsinformation/vardefulladatamangder/apiforvardefulladatamangder.5513.html
+    licens: okänd
+    attribution: "Källa: Bolagsverket"
+    takt: { anrop: 2, per_sekunder: 1 }
+    cache_ttl: 86400
+    tacker:
+      - SNI-koder
+      - digitalt inlämnade årsredovisningar (iXBRL)
+      - grunddata om företag
 
-- id: skatteverket_rowstore
-  myndighet: Skatteverket
-  adapter: rowstore
-  bas_url: https://skatteverket.entryscape.net/rowstore/dataset
-  verifierad: ja
-  aktiverad: true
-  verifierat_anrop: GET /080c60de-c7e3-4d65-a386-5e72b2aa4bcd/json?_limit=1 -> 200 OK
-  licens: okänd
-  attribution: "Källa: Skatteverket"
-  takt: { anrop: 3, per_sekunder: 1 }
-  cache_ttl: 86400
-  tacker:
-    - skattetabeller
-    - momsstatistik, arbetsgivaravgifter, ROT/RUT, fastighetsskatt
-  notering: >
-    Detta är STATISTIK, inte rättslig vägledning. Skatteverkets ställningstaganden
-    finns inte som API.
+  - id: skatteverket_rowstore
+    myndighet: Skatteverket
+    adapter: rowstore
+    bas_url: https://skatteverket.entryscape.net/rowstore/dataset
+    verifierad: ja
+    aktiverad: true
+    verifierat_anrop: GET /080c60de-c7e3-4d65-a386-5e72b2aa4bcd/json?_limit=1 -> 200 OK
+    licens: okänd
+    attribution: "Källa: Skatteverket"
+    takt: { anrop: 3, per_sekunder: 1 }
+    cache_ttl: 86400
+    tacker:
+      - skattetabeller
+      - momsstatistik, arbetsgivaravgifter, ROT/RUT, fastighetsskatt
+    notering: >
+      Detta är STATISTIK, inte rättslig vägledning. Skatteverkets ställningstaganden
+      finns inte som API.
 
-- id: kronofogden_rowstore
-  myndighet: Kronofogdemyndigheten
-  adapter: rowstore
-  bas_url: https://kronofogden.entryscape.net/rowstore/dataset
-  verifierad: ja
-  aktiverad: true
-  verifierat_anrop: GET /4e789168-1d3d-468c-b9a1-0cce9a9a4f1e/json?_limit=1 -> 200 OK
-  licens: okänd
-  attribution: "Källa: Kronofogden"
-  takt: { anrop: 3, per_sekunder: 1 }
-  cache_ttl: 86400
-  tacker:
-    - konkursstatistik, skuldsanering, avhysningar
-    - förbehållsbelopp, handläggningstider
+  - id: kronofogden_rowstore
+    myndighet: Kronofogdemyndigheten
+    adapter: rowstore
+    bas_url: https://kronofogden.entryscape.net/rowstore/dataset
+    verifierad: ja
+    aktiverad: true
+    verifierat_anrop: GET /4e789168-1d3d-468c-b9a1-0cce9a9a4f1e/json?_limit=1 -> 200 OK
+    licens: okänd
+    attribution: "Källa: Kronofogden"
+    takt: { anrop: 3, per_sekunder: 1 }
+    cache_ttl: 86400
+    tacker:
+      - konkursstatistik, skuldsanering, avhysningar
+      - förbehållsbelopp, handläggningstider
 
-- id: jobtech
-  myndighet: Arbetsförmedlingen
-  adapter: json_rest
-  bas_url: https://jobsearch.api.jobtechdev.se
-  verifierad: ja
-  aktiverad: true
-  verifierat_anrop: GET /search?q=lärare&limit=1 -> 200 OK
-  licens: okänd
-  attribution: "Källa: Arbetsförmedlingen / JobTech"
-  takt: { anrop: 5, per_sekunder: 1 }
-  cache_ttl: 3600
-  tacker:
-    - platsannonser, arbetsmarknadstaxonomi
+  - id: jobtech
+    myndighet: Arbetsförmedlingen
+    adapter: json_rest
+    bas_url: https://jobsearch.api.jobtechdev.se
+    verifierad: ja
+    aktiverad: true
+    verifierat_anrop: GET /search?q=lärare&limit=1 -> 200 OK
+    licens: okänd
+    attribution: "Källa: Arbetsförmedlingen / JobTech"
+    takt: { anrop: 5, per_sekunder: 1 }
+    cache_ttl: 3600
+    tacker:
+      - platsannonser, arbetsmarknadstaxonomi
 
-# ---------------------------------------------------------------------------
-# NIVÅ 2 — generiska protokolladaptrar
-#
-# Dessa har ingen egen bas_url. De instansieras vid körning från katalogindexets
-# access_url när en datamängd pekar på en PxWeb- eller RowStore-instans.
-# Det är så systemet når de ~140 utgivare som inte har egen adapter:
-# Naturvårdsverket, Energimyndigheten, Folkhälsomyndigheten, Socialstyrelsen,
-# Domstolsverket, Konsumentverket, Transportstyrelsen, Boverket,
-# Upphandlingsmyndigheten, PRV, Swedac, Energimarknadsinspektionen, IAF, SKR,
-# Pensionsmyndigheten, Försäkringskassan, MYH, PTS, BRÅ, Valmyndigheten,
-# Kungliga biblioteket, Riksarkivet, Livsmedelsverket, HaV, SGU, Trafikverket,
-# Svenska kraftnät, Visit Sweden, Tillväxtverket, Migrationsverket, CSN,
-# Länsstyrelserna, Skogsstyrelsen, kommuner och regioner.
-# ---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
+  # NIVÅ 2 — generiska protokolladaptrar
+  #
+  # Dessa har ingen egen bas_url. De instansieras vid körning från katalogindexets
+  # access_url när en datamängd pekar på en PxWeb- eller RowStore-instans.
+  # Det är så systemet når de ~140 utgivare som inte har egen adapter:
+  # Naturvårdsverket, Energimyndigheten, Folkhälsomyndigheten, Socialstyrelsen,
+  # Domstolsverket, Konsumentverket, Transportstyrelsen, Boverket,
+  # Upphandlingsmyndigheten, PRV, Swedac, Energimarknadsinspektionen, IAF, SKR,
+  # Pensionsmyndigheten, Försäkringskassan, MYH, PTS, BRÅ, Valmyndigheten,
+  # Kungliga biblioteket, Riksarkivet, Livsmedelsverket, HaV, SGU, Trafikverket,
+  # Svenska kraftnät, Visit Sweden, Tillväxtverket, Migrationsverket, CSN,
+  # Länsstyrelserna, Skogsstyrelsen, kommuner och regioner.
+  # ---------------------------------------------------------------------------
 
-- id: _generisk_pxweb
-  adapter: pxweb
-  generisk: true
-  verifierad: ja      # protokollet är verifierat mot SCB
-  takt: { anrop: 3, per_sekunder: 1 }
-  cache_ttl: 86400
-  notering: >
-    Instansieras per värdnamn. Varje ny värd får sin egen token bucket. Respektera
-    värdens /config om den finns; annars gäller takten ovan.
+  - id: _generisk_pxweb
+    adapter: pxweb
+    generisk: true
+    verifierad: ja      # protokollet är verifierat mot SCB
+    takt: { anrop: 3, per_sekunder: 1 }
+    cache_ttl: 86400
+    notering: >
+      Instansieras per värdnamn. Varje ny värd får sin egen token bucket. Respektera
+      värdens /config om den finns; annars gäller takten ovan.
 
-- id: _generisk_rowstore
-  adapter: rowstore
-  generisk: true
-  verifierad: nej
-  takt: { anrop: 3, per_sekunder: 1 }
-  cache_ttl: 86400
+  - id: _generisk_rowstore
+    adapter: rowstore
+    generisk: true
+    verifierad: nej
+    takt: { anrop: 3, per_sekunder: 1 }
+    cache_ttl: 86400
 
-- id: _generisk_json
-  adapter: json_rest
-  generisk: true
-  verifierad: nej
-  takt: { anrop: 2, per_sekunder: 1 }
-  cache_ttl: 86400
-  notering: >
-    Sista utvägen. Får bara användas mot värdar som finns i katalogindexet, aldrig
-    mot en URL som modellen konstruerat själv. Kontrolleras i adapterlagret.
+  - id: _generisk_json
+    adapter: json_rest
+    generisk: true
+    verifierad: nej
+    takt: { anrop: 2, per_sekunder: 1 }
+    cache_ttl: 86400
+    notering: >
+      Sista utvägen. Får bara användas mot värdar som finns i katalogindexet, aldrig
+      mot en URL som modellen konstruerat själv. Kontrolleras i adapterlagret.
 
-# ---------------------------------------------------------------------------
-# EJ ANVÄNDBARA — dokumenteras för att slippa utreda igen
-# ---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
+  # EJ ANVÄNDBARA — dokumenteras för att slippa utreda igen
+  # ---------------------------------------------------------------------------
 
-- id: _ogc_wms_wfs
-  anvandbar: false
-  skal: >
-    Cirka 65 procent av dataportalens 598 dataservices är INSPIRE WMS/WFS. De svarar
-    med kartbilder eller GML. En chattbot kan inte formulera svar från dem. Filtreras
-    bort vid katalogingest (format innehåller VND.OGC eller titeln slutar på
-    "visningstjänst"/"nedladdningstjänst").
+  - id: _ogc_wms_wfs
+    anvandbar: false
+    skal: >
+      Cirka 65 procent av dataportalens 598 dataservices är INSPIRE WMS/WFS. De svarar
+      med kartbilder eller GML. En chattbot kan inte formulera svar från dem. Filtreras
+      bort vid katalogingest (format innehåller VND.OGC eller titeln slutar på
+      "visningstjänst"/"nedladdningstjänst").

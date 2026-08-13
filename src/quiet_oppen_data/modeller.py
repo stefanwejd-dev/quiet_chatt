@@ -5,9 +5,10 @@ Se ARKITEKTUR.md §3.4.
 
 from __future__ import annotations
 
+import dataclasses
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Iterator
+from typing import Iterable, Iterator
 
 
 # ---------------------------------------------------------------------------
@@ -40,6 +41,42 @@ class Faktapost:
     attribution: str | None = None
     harledd: bool = False            # True om beräknad ur andra Faktaposter
     harledd_av: tuple[str, ...] = () # id:n på ingångsposterna
+
+
+# ---------------------------------------------------------------------------
+# Faktautkast — vad en adapter returnerar
+# ---------------------------------------------------------------------------
+
+@dataclass(frozen=True)
+class Faktautkast:
+    """En hämtad uppgift som ännu inte fått något F-id.
+
+    Adaptrar returnerar Faktautkast, inte Faktapost. Skälet är att Faktaregister
+    ska vara den enda vägen in för fakta (ARKITEKTUR.md §3.4): bara registret får
+    mynta ett F-id, och bara registret kontrollerar att båda länkarna finns.
+
+    Tidigare returnerade adaptrarna Faktapost med id="" och fyllde i id senare.
+    Det gjorde att en post kunde existera utan länkar — vilket faktiskt inträffade
+    i pxweb-adapterns felgren — eftersom kontrollen bara låg i registrera().
+    Med Faktautkast är den vägen stängd: en Faktapost kan inte konstrueras utan
+    att passera valideringen.
+    """
+
+    etikett: str
+    varde: str
+    kalla_id: str
+    myndighet: str
+    licens: str
+    lank_manniska: str
+    lank_maskin: str
+    enhet: str | None = None
+    period: str | None = None
+    dimensioner: dict = field(default_factory=dict)
+    dataset: str | None = None
+    attribution: str | None = None
+    hamtad: datetime | None = None
+    harledd: bool = False
+    harledd_av: tuple[str, ...] = ()
 
 
 # ---------------------------------------------------------------------------
@@ -97,6 +134,23 @@ class Faktaregister:
         post = Faktapost(id=fid, **falt)
         self._poster[fid] = post
         return post
+
+    def registrera_utkast(self, utkast: Faktautkast) -> Faktapost:
+        """Registrerar ett Faktautkast från en adapter och tilldelar F-id.
+
+        Detta är den väg adapterresultat ska ta in i registret. Valideringen i
+        registrera() gäller oförändrat — ett utkast utan länkar avvisas.
+        """
+        falt = {
+            f.name: getattr(utkast, f.name)
+            for f in dataclasses.fields(utkast)
+            if not (f.name == "hamtad" and getattr(utkast, "hamtad") is None)
+        }
+        return self.registrera(**falt)
+
+    def registrera_alla(self, utkast: Iterable[Faktautkast]) -> list[Faktapost]:
+        """Registrerar en sekvens utkast i ordning. Returnerar de skapade posterna."""
+        return [self.registrera_utkast(u) for u in utkast]
 
     # ------------------------------------------------------------------
     # Läsa

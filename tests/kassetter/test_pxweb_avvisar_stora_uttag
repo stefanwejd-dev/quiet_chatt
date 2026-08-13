@@ -58,9 +58,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 Aug 2026 14:52:24 GMT
+      - Thu, 13 Aug 2026 14:53:05 GMT
       set-cookie:
-      - TS0187a64b=017dca055c953eaee8a15db65f44fd66be28f098e3a58521d5e5c3c0634465bd24ba83458b2eac21873f6f2b51307d9d3dd396b484;
+      - TS0187a64b=017dca055ce059565bf2ba8296202e6adde467c0793f238752fcbe2256bc7233f1969a172f46c9813695a31d1d80391d473a860707;
         Path=/; Domain=.api.scb.se; Secure; HttpOnly
       strict-transport-security:
       - max-age=31536000; includeSubDomains
@@ -75,7 +75,7 @@ interactions:
       x-rate-limit-remaining:
       - '29'
       x-rate-limit-reset:
-      - '2026-08-13T14:52:34.6800695Z'
+      - '2026-08-13T14:53:15.4630858Z'
     status:
       code: 200
       message: OK

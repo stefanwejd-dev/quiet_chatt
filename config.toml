@@ -13,6 +13,10 @@ max_verktygsvarv  = 8
 [kvot]
 fragor_per_ip_per_dygn  = 50
 fragor_totalt_per_dygn  = 2000
+# Hård gräns. Upprätthålls primärt genom att Anthropic-kontot är förskottsbetalt
+# utan auto-reload — se ARKITEKTUR.md §6a. Denna rad är ett internt larm, inte
+# den enda spärren.
+kostnadstak_sek_per_manad = 1000
 
 [index]
 db = "data/index.sqlite"
