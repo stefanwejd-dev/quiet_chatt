@@ -240,13 +240,12 @@ uppdaterad: 2026-08-13
 - id: bolagsverket_hvd
   myndighet: Bolagsverket
   adapter: bolagsverket
-  bas_url: https://gw.api.bolagsverket.se/vardefulla-datamangder/v1
+  bas_url: https://gw.api.bolagsverket.se/foretagsinformation/v4
   verifierad: nej
   aktiverad: false
   hinder: >
-    Gissad sökväg /organisationer svarar 404, roten svarar 404. Rätt sökvägar måste
-    hämtas ur Bolagsverkets egen dokumentation. API:t kräver ingen avtalsprocess men
-    en kundanmälan. Bekräfta både anmälan och sökvägar innan aktivering.
+    API för värdefulla datamängder (HVD) kräver kundanmälan och OAuth2 (API-nycklar).
+    Nycklarna väntas inom kort och kommer att placeras i quiet_chatt_hemligt-mappen.
   dokumentation: https://bolagsverket.se/apierochoppnadata/hamtaforetagsinformation/vardefulladatamangder/apiforvardefulladatamangder.5513.html
   licens: okänd
   attribution: "Källa: Bolagsverket"
@@ -261,12 +260,9 @@ uppdaterad: 2026-08-13
   myndighet: Skatteverket
   adapter: rowstore
   bas_url: https://skatteverket.entryscape.net/rowstore/dataset
-  verifierad: nej
-  aktiverad: false
-  hinder: >
-    Rot-listningen svarar 404. Datamängder nås som /dataset/{uuid}. UUID:na måste
-    hittas via dataportal.se-katalogen först. Verifiera ett konkret UUID innan
-    aktivering.
+  verifierad: ja
+  aktiverad: true
+  verifierat_anrop: GET /080c60de-c7e3-4d65-a386-5e72b2aa4bcd/json?_limit=1 -> 200 OK
   licens: okänd
   attribution: "Källa: Skatteverket"
   takt: { anrop: 3, per_sekunder: 1 }
@@ -282,9 +278,9 @@ uppdaterad: 2026-08-13
   myndighet: Kronofogdemyndigheten
   adapter: rowstore
   bas_url: https://kronofogden.entryscape.net/rowstore/dataset
-  verifierad: nej
-  aktiverad: false
-  hinder: Rot-listningen svarar 404. Samma UUID-förfarande som Skatteverket.
+  verifierad: ja
+  aktiverad: true
+  verifierat_anrop: GET /4e789168-1d3d-468c-b9a1-0cce9a9a4f1e/json?_limit=1 -> 200 OK
   licens: okänd
   attribution: "Källa: Kronofogden"
   takt: { anrop: 3, per_sekunder: 1 }
@@ -297,9 +293,9 @@ uppdaterad: 2026-08-13
   myndighet: Arbetsförmedlingen
   adapter: json_rest
   bas_url: https://jobsearch.api.jobtechdev.se
-  verifierad: nej
-  aktiverad: false
-  hinder: Endpoints hämtade ur tredjepartskatalog, inte anropade. Verifiera.
+  verifierad: ja
+  aktiverad: true
+  verifierat_anrop: GET /search?q=lärare&limit=1 -> 200 OK
   licens: okänd
   attribution: "Källa: Arbetsförmedlingen / JobTech"
   takt: { anrop: 5, per_sekunder: 1 }
