@@ -22,6 +22,10 @@ _KONFIG_FIL = _PROJEKT_ROT / "config.toml"
 @dataclass(frozen=True)
 class SiteKonfig:
     domain: str
+    # Sant bakom en reverse proxy (Coolify/Traefik) som sätter X-Forwarded-For.
+    # Falskt om appen exponeras direkt — då är headern klientstyrd och skulle
+    # göra per-IP-kvoten verkningslös. Se api.py:_klient_ip.
+    betrodd_proxy: bool = True
 
 
 @dataclass(frozen=True)

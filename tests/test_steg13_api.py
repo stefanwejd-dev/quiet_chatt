@@ -252,3 +252,27 @@ def test_nyckeln_syns_inte_i_nagot_svar(client, monkeypatch):
         client.post("/fraga", json={"fraga": "Vad är referensräntan?"}),
     ):
         assert _HEMLIG_TESTNYCKEL not in res.text
+
+
+def test_klient_ip_litar_inte_pa_header_utan_betrodd_proxy(monkeypatch):
+    """X-Forwarded-For sätts av vem som helst som når porten.
+
+    Litar api:et alltid på den blir per-IP-kvoten verkningslös: en ny slumpad
+    adress per anrop ger obegränsat antal frågor, bara bromsat av dygnstotalen.
+    """
+    import dataclasses
+    import quiet_oppen_data.api as api_modul
+
+    riktig = api_modul.las_konfig()
+
+    class _Req:
+        headers = {"x-forwarded-for": "9.9.9.9"}
+        class client:  # noqa: N801
+            host = "10.0.0.5"
+
+    for betrodd, forvantad in ((True, "9.9.9.9"), (False, "10.0.0.5")):
+        konfig = dataclasses.replace(
+            riktig, site=dataclasses.replace(riktig.site, betrodd_proxy=betrodd)
+        )
+        monkeypatch.setattr(api_modul, "las_konfig", lambda k=konfig: k)
+        assert api_modul._klient_ip(_Req()) == forvantad

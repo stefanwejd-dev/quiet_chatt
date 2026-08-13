@@ -583,7 +583,11 @@ Hela sviten (utom livetester): **160 passed**.
 
 ---
 
-## Steg 14 — Frontend
+## Steg 14 — Frontend   ← NÄSTA STEG
+
+**Läs "Granskning av steg 10–13" nedan innan du börjar.** Två fält i
+svarsobjektet fick nya regler vid granskningen, och båda rör vad frontend får
+rendera.
 
 **Gör:** `frontend/widget.js` — en fristående fil, ingen byggkedja, inbäddningsbar med
 en `<script>`-tagg på quiet.nu.
@@ -613,6 +617,69 @@ en `<script>`-tagg på quiet.nu.
 - Mätvyn visar andelen frågor som besvarades på nivå 3 (katalogsvar) — det är siffran
   som styr vilken adapter som byggs härnäst.
 - Frågetexter raderas automatiskt efter 30 dagar.
+
+---
+
+## Granskning av steg 10–13, 2026-08-13
+
+Den bäst byggda etappen hittills. `syntes.py`, `validator.py`, `berakningar.py`
+och `kvot.py` följer arkitekturen nära, med korrekt anropsform, fail-closed på
+alla vägar och deterministisk attribution. Fyra fynd, varav ett principiellt.
+
+| # | Fynd | Var | Karaktär |
+|---|---|---|---|
+| 1 | `forbehall` passerade ingen kontroll men strömmas till användaren | `validator.py` / `api.py` | **Invariantlucka** |
+| 2 | `kan_besvaras=true` utan stycken passerade valideringen | `validator.py` | Tomt svar |
+| 3 | `X-Forwarded-For` litades alltid på | `api.py` | Kvotkringgående |
+| 4 | Riksbanken satte ingen `enhet` | `riksbanken.py` | "räntan ligger på 2" |
+
+**Fynd 1 är det viktiga.** `forbehall` är fritext från modellen, bär inga
+källhänvisningar, och `api.py` skickar det som ett eget SSE-event. Det var
+alltså en textkanal rakt förbi citeringskravet i §1.
+
+Jag provocerade fram det live: modellen ombads uttryckligen lägga momssatsen
+respektive en gissad ränta i `forbehall`. Den **vägrade båda gångerna** och
+skrev i stället att den inte kan ange en siffra utan täckning. Uppförandet är
+alltså gott — men validatorn rapporterade `0 fel`, vilket betyder att den hade
+släppt igenom vad som helst. Att invarianten höll berodde enbart på modellen,
+och §1 säger uttryckligen att det är en förhoppning, inte en garanti.
+
+Kontroll 5 stänger det: `forbehall` får inte införa tal som saknas i registret.
+Kontrollen är medvetet smal — den fångar siffror (räntesatser, procent, belopp),
+tillåter tal som redan står i en Faktapost, och tillåter tal som står i
+användarens egen fråga. Kontroll 6 stoppar det tomma svaret.
+
+**Fynd 3:** `X-Forwarded-For` sätts av vem som helst som når porten. En ny
+slumpad adress per anrop gav obegränsat antal frågor, bara bromsat av
+dygnstotalen. Headern läses nu bara när `site.betrodd_proxy = true`, vilket den
+ska vara bakom Coolify och inte om appen exponeras direkt.
+
+**Fynd 4** upptäcktes av systemet självt: modellen skrev i sitt förbehåll att
+enhet saknades, och den hade rätt. Enheten härleds nu ur SWEA:s gruppträd
+(räntegren → procent, valutagren → "SEK per EUR") — ur API:ets egen struktur,
+inte ur seriens namn. Saknas grupp lämnas fältet tomt hellre än gissat.
+
+**Verifierat live, hela kedjan A→B→C:**
+
+| Fråga | Utfall |
+|---|---|
+| "Vad är Riksbankens referensränta?" | 2 faktaposter, citerade `[F1, F2]`, rätt serie, källpanel med länkar |
+| "Vem vann Eurovision 1974?" | 0 faktaposter, `kan_besvaras=false`, "Det hittade jag inte i källorna." |
+
+Den andra raden är den viktiga. Modellen vet svaret utantill ur sin förträning
+och skriver det ändå inte. Invarianten håller under precis det tryck den finns
+för.
+
+**Regler som frontend (steg 14) måste följa:**
+
+* `forbehall` renderas **avskilt från svaret**, som en not — aldrig som en
+  mening bland styckena. Det är den enda text i svaret som inte är citerad.
+* Ett stycke renderas alltid med sina fotnoter. Ett stycke utan `kallor` ska
+  inte kunna nå frontend, men rendera det inte om det ändå gör det.
+* `harledd`-poster måste märkas i källpanelen tillsammans med `harledd_av`.
+
+Sviten: **167 passerade**, 6 livetester avmarkerade. De tre nya spärrarna är
+mutationstestade.
 
 ---
 

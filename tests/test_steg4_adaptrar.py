@@ -110,3 +110,18 @@ def test_riksbanken_etikett_namnger_serien(isolerad_cache):
     assert len(utkast) == 1
     assert "Reference rate" in utkast[0].etikett
     assert "SECBREFEFF" in utkast[0].etikett
+
+
+@vcr.use_cassette(**vcr_config)
+def test_riksbanken_harleder_enhet_ur_grupptradet(isolerad_cache):
+    """Utan enhet blir svaret "referensräntan ligger på 2" — tvetydigt.
+
+    SWEA anger ingen enhet per serie, men gruppträdet skiljer räntor från
+    valutakurser. Vi härleder ur API:ets egen struktur, inte ur seriens namn.
+    """
+    a = RiksbankenAdapter()
+    ranta = a.hamta(Fragplan(fraga="", extra={"verktyg": "riksbanken_hamta", "serie": "SECBREFEFF"}))
+    assert ranta[0].enhet == "procent"
+
+    kurs = a.hamta(Fragplan(fraga="", extra={"verktyg": "riksbanken_hamta", "serie": "SEKEURPMI"}))
+    assert kurs[0].enhet == "SEK per EUR"

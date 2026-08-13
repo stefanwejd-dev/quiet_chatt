@@ -182,11 +182,19 @@ class FragaBegaran(BaseModel):
 
 
 def _klient_ip(request: Request) -> str:
-    """Klientens IP. Bakom en reverse proxy (Coolify/Traefik) är det den
-    första posten i X-Forwarded-For som gäller, inte proxyns egen adress."""
-    vidarebefordrad = request.headers.get("x-forwarded-for")
-    if vidarebefordrad:
-        return vidarebefordrad.split(",")[0].strip()
+    """Klientens IP, för per-IP-kvoten.
+
+    X-Forwarded-For sätts av vem som helst som kan nå porten. Litar vi alltid
+    på den blir per-IP-kvoten verkningslös: en angripare skickar en ny slumpad
+    adress per anrop och får obegränsat antal frågor, bara begränsat av
+    dygnstotalen. Headern läses därför bara när `site.betrodd_proxy` är satt,
+    vilket den ska vara bakom Coolify/Traefik och inte vara om appen exponeras
+    direkt.
+    """
+    if las_konfig().site.betrodd_proxy:
+        vidarebefordrad = request.headers.get("x-forwarded-for")
+        if vidarebefordrad:
+            return vidarebefordrad.split(",")[0].strip()
     return request.client.host if request.client else "okänd"
 
 

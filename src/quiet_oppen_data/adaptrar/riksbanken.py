@@ -126,6 +126,62 @@ class RiksbankenAdapter:
                 return s.get("shortDescription") or s.get("midDescription")
         return None
 
+    # ------------------------------------------------------------------
+    # Enhet
+    # ------------------------------------------------------------------
+
+    def _gruppvag(self) -> dict[int, list[str]]:
+        """Bygger {groupId: [namn på alla förfäder + eget namn]} ur /Groups.
+
+        SWEA anger ingen enhet per serie. Men gruppträdet skiljer räntor från
+        valutakurser, och den strukturen kommer från API:et självt — vi
+        härleder ur den i stället för att gissa på seriens namn.
+        """
+        try:
+            rot = hamta_json(self.id, "GET", f"{self._kalla.bas_url}/Groups")
+        except Exception:
+            logger.warning("%s: kunde inte hämta gruppträdet", self.id, exc_info=True)
+            return {}
+
+        vagar: dict[int, list[str]] = {}
+
+        def ga(nod: dict, forfader: list[str]) -> None:
+            namn = forfader + [nod.get("name") or ""]
+            gid = nod.get("groupId")
+            if gid is not None:
+                vagar[gid] = namn
+            for barn in nod.get("childGroups") or []:
+                ga(barn, namn)
+
+        for nod in (rot if isinstance(rot, list) else [rot]):
+            ga(nod, [])
+        return vagar
+
+    def _enhet(self, serie: str) -> str | None:
+        """Enhet för en serie, härledd ur gruppträdet. None när det är oklart.
+
+        Utan enhet blir svaret "referensräntan ligger på 2" — vilket är
+        tvetydigt. Vi gissar dock inte: hittar vi ingen grupp lämnas fältet
+        tomt, och syntesmodellen påpekar då själv att sorten saknas.
+        """
+        post = next((s for s in self._serier() if s.get("seriesId") == serie), None)
+        if post is None:
+            return None
+
+        vag = self._gruppvag().get(post.get("groupId"))
+        if not vag:
+            return None
+        # Rotnoden heter "Interest rates and exchange rates" och matchar därmed
+        # båda grenarna. Den bär ingen information — vi läser grenen under den.
+        text = " / ".join(vag[1:] or vag).lower()
+
+        if "exchange rate" in text or "currencies against" in text:
+            valuta = (post.get("shortDescription") or "").strip()
+            return f"SEK per {valuta}" if valuta else "SEK"
+        if "interest rate" in text or "rates" in text:
+            return "procent"
+        return None
+
     def hamta(self, plan: Fragplan) -> list[Faktautkast]:
         if plan.extra.get("verktyg") == "riksbanken_lista_serier":
             return self._lista_serier(plan.extra.get("sok"))
@@ -163,6 +219,7 @@ class RiksbankenAdapter:
         return [
             Faktautkast(
                 etikett=etikett,
+                enhet=self._enhet(serie),
                 varde=str(data["value"]),
                 period=data.get("date"),
                 kalla_id=self.id,

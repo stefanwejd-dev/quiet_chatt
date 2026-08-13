@@ -250,6 +250,14 @@ från prompt till arkitektur.
 
 Innan svaret lämnar backend:
 
+0. **Allt som renderas måste vara täckt.** `forbehall` är fritext från modellen
+   och bär inga källhänvisningar. Det får därför inte införa tal som saknas i
+   registret — annars är fältet en textkanal rakt förbi invarianten i §1. Vid
+   granskningen 2026-08-13 vägrade modellen att lägga fakta där även vid direkt
+   uppmaning, men validatorn hade släppt igenom vad som helst. Att invarianten
+   höll berodde enbart på modellens uppförande, vilket är precis vad §1 säger
+   att man inte får förlita sig på. Ett svar med `kan_besvaras: true` men utan
+   stycken avvisas av samma skäl: då vore förbehållet svarets hela innehåll.
 1. Varje `kallor`-id måste finnas i sessionens Faktaregister. Annars kasta.
 2. Varje stycke som innehåller en siffra, ett datum eller ett egennamn måste ha minst
    en källa. (Schemat garanterar detta redan; kontrollen fångar schema-drift.)

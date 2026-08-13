@@ -257,3 +257,70 @@ def test_attribution_fylls_i_deterministiskt_vid_giltigt_svar():
     resultat = validator.kor("Vad är referensräntan?", register)
 
     assert resultat.attribution == ("Källa: Riksbanken (CC-BY)",)
+
+
+# ---------------------------------------------------------------------------
+# Kontroll 5 och 6 — tillagda vid granskningen 2026-08-13
+# ---------------------------------------------------------------------------
+
+def _register_med_ett_faktum() -> Faktaregister:
+    reg = Faktaregister()
+    reg.registrera(
+        etikett="SMHI: nederbörd Malmö", varde="4.2", enhet="mm", period="2026-08-12",
+        kalla_id="smhi", myndighet="SMHI", licens="CC-BY", attribution="Källa: SMHI",
+        lank_manniska="https://smhi.se/data", lank_maskin="https://x/api.json",
+    )
+    return reg
+
+
+def test_forbehall_med_pahittat_tal_underkanns():
+    """forbehall är fritext utan källhänvisning men strömmas till användaren.
+
+    Utan kontroll 5 är det en textkanal rakt förbi citeringskravet i §1:
+    modellen kunde skriva "momsen är 25 procent" där och det hade nått
+    besökaren ociterat.
+    """
+    reg = _register_med_ett_faktum()
+    svar = SyntesSvar(
+        kan_besvaras=False, stycken=(),
+        forbehall="Underlaget saknar uppgift, men momssatsen är normalt 25 procent.",
+    )
+    fel = validera(svar, reg, fraga="Vad är momsen?")
+    assert [f.kontroll for f in fel] == ["obelagt_tal_i_forbehall"]
+    assert "25" in fel[0].meddelande
+
+
+def test_forbehall_far_citera_tal_ur_registret():
+    """Att återge ett värde som finns i registret är inte påhitt."""
+    reg = _register_med_ett_faktum()
+    svar = SyntesSvar(
+        kan_besvaras=False, stycken=(),
+        forbehall="Underlaget innehåller bara nederbörd 4,2 mm för 2026-08-12.",
+    )
+    assert validera(svar, reg, fraga="Vad är referensräntan?") == []
+
+
+def test_forbehall_far_aterge_fragans_egna_tal():
+    """Frågans egna siffror är användarens, inte modellens påhitt."""
+    reg = _register_med_ett_faktum()
+    svar = SyntesSvar(
+        kan_besvaras=False, stycken=(),
+        forbehall="Underlaget saknar uppgifter för juli 2025.",
+    )
+    assert validera(svar, reg, fraga="Vad var räntan i juli 2025?") == []
+
+
+def test_besvarat_utan_stycken_underkanns():
+    """kan_besvaras=true utan stycken vore ett svar vars hela innehåll är
+    det enda fält som inte är citerat."""
+    reg = _register_med_ett_faktum()
+    svar = SyntesSvar(kan_besvaras=True, stycken=(), forbehall=None)
+    fel = validera(svar, reg, fraga="Hur mycket regnade det?")
+    assert [f.kontroll for f in fel] == ["tomt_svar"]
+
+
+def test_fail_closed_svaret_passerar_egen_validering():
+    """Regressionsskydd: fail-closed-texten får inte själv fastna i kontroll 5."""
+    reg = _register_med_ett_faktum()
+    svar = SyntesSvar(kan_besvaras=False, stycken=(), forbehall=INGET_HITTAT)
+    assert validera(svar, reg, fraga="Vad kostar 25 kg potatis 2026?") == []

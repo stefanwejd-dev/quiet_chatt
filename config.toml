@@ -3,6 +3,10 @@
 
 [site]
 domain = "quiet.nu"
+# Sant bakom Coolify/Traefik. Sätt false om appen exponeras direkt mot internet
+# — annars kan vem som helst kringgå per-IP-kvoten med en påhittad
+# X-Forwarded-For-header.
+betrodd_proxy = true
 
 [modell]
 namn              = "claude-opus-5"
