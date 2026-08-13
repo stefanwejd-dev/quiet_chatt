@@ -235,6 +235,8 @@ av svaret, och ett förslag till uppdatering av `kallregister.yaml`. Uppdatera r
 först efter beställarens godkännande. Källor som fortfarande inte går att nå lämnas
 `verifierad: nej` och `aktiverad: false` — det är ett giltigt utfall.
 
+**Utfall 2026-08-13:** Undersökt RowStore (Skatteverket och Kronofogden) och bekräftat paginering via `_offset` och `_limit`. Bekräftat att Bolagsverkets HVD API kräver kundanmälan (väntar på API-nycklar), lämnas därför inaktiv tills vidare i registret. Sökt och verifierat endpointen för JobTech (JobSearch). Dokumenterat allt i en artefakt (`verifiering_steg7.md`). Uppdatering av källregistret avvaktar nu beställarens (ditt) godkännande av förslagen i rapporten.
+
 ---
 
 ## Steg 8 — Övriga verifierade adaptrar
