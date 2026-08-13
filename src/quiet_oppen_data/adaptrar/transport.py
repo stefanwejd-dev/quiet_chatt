@@ -86,8 +86,7 @@ def _ar_tillaten_vard(url: str) -> bool:
         return True
     return False
 
-def hamta_json(kalla_id: str, method: str, url: str, **kwargs) -> Any:
-    """Gemensam HTTP-klient med blocklista, cache och kö."""
+def _hamta_generisk(kalla_id: str, method: str, url: str, return_json: bool, **kwargs) -> Any:
     # 1. Kontrollera blockering (Sparrad)
     k = hamta(kalla_id)
     if isinstance(k, Sparrad):
@@ -100,7 +99,7 @@ def hamta_json(kalla_id: str, method: str, url: str, **kwargs) -> Any:
         if not _ar_tillaten_vard(url):
             raise ValueError(f"Värden i {url} är inte tillåten för generiska anrop.")
 
-    # 3. Cache nyckel (normaliserad metod, url, body/params)
+    # 3. Cache nyckel
     params = kwargs.get("params")
     json_body = kwargs.get("json")
     
@@ -108,7 +107,8 @@ def hamta_json(kalla_id: str, method: str, url: str, **kwargs) -> Any:
         "method": method.upper(),
         "url": url,
         "params": params,
-        "json": json_body
+        "json": json_body,
+        "return_json": return_json
     }
     key_str = json.dumps(cache_parts, sort_keys=True)
     cache_key = hashlib.sha256(key_str.encode("utf-8")).hexdigest()
@@ -120,12 +120,12 @@ def hamta_json(kalla_id: str, method: str, url: str, **kwargs) -> Any:
     if row:
         data, expires_at = row
         if now < expires_at:
-            return json.loads(data)
+            return json.loads(data) if return_json else data
         else:
             conn.execute("DELETE FROM http_cache WHERE key = ?", (cache_key,))
             conn.commit()
 
-    # 4. Token bucket (Rate limiting)
+    # 4. Token bucket
     bucket = _get_bucket(k)
     bucket.consume(1)
 
@@ -133,15 +133,25 @@ def hamta_json(kalla_id: str, method: str, url: str, **kwargs) -> Any:
     with httpx.Client() as client:
         res = client.request(method, url, **kwargs)
         res.raise_for_status()
-        res_data = res.json()
+        res_data = res.json() if return_json else res.text
         
     # 6. Spara i cache
     ttl = k.cache_ttl
     expires_at = now + ttl
     conn.execute(
         "REPLACE INTO http_cache (key, data, expires_at) VALUES (?, ?, ?)",
-        (cache_key, json.dumps(res_data), expires_at)
+        (cache_key, json.dumps(res_data) if return_json else res_data, expires_at)
     )
     conn.commit()
     
     return res_data
+
+def hamta_json(kalla_id: str, method: str, url: str, **kwargs) -> Any:
+    """Gemensam HTTP-klient med blocklista, cache och kö. Returnerar JSON."""
+    return _hamta_generisk(kalla_id, method, url, True, **kwargs)
+
+def hamta_text(kalla_id: str, method: str, url: str, **kwargs) -> str:
+    """Gemensam HTTP-klient. Returnerar råtext."""
+    return _hamta_generisk(kalla_id, method, url, False, **kwargs)
+
+

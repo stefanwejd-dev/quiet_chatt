@@ -1,0 +1,82 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - api.scb.se
+      user-agent:
+      - python-httpx/0.28.1
+    method: GET
+    uri: https://api.scb.se/OV0104/v2beta/api/v2/tables/TAB6445/metadata
+  response:
+    body:
+      string: !!binary |
+        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
+        xAsAAA==
+    headers:
+      access-control-allow-methods:
+      - GET,POST
+      access-control-allow-origin:
+      - '*'
+      access-control-max-age:
+      - '86400'
+      allow:
+      - GET,HEAD,POST,OPTIONS
+      content-encoding:
+      - gzip
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 13 Aug 2026 12:37:11 GMT
+      set-cookie:
+      - TS0187a64b=017dca055cddc96463bc371ca26ca31266fc9de147e13385d018a63c27d85c9ac634c4fd459d9c71eed920c0e69e9107c84d9e44c9;
+        Path=/; Domain=.api.scb.se; Secure; HttpOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Origin, Accept-Encoding
+      x-frame-options:
+      - SAMEORIGIN
+      x-rate-limit-limit:
+      - 10s
+      x-rate-limit-remaining:
+      - '29'
+      x-rate-limit-reset:
+      - '2026-08-13T12:37:22.4324853Z'
+    status:
+      code: 200
+      message: OK
+version: 1

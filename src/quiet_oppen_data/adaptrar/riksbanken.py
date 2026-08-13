@@ -20,8 +20,8 @@ class RiksbankenAdapter:
     def id(self) -> str:
         return self._kalla.id
 
-    def beskriv(self) -> dict[str, Any]:
-        return {
+    def beskriv(self) -> list[dict[str, Any]]:
+        return [{
             "name": self.id,
             "description": "Hämtar senaste observation för en ränta eller valutakurs (t.ex. SEKEURPMI).",
             "input_schema": {
@@ -34,7 +34,7 @@ class RiksbankenAdapter:
                 },
                 "required": ["serie"]
             }
-        }
+        }]
 
     def hamta(self, plan: Fragplan) -> list[Faktapost]:
         # Flexibel hantering av planens parametrar.

@@ -12,8 +12,11 @@ class Adapter(Protocol):
         """Adapterns unika id (ska matcha källans id i registret)."""
         ...
         
-    def beskriv(self) -> VerktygsSpec:
-        """Returnerar verktygsdefinitionen för Anthropic API."""
+    def beskriv(self) -> list[VerktygsSpec]:
+        """Returnerar verktygsdefinitioner för Anthropic API.
+        
+        En adapter kan exponera ett eller flera verktyg (t.ex. hamta_data och lista_dimensioner).
+        """
         ...
         
     def hamta(self, plan: Fragplan) -> list[Faktapost]:

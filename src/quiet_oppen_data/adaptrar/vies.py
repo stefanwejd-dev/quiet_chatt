@@ -20,8 +20,8 @@ class ViesAdapter:
     def id(self) -> str:
         return self._kalla.id
 
-    def beskriv(self) -> dict[str, Any]:
-        return {
+    def beskriv(self) -> list[dict[str, Any]]:
+        return [{
             "name": self.id,
             "description": "Validerar ett EU-momsregistreringsnummer.",
             "input_schema": {
@@ -39,7 +39,7 @@ class ViesAdapter:
                 },
                 "required": ["momsnr"]
             }
-        }
+        }]
 
     def hamta(self, plan: Fragplan) -> list[Faktapost]:
         momsnr = getattr(plan, "momsnr", None) or plan.extra.get("momsnr")

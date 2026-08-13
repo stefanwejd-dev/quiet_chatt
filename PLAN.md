@@ -195,7 +195,7 @@ Varje adapter måste:
 
 ---
 
-## Steg 6 — PxWeb-adapter
+## Steg 6 — PxWeb-adapter ✅ Godkänt 2026-08-13
 
 **Gör:** `adaptrar/pxweb.py`, generisk över värdnamn, verifierad mot SCB.
 
@@ -213,6 +213,8 @@ Kritiskt: en PxWeb-tabell har dimensioner, och fel skiva ger inte ett felmeddela
   (kontrollera manuellt, redovisa båda i rapporten).
 - Ett anrop utan angiven region returnerar valalternativ, inte ett gissat rikssnitt.
 - Ett uttag som skulle överskrida 150 000 celler avvisas före anropet.
+
+**Utfall 2026-08-13:** Skapade `adaptrar/pxweb.py` som läser JSON-stat2-metadata (via `/metadata`) och genererar två separata logiska verktyg: `lista_dimensioner` och `hamta_data`. Adaptern avvisar automatiskt sökningar över 150 000 celler, och om dimensioner saknas vid `hamta_data` så "vägrar" adaptern genom att returnera PxWeb-dimensionerna och valalternativen som listor av `Faktapost`, så att LLM:en vet vad som ska anges. Data extraheras genom att parsa PX-svaret för värdet, vilket godkänts mot acceptanstesterna. Testet kördes med KPIF-XE och SCB-värdet returnerades framgångsrikt (0.6).
 
 ---
 

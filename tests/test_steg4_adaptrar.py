@@ -49,10 +49,10 @@ def test_beskriv_innehaller_korrekt_format():
     r_adapter = RiksbankenAdapter()
     v_adapter = ViesAdapter()
     
-    r_spec = r_adapter.beskriv()
+    r_spec = r_adapter.beskriv()[0]
     assert r_spec["name"] == "riksbanken"
     assert "serie" in r_spec["input_schema"]["properties"]
     
-    v_spec = v_adapter.beskriv()
+    v_spec = v_adapter.beskriv()[0]
     assert v_spec["name"] == "vies"
     assert "momsnr" in v_spec["input_schema"]["properties"]

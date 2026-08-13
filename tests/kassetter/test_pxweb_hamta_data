@@ -1,0 +1,97 @@
+interactions:
+- request:
+    body: '{"selection":[{"variableCode":"PrelAggr","valueCodes":["SKPI03"]},{"variableCode":"ContentsCode","valueCodes":["000007PM"]},{"variableCode":"Tid","valueCodes":["2026M07"]}],"responseFormat":"json-stat2"}'
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      content-length:
+      - '203'
+      content-type:
+      - application/json
+      host:
+      - api.scb.se
+      user-agent:
+      - python-httpx/0.28.1
+    method: POST
+    uri: https://api.scb.se/OV0104/v2beta/api/v2/tables/TAB6445/data
+  response:
+    body:
+      string: !!binary |
+        Q0hBUlNFVD0iQU5TSSI7DQpBWElTLVZFUlNJT049IjIwMTAiOw0KQ09ERVBBR0U9Imlzby04ODU5
+        LTEiOw0KTEFOR1VBR0U9InN2IjsNCkNSRUFUSU9OLURBVEU9IjIwMjYwODEzIDE0OjM3IjsNCkRF
+        Q0lNQUxTPTE7DQpTSE9XREVDSU1BTFM9MTsNCk1BVFJJWD0iVEFCNjQ0NSI7DQpBR0dSRUdBTExP
+        V0VEPU5POw0KQ09QWVJJR0hUPU5POw0KU1VCSkVDVC1DT0RFPSJQUiI7DQpTVUJKRUNULUFSRUE9
+        IlByaXNlciBvY2gga29uc3VtdGlvbiI7DQpUSVRMRT0iU25hYmItS1BJLCBm9nLkbmRyaW5nIG1v
+        dCBzYW1tYSBt5W5hZCBm9nJlZ+VlbmRlIOVyLCBwcm9jZW50IGVmdGVyIHByZWxpbWlu5HJhIGFn
+        Z3JlZ2F0IG9jaCBt5W5hZCI7DQpDT05URU5UUz0iU25hYmItS1BJLCBm9nLkbmRyaW5nIG1vdCBz
+        YW1tYSBt5W5hZCBm9nJlZ+VlbmRlIOVyLCBwcm9jZW50IjsNClNUVUI9InByZWxpbWlu5HJhIGFn
+        Z3JlZ2F0IjsNCkhFQURJTkc9InRhYmVsbGlubmVo5WxsIiwibeVuYWQiOw0KQ09OVFZBUklBQkxF
+        PSJ0YWJlbGxpbm5laOVsbCI7DQpWQVJJQUJMRUNPREUoInByZWxpbWlu5HJhIGFnZ3JlZ2F0Iik9
+        IlByZWxBZ2dyIjsNClZBTFVFUygicHJlbGltaW7kcmEgYWdncmVnYXQiKT0iS29uc3VtZW50cHJp
+        c2luZGV4IG1lZCBmYXN0IHLkbnRhIGV4a2wuIGVuZXJnaSAoS1BJRi1YRSkiOw0KVkFSSUFCTEVD
+        T0RFKCJ0YWJlbGxpbm5laOVsbCIpPSJDb250ZW50c0NvZGUiOw0KVkFMVUVTKCJ0YWJlbGxpbm5l
+        aOVsbCIpPSJG9nLkbmRyaW5nIG1vdCBzYW1tYSBt5W5hZCBm9nJlZ+VlbmRlIOVyLCBwcm9jZW50
+        IjsNClZBUklBQkxFQ09ERSgibeVuYWQiKT0iVGlkIjsNClZBTFVFUygibeVuYWQiKT0iMjAyNk0w
+        NyI7DQpUSU1FVkFMKCJt5W5hZCIpPVRMSVNUKE0xKSwiMjAyNk0wNyI7DQpDT0RFUygicHJlbGlt
+        aW7kcmEgYWdncmVnYXQiKT0iU0tQSTAzIjsNCkNPREVTKCJ0YWJlbGxpbm5laOVsbCIpPSIwMDAw
+        MDdQTSI7DQpDT0RFUygibeVuYWQiKT0iMjAyNk0wNyI7DQpQUkVTVEVYVCgibeVuYWQiKT0wOw0K
+        VU5JVFM9InByb2NlbnQiOw0KTEFTVC1VUERBVEVEKCJG9nLkbmRyaW5nIG1vdCBzYW1tYSBt5W5h
+        ZCBm9nJlZ+VlbmRlIOVyLCBwcm9jZW50Iik9IjIwMjYwODA2IDA4OjAwIjsNClNUT0NLRkEoIkb2
+        cuRuZHJpbmcgbW90IHNhbW1hIG3lbmFkIGb2cmVn5WVuZGUg5XIsIHByb2NlbnQiKT0iUyI7DQpE
+        QVlBREooIkb2cuRuZHJpbmcgbW90IHNhbW1hIG3lbmFkIGb2cmVn5WVuZGUg5XIsIHByb2NlbnQi
+        KT1OTzsNClNFQVNBREooIkb2cuRuZHJpbmcgbW90IHNhbW1hIG3lbmFkIGb2cmVn5WVuZGUg5XIs
+        IHByb2NlbnQiKT1OTzsNClJFRlBFUklPRCgiRvZy5G5kcmluZyBtb3Qgc2FtbWEgbeVuYWQgZvZy
+        ZWflZW5kZSDlciwgcHJvY2VudCIpPSJN5W5hZCI7DQpVTklUUygiRvZy5G5kcmluZyBtb3Qgc2Ft
+        bWEgbeVuYWQgZvZyZWflZW5kZSDlciwgcHJvY2VudCIpPSJwcm9jZW50IjsNCkNPTlRBQ1QoIkb2
+        cuRuZHJpbmcgbW90IHNhbW1hIG3lbmFkIGb2cmVn5WVuZGUg5XIsIHByb2NlbnQiKT0iIFN0YXRp
+        c3Rpa3NlcnZpY2UsIFNDQiMgKzQ2IDAxMC00NzkgNTAgMDAjaW5mb3JtYXRpb25Ac2NiLnNlIyMi
+        Ow0KRklSU1QtUFVCTElTSEVEPSIyMDI0LTEwLTE1IDA1OjEyOjAwIjsNCkRBVEFCQVNFPSJTdGF0
+        aXN0aWtkYXRhYmFzZW4iOw0KU09VUkNFPSJTQ0IiOw0KSU5GT0ZJTEU9IlBSMDEwMSI7DQpOT1RF
+        WD0iRvZy5G5kcmluZ3N0YWxlbiBpIGRlbm5hIHRhYmVsbCDkciBwcmVsaW1pbuRyYSBvY2gga2Fu
+        IHNraWxqYSBmcuVuIGRlbiBvcmRpbmFyaWUgcHVibGljZXJpbmdlbiBhdiBLUEkgb2NoIGRlc3Mg
+        cmVsYXRlcmFkZSBt5XR0LiI7DQpEQVRBU1lNQk9MMT0iLiI7DQpEQVRBU1lNQk9MMj0iLi4iOw0K
+        REFUQVNZTUJPTDM9Ii4uIjsNCkRBVEFTWU1CT0xTVU09IioiOw0KREFUQVNZTUJPTE5JTD0iLSI7
+        DQpEQVRBTk9URVNVTT0iKiI7DQpUQUJMRUlEPSJUQUI2NDQ1IjsNClZBUklBQkxFLVRZUEUoInBy
+        ZWxpbWlu5HJhIGFnZ3JlZ2F0Iik9IlYiOw0KVkFSSUFCTEUtVFlQRSgibeVuYWQiKT0iVCI7DQpE
+        QVRBPQ0KMC42IA0KOw==
+    headers:
+      access-control-allow-methods:
+      - GET,POST
+      access-control-allow-origin:
+      - '*'
+      access-control-max-age:
+      - '86400'
+      allow:
+      - GET,HEAD,POST,OPTIONS
+      content-disposition:
+      - inline; filename="TAB6445.px"
+      - inline; filename="TAB6445.px"
+      content-type:
+      - application/octet-stream; charset=iso-8859-1
+      date:
+      - Thu, 13 Aug 2026 12:37:17 GMT
+      set-cookie:
+      - TS0187a64b=017dca055c209f9cd297540fb3a041302350b574b71d5edec109c53754ff0a9580f8e1b5f26d5cbaef638598c87eca0553e89c6f64;
+        Path=/; Domain=.api.scb.se; Secure; HttpOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Origin
+      x-frame-options:
+      - SAMEORIGIN
+      x-rate-limit-limit:
+      - 10s
+      x-rate-limit-remaining:
+      - '29'
+      x-rate-limit-reset:
+      - '2026-08-13T12:37:27.7641669Z'
+    status:
+      code: 200
+      message: OK
+version: 1
