@@ -44,7 +44,10 @@ kallor:
     autentisering: ingen
     licens: okänd
     attribution: "Källa: Sveriges riksbank"
-    takt: { anrop: 10, per_sekunder: 1 }
+    # Sänkt från 10/s till 2/s. Vid provkörning 2026-08-13 gav SWEA 429 Too Many
+    # Requests efter ett knappt tiotal snabba anrop. Riksbanken publicerar ingen
+    # gräns, så vi ligger konservativt.
+    takt: { anrop: 2, per_sekunder: 1 }
     cache_ttl: 3600
     manniskolank_mall: "https://www.riksbank.se/sv/statistik/rantor-och-valutakurser/"
     tacker:

@@ -143,3 +143,105 @@ class TestFasALive:
             res2.cache_read_tokens,
             res2.cache_write_tokens,
         )
+
+
+# ---------------------------------------------------------------------------
+# Regressionstest — anropsformen mot Anthropic
+#
+# Bakgrund: den först incheckade versionen skickade thinking.budget_tokens och
+# beta-flaggorna "extended-thinking-*"/"prompt-caching-*". Båda ger HTTP 400 på
+# Opus 5 — fas A kunde alltså inte köras alls. Ingenting fångade det, eftersom
+# de enda testerna som rörde API:t var @pytest.mark.live och hoppades över.
+#
+# Testet nedan gör ingen nätverkstrafik. Det inspekterar bara vad koden SKULLE
+# ha skickat, vilket räcker för att fånga hela den här felklassen i CI.
+# ---------------------------------------------------------------------------
+
+class _FalskStröm:
+    def __init__(self, svar):
+        self._svar = svar
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *a):
+        return False
+
+    def get_final_message(self):
+        return self._svar
+
+
+class _FalsktSvar:
+    stop_reason = "end_turn"
+    content: list = []
+    usage = None
+
+
+class _FalskKlient:
+    """Spelar in anropsargumenten i stället för att kontakta Anthropic."""
+
+    def __init__(self):
+        self.anrop: list[dict] = []
+        self.messages = self
+        # Om koden råkar gå via beta-namnrymden vill vi upptäcka det.
+        self.beta = self
+
+    def stream(self, **kwargs):
+        self.anrop.append(kwargs)
+        return _FalskStröm(_FalsktSvar())
+
+
+def _lopp_med_falsk_klient(monkeypatch):
+    import quiet_oppen_data.konfig as konfig_modul
+    from quiet_oppen_data.motor.hamtning import FasALopp
+
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-test-attrapp")
+    monkeypatch.setattr(konfig_modul, "_cache", None, raising=False)
+
+    lopp = FasALopp()
+    klient = _FalskKlient()
+    lopp._klient = klient
+    return lopp, klient
+
+
+def test_anropsform_saknar_borttagna_parametrar(monkeypatch):
+    lopp, klient = _lopp_med_falsk_klient(monkeypatch)
+    lopp.hamta("testfråga")
+
+    assert klient.anrop, "inget anrop gjordes"
+    kw = klient.anrop[0]
+
+    # budget_tokens är borttaget på Opus 5 och ger 400.
+    assert "budget_tokens" not in kw.get("thinking", {}), (
+        "thinking.budget_tokens ger HTTP 400 på Opus 5 — djupet styrs med effort"
+    )
+    # Prompt-caching och thinking är GA; de gamla beta-flaggorna ger 400.
+    assert "betas" not in kw, "beta-flaggor ska inte skickas — funktionerna är GA"
+
+    assert kw["thinking"] == {"type": "adaptive"}
+
+
+def test_anropsform_har_effort_och_taket_ur_config(monkeypatch):
+    from quiet_oppen_data.konfig import las
+
+    lopp, klient = _lopp_med_falsk_klient(monkeypatch)
+    lopp.hamta("testfråga")
+    kw = klient.anrop[0]
+    modell = las().modell
+
+    # Modulens docstring lovade effort men koden skickade det aldrig.
+    assert kw["output_config"] == {"effort": modell.effort_hamtning}
+    assert kw["max_tokens"] == modell.max_tokens_hamtning
+    assert kw["model"] == modell.namn
+
+
+def test_cache_brytpunkter_och_deterministisk_ordning(monkeypatch):
+    lopp, klient = _lopp_med_falsk_klient(monkeypatch)
+    lopp.hamta("testfråga")
+    kw = klient.anrop[0]
+
+    assert kw["system"][-1]["cache_control"] == {"type": "ephemeral"}
+    assert kw["tools"][-1]["cache_control"] == {"type": "ephemeral"}
+
+    namn = [t["name"] for t in kw["tools"]]
+    assert namn == sorted(namn), "verktygslistan måste vara sorterad — annars slås cachen sönder"

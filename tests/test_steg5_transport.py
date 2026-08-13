@@ -19,6 +19,9 @@ def test_transport_cache_fungerar(monkeypatch, isolerad_cache):
         nonlocal anrop
         anrop += 1
         class MockRes:
+            status_code = 200
+            headers: dict = {}
+            request = None
             def raise_for_status(self): pass
             def json(self): return {"data": "ok"}
         return MockRes()
@@ -76,6 +79,9 @@ def test_transport_ko_haller_takt(monkeypatch, isolerad_cache):
         nonlocal anrop
         anrop += 1
         class MockRes:
+            status_code = 200
+            headers: dict = {}
+            request = None
             def raise_for_status(self): pass
             def json(self): return {"data": "ok"}
         return MockRes()
@@ -107,3 +113,58 @@ def test_transport_ko_haller_takt(monkeypatch, isolerad_cache):
     # De sista 10 kostar 10 / 3 = 3.33 sekunder total sleep
     tot_sleep = sum(sleeps)
     assert tot_sleep >= 3.0, f"Totalt sleep var {tot_sleep}, förväntat >= 3.0"
+
+
+def test_omforsok_vid_429(monkeypatch, isolerad_cache):
+    """Ett 429 ska ge omförsök, inte tolkas som 'källan hade inget att säga'.
+
+    Utan detta blev Riksbankens rate limit till ett tomt svar, och boten
+    rapporterade att den inte hittade något trots att uppgiften fanns.
+    """
+    import quiet_oppen_data.adaptrar.transport as transport
+
+    svar = [429, 429, 200]
+    sovit: list[float] = []
+    monkeypatch.setattr(transport.time, "sleep", lambda s: sovit.append(s))
+
+    class _Res:
+        def __init__(self, kod):
+            self.status_code = kod
+            self.headers = {}
+            self.request = None
+        def raise_for_status(self):
+            if self.status_code >= 400:
+                raise httpx.HTTPStatusError("fel", request=None, response=self)
+        def json(self):
+            return {"ok": True}
+
+    monkeypatch.setattr(httpx.Client, "request", lambda *a, **k: _Res(svar.pop(0)))
+
+    assert hamta_json("riksbanken", "GET", "https://api.riksbank.se/mock_429") == {"ok": True}
+    assert svar == [], "alla tre svaren ska ha konsumerats"
+    assert sovit == [1.0, 2.0], f"exponentiell backoff förväntad, fick {sovit}"
+
+
+def test_permanent_fel_gor_inga_omforsok(monkeypatch, isolerad_cache):
+    """404 blir inte bättre av att göras om — kasta direkt."""
+    import quiet_oppen_data.adaptrar.transport as transport
+
+    anrop = {"n": 0}
+    monkeypatch.setattr(transport.time, "sleep", lambda s: pytest.fail("skulle inte sova"))
+
+    class _Res:
+        status_code = 404
+        headers: dict = {}
+        request = None
+        def raise_for_status(self):
+            raise httpx.HTTPStatusError("404", request=None, response=self)
+
+    def rakna(*a, **k):
+        anrop["n"] += 1
+        return _Res()
+
+    monkeypatch.setattr(httpx.Client, "request", rakna)
+
+    with pytest.raises(httpx.HTTPStatusError):
+        hamta_json("riksbanken", "GET", "https://api.riksbank.se/mock_404")
+    assert anrop["n"] == 1

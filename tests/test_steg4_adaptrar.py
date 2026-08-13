@@ -74,10 +74,39 @@ def test_adaptrar_returnerar_tomt_utan_parametrar():
 
 
 def test_beskriv_innehaller_korrekt_format():
-    r_spec = RiksbankenAdapter().beskriv()[0]
-    assert r_spec["name"] == "riksbanken"
-    assert "serie" in r_spec["input_schema"]["properties"]
+    r_specar = {s["name"]: s for s in RiksbankenAdapter().beskriv()}
+    # Katalogverktyget är obligatoriskt: utan det gissar modellen serie-id.
+    assert "riksbanken_lista_serier" in r_specar
+    assert "riksbanken_hamta" in r_specar
+    assert "serie" in r_specar["riksbanken_hamta"]["input_schema"]["properties"]
 
     v_spec = ViesAdapter().beskriv()[0]
     assert v_spec["name"] == "vies"
     assert "momsnr" in v_spec["input_schema"]["properties"]
+
+
+@vcr.use_cassette(**vcr_config)
+def test_riksbanken_lista_serier_hittar_referensrantan(isolerad_cache):
+    """Katalogverktyget ska skilja referensränta från styrränta.
+
+    Vid provkörning 2026-08-13 gissade modellen nio serie-id och landade på
+    SECBREPOEFF (styrränta) när frågan gällde referensräntan SECBREFEFF.
+    Skillnaden är ett tecken och en helt annan ränta.
+    """
+    utkast = RiksbankenAdapter().hamta(
+        Fragplan(fraga="", extra={"verktyg": "riksbanken_lista_serier", "sok": "reference"})
+    )
+    assert len(utkast) == 1
+    assert "SECBREFEFF" in utkast[0].varde
+    assert "SECBREPOEFF" not in utkast[0].varde
+
+
+@vcr.use_cassette(**vcr_config)
+def test_riksbanken_etikett_namnger_serien(isolerad_cache):
+    """Etiketten måste säga vad serien ÄR, inte bara dess id."""
+    utkast = RiksbankenAdapter().hamta(
+        Fragplan(fraga="", extra={"verktyg": "riksbanken_hamta", "serie": "SECBREFEFF"})
+    )
+    assert len(utkast) == 1
+    assert "Reference rate" in utkast[0].etikett
+    assert "SECBREFEFF" in utkast[0].etikett

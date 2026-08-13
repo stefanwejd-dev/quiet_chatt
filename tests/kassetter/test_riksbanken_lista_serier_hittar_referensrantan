@@ -13,38 +13,6 @@ interactions:
       user-agent:
       - python-httpx/0.28.1
     method: GET
-    uri: https://api.riksbank.se/swea/v1/Observations/Latest/SEKEURPMI
-  response:
-    body:
-      string: '{"date":"2026-08-13","value":11.0285}'
-    headers:
-      api-supported-versions:
-      - '1.0'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 Aug 2026 16:21:40 GMT
-      request-context:
-      - appId=cid-v1:b53c43df-6992-4362-80ab-8feb63e7d60a
-      transfer-encoding:
-      - chunked
-    status:
-      code: 200
-      message: OK
-- request:
-    body: ''
-    headers:
-      accept:
-      - '*/*'
-      accept-encoding:
-      - gzip, deflate
-      connection:
-      - keep-alive
-      host:
-      - api.riksbank.se
-      user-agent:
-      - python-httpx/0.28.1
-    method: GET
     uri: https://api.riksbank.se/swea/v1/Series
   response:
     body:

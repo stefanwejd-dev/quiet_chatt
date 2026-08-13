@@ -13,17 +13,83 @@ interactions:
       user-agent:
       - python-httpx/0.28.1
     method: GET
-    uri: https://api.riksbank.se/swea/v1/Observations/Latest/SEKEURPMI
+    uri: https://api.riksbank.se/swea/v1/Observations/Latest/SECBREFEFF
   response:
     body:
-      string: '{"date":"2026-08-13","value":11.0285}'
+      string: '{ "statusCode": 429, "message": "Rate limit is exceeded. Try again
+        in 59 seconds." }'
+    headers:
+      content-length:
+      - '84'
+      content-type:
+      - application/json
+      date:
+      - Thu, 13 Aug 2026 16:21:41 GMT
+      request-context:
+      - appId=cid-v1:b53c43df-6992-4362-80ab-8feb63e7d60a
+      retry-after:
+      - '59'
+    status:
+      code: 429
+      message: Too Many Requests
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - api.riksbank.se
+      user-agent:
+      - python-httpx/0.28.1
+    method: GET
+    uri: https://api.riksbank.se/swea/v1/Observations/Latest/SECBREFEFF
+  response:
+    body:
+      string: '{ "statusCode": 429, "message": "Rate limit is exceeded. Try again
+        in 29 seconds." }'
+    headers:
+      content-length:
+      - '84'
+      content-type:
+      - application/json
+      date:
+      - Thu, 13 Aug 2026 16:22:12 GMT
+      request-context:
+      - appId=cid-v1:b53c43df-6992-4362-80ab-8feb63e7d60a
+      retry-after:
+      - '29'
+    status:
+      code: 429
+      message: Too Many Requests
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - api.riksbank.se
+      user-agent:
+      - python-httpx/0.28.1
+    method: GET
+    uri: https://api.riksbank.se/swea/v1/Observations/Latest/SECBREFEFF
+  response:
+    body:
+      string: '{"date":"2026-08-13","value":2}'
     headers:
       api-supported-versions:
       - '1.0'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 Aug 2026 16:21:40 GMT
+      - Thu, 13 Aug 2026 16:22:41 GMT
       request-context:
       - appId=cid-v1:b53c43df-6992-4362-80ab-8feb63e7d60a
       transfer-encoding:
@@ -313,7 +379,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 Aug 2026 16:21:41 GMT
+      - Thu, 13 Aug 2026 16:22:41 GMT
       request-context:
       - appId=cid-v1:b53c43df-6992-4362-80ab-8feb63e7d60a
       transfer-encoding:

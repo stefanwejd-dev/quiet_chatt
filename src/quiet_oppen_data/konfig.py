@@ -30,6 +30,9 @@ class ModellKonfig:
     effort_hamtning: str
     effort_syntes: str
     max_verktygsvarv: int
+    # Tak för thinking + svarstext per varv. Med adaptiv thinking räknas båda
+    # mot samma tak, så ett snålt värde trunkerar mitt i ett resonemang.
+    max_tokens_hamtning: int = 16000
 
 
 @dataclass(frozen=True)

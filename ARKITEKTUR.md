@@ -272,6 +272,21 @@ ett obelagt svar.
 | 6 | Frågan är synlig | `dimensioner` + `lank_maskin` renderas alltid i källpanelen |
 | 7 | Vägra hellre än gissa | Om planeraren inte kan mappa frågan till konkreta dimensioner returnerar adaptern valalternativen som Faktaposter i stället för ett gissat värde |
 
+Regel 7 har ett generellare krav bakom sig, lärt av två separata fel: **varje
+adapter vars data har en identifierare — tabell-id, dimensionskod, serie-id,
+dataset-UUID — måste exponera ett katalogverktyg som listar de giltiga
+värdena.** Utan det gissar modellen, och den gissar övertygande.
+
+PxWeb saknade det först och hade returnerat en godtycklig skiva. Riksbanken
+saknade det och besvarade en fråga om referensräntan med styrräntan
+(`SECBREPOEFF` i stället för `SECBREFEFF` — ett tecken isär). Båda felen hade
+passerat en läsare som bara ser svaret, eftersom källänken pekade på en riktig
+sida hos en riktig myndighet.
+
+Av samma skäl måste `etikett` säga **vad** uppgiften är, inte bara vilket id den
+hämtades med. "Riksbanken, serie SECBREPOEFF" gör felet osynligt i källpanelen;
+"Riksbanken: Policy rate (SECBREPOEFF)" gör det uppenbart.
+
 Regel 2 är den som skyddar mot den farligaste felmoden. Ett självsäkert felaktigt tal är
 värre än inget tal, och en modell som får multiplicera två hämtade värden har fem sätt
 att göra det fel. Låt den hämta och citera; låt koden räkna.
@@ -289,6 +304,19 @@ att göra det fel. Låt den hämta och citera; låt koden räkna.
 | Struktur | `output_config.format` med json_schema i fas B | Se §4. |
 | Cache | Breakpoint efter systemprompt + verktygsdefinitioner | Stabil prefix. Minsta cachebara prefix på Opus 5 är 512 token. |
 | SDK | `anthropic` (Python) | Rå HTTP är förbjudet — använd SDK:t. |
+
+**Anropsformen, verifierad mot API:t 2026-08-13.** Tre fällor har redan kostat
+en hel omskrivning av fas A — de ger alla HTTP 400 på Opus 5:
+
+* **Inget `budget_tokens`.** Det är borttaget. Djupet styrs med
+  `output_config.effort`, inte med ett tokentak.
+* **Inga beta-flaggor** för thinking eller prompt-caching. Båda är GA, och de
+  gamla flaggorna finns inte kvar. Använd `client.messages.stream`, inte
+  `client.beta.messages.stream`.
+* **`max_tokens` täcker thinking + svarstext.** Med adaptiv thinking räknas båda
+  mot samma tak, så ett snålt värde trunkerar mitt i ett resonemang.
+
+Kontrollera `stop_reason` innan `content` läses — Opus 5 kan svara `refusal`.
 
 **Kostnad, som beställaren måste ta ställning till.** Opus 5 kostar 5 USD per miljon
 input-token och 25 per miljon output. En publik chatt på en öppen sajt har obegränsad

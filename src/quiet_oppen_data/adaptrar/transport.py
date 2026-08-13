@@ -1,5 +1,6 @@
 import hashlib
 import json
+import logging
 import sqlite3
 import threading
 import time
@@ -12,6 +13,8 @@ import httpx
 from quiet_oppen_data.konfig import las
 from quiet_oppen_data.register import Kalla, Sparrad, hamta
 from quiet_oppen_data.index.db import oppna_db
+
+logger = logging.getLogger(__name__)
 
 # Explicit timeout. httpx default är 5 s, vilket är för snålt för SCB:s tyngre
 # uttag och TED:s söksvar. connect hålls kort, read längre.
@@ -109,6 +112,49 @@ def _ar_tillaten_vard(url: str) -> bool:
     finally:
         conn.close()
 
+# Tillfälliga fel: for many requests, samt serverfel.
+_OMFORSOK_STATUS = frozenset({429, 500, 502, 503, 504})
+_MAX_OMFORSOK = 3
+
+
+def _anropa_med_omforsok(method: str, url: str, return_json: bool, **kwargs) -> Any:
+    """Utför HTTP-anropet och gör om vid tillfälliga fel.
+
+    Respekterar Retry-After när servern skickar den; annars exponentiell
+    backoff. Permanenta fel (4xx utom 429) kastas direkt — de blir inte bättre
+    av att göras om.
+    """
+    sista: Exception | None = None
+    for forsok in range(_MAX_OMFORSOK):
+        with httpx.Client(timeout=TIMEOUT, follow_redirects=True) as client:
+            res = client.request(method, url, **kwargs)
+
+        if res.status_code not in _OMFORSOK_STATUS:
+            res.raise_for_status()
+            return res.json() if return_json else res.text
+
+        sista = httpx.HTTPStatusError(
+            f"{res.status_code} från {url}", request=res.request, response=res
+        )
+        if forsok == _MAX_OMFORSOK - 1:
+            break
+
+        retry_after = res.headers.get("Retry-After")
+        try:
+            vanta = float(retry_after) if retry_after else 2.0 ** forsok
+        except ValueError:
+            vanta = 2.0 ** forsok
+        vanta = min(vanta, 30.0)
+        logger.info(
+            "Tillfälligt fel %s från %s — försök %d/%d om %.1f s",
+            res.status_code, url, forsok + 1, _MAX_OMFORSOK, vanta,
+        )
+        time.sleep(vanta)
+
+    assert sista is not None
+    raise sista
+
+
 def _hamta_generisk(kalla_id: str, method: str, url: str, return_json: bool, **kwargs) -> Any:
     # 1. Kontrollera blockering (Sparrad)
     k = hamta(kalla_id)
@@ -163,11 +209,10 @@ def _hamta_generisk(kalla_id: str, method: str, url: str, return_json: bool, **k
         # 5. Token bucket
         _get_bucket(k).consume(1)
 
-        # 6. Utför HTTP-anropet
-        with httpx.Client(timeout=TIMEOUT, follow_redirects=True) as client:
-            res = client.request(method, url, **kwargs)
-            res.raise_for_status()
-            res_data = res.json() if return_json else res.text
+        # 6. Utför HTTP-anropet, med omförsök på tillfälliga fel.
+        #    Utan det blir ett 429 till "källan hade inget att säga", och boten
+        #    svarar att den inte hittade något trots att uppgiften finns.
+        res_data = _anropa_med_omforsok(method, url, return_json, **kwargs)
 
         # 7. Spara i cache
         conn.execute(

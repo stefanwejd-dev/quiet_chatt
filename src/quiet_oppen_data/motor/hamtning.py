@@ -10,9 +10,13 @@ Designbeslut (se ARKITEKTUR.md §4 och PLAN.md §9):
   * Systemprompten är frusen: ingen tidsstämpel, inget sessions-id, inget IP.
     Dynamiskt innehåll läggs i användarmeddelandena.
   * Cache-brytpunkt (cache_control: {"type": "ephemeral"}) sätts på sista
-    systemblocket så att verktyg + systemprompt cachas ihop.
-  * Thinking: {"type": "adaptive"} + output_config: {"effort": "high"}.
-  * Loopen drivs av client.beta.messages.tool_runner med max_iterations.
+    verktyget och på sista systemblocket. Renderingsordningen är
+    tools → system → messages, så verktygen cachas i den första brytpunkten
+    och systemprompten i den andra.
+  * Thinking: {"type": "adaptive"} + output_config: {"effort": ...} ur config.
+    INGET budget_tokens — det är borttaget på Opus 5 och ger HTTP 400.
+    INGA beta-flaggor — caching och thinking är GA; de gamla flaggorna ger 400.
+  * Loopen är handskriven för att kunna samla usage per varv.
 """
 
 from __future__ import annotations
@@ -20,7 +24,7 @@ from __future__ import annotations
 import json
 import logging
 from dataclasses import dataclass
-from typing import Any, Generator, Iterator
+from typing import Any
 
 import anthropic
 
@@ -118,14 +122,16 @@ def _bygg_verktygsspecar(adaptrar: dict[str, Any]) -> list[dict[str, Any]]:
 def _bygg_dispatcher(adaptrar: dict[str, Any]) -> dict[str, Any]:
     """Bygg ett {verktygsnamn → adapter}-index för verktygsdispacthcing."""
     dispatcher: dict[str, Any] = {}
-    for adapter in adaptrar.values():
+    for kalla_id, adapter in adaptrar.items():
         try:
             for spec in adapter.beskriv():
                 namn = spec.get("name", "")
                 if namn:
                     dispatcher[namn] = adapter
         except Exception:
-            pass
+            # Tyst svälj är förbjudet enligt kontraktet i PLAN.md — en adapter
+            # som tappas här försvinner annars spårlöst ur verktygslistan.
+            logger.warning("beskriv() misslyckades för '%s'", kalla_id, exc_info=True)
     return dispatcher
 
 
@@ -138,7 +144,6 @@ class _VerktygKontext:
     """Kontextobjekt som delas mellan verktygskallarna och loopen."""
     dispatcher: dict[str, Any]
     register: Faktaregister
-    verktygsnamn_till_kallaid: dict[str, str]  # {verktygsnamn → kalla_id}
 
 
 def _kör_verktyg(kontext: _VerktygKontext, verktygsnamn: str, indata: dict[str, Any]) -> str:
@@ -183,27 +188,6 @@ def _kör_verktyg(kontext: _VerktygKontext, verktygsnamn: str, indata: dict[str,
         resultat.append(item)
 
     return json.dumps({"resultat": resultat, "antal": len(resultat)}, ensure_ascii=False)
-
-
-# ---------------------------------------------------------------------------
-# BetaRunnableTool-wrapper
-# ---------------------------------------------------------------------------
-
-def _skapa_runnable_verktyg(
-    spec: dict[str, Any],
-    kontext: _VerktygKontext,
-) -> anthropic.types.beta.BetaToolParam:
-    """Skapar en BetaToolParam-kompatibel spec.
-
-    tool_runner accepterar antingen BetaRunnableTool (med .run()-metod) eller
-    BetaToolUnionParam (ren dict). Vi använder ren dict och hanterar
-    verktygskörningen manuellt i loopen via on_tool_use.
-    """
-    return {
-        "name": spec["name"],
-        "description": spec.get("description", ""),
-        "input_schema": spec.get("input_schema", {"type": "object", "properties": {}}),
-    }
 
 
 # ---------------------------------------------------------------------------
@@ -258,12 +242,6 @@ class FasALopp:
         kontext = _VerktygKontext(
             dispatcher=self._dispatcher,
             register=register,
-            verktygsnamn_till_kallaid={
-                spec["name"]: kalla_id
-                for kalla_id, adapter in self._adaptrar.items()
-                for spec in adapter.beskriv()
-                if spec.get("name")
-            },
         )
 
         # Bygg systemblocket med cache-brytpunkt på sista blocket
@@ -304,14 +282,20 @@ class FasALopp:
         for _ in range(konfig.max_verktygsvarv):
             iterationer += 1
 
-            with self._klient.beta.messages.stream(
+            # Anropsformen är verifierad mot API:t 2026-08-13. Två fällor:
+            #   * budget_tokens är BORTTAGET på Opus 5 och ger HTTP 400.
+            #     Djupet styrs med output_config.effort, inte med ett tokentak.
+            #   * Prompt-caching och thinking är GA. Beta-flaggorna
+            #     "extended-thinking-*" och "prompt-caching-*" finns inte längre
+            #     och ger också 400 — därför vanliga messages.stream, inte beta.
+            with self._klient.messages.stream(
                 model=konfig.namn,
-                max_tokens=4096,
+                max_tokens=konfig.max_tokens_hamtning,
                 system=systemblock,
                 messages=meddelanden,
                 tools=verktyg_med_cache,
-                thinking={"type": "adaptive", "budget_tokens": 2000},
-                betas=["extended-thinking-2025-01-30", "prompt-caching-2024-07-31"],
+                thinking={"type": "adaptive"},
+                output_config={"effort": konfig.effort_hamtning},
             ) as ström:
                 svar = ström.get_final_message()
 
@@ -322,6 +306,15 @@ class FasALopp:
                 cache_write += getattr(u, "cache_creation_input_tokens", 0) or 0
                 tot_in += getattr(u, "input_tokens", 0) or 0
                 tot_ut += getattr(u, "output_tokens", 0) or 0
+
+            # Opus 5 kan avböja med stop_reason "refusal". Då är content tomt
+            # eller partiellt — kontrollera stop_reason innan det läses.
+            if svar.stop_reason == "refusal":
+                kategori = getattr(getattr(svar, "stop_details", None), "category", None)
+                logger.warning(
+                    "Fas A avbröts: modellen avböjde frågan (kategori=%s)", kategori
+                )
+                break
 
             # Kolla om modellen vill avsluta
             if svar.stop_reason == "end_turn":

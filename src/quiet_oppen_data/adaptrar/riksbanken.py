@@ -22,22 +22,114 @@ class RiksbankenAdapter:
         return self._kalla.id
 
     def beskriv(self) -> list[dict[str, Any]]:
-        return [{
-            "name": self.id,
-            "description": "Hämtar senaste observation för en ränta eller valutakurs (t.ex. SEKEURPMI).",
-            "input_schema": {
-                "type": "object",
-                "properties": {
-                    "serie": {
-                        "type": "string",
-                        "description": "Seriens ID (ex. SEKEURPMI för Euro-kurs, SECRINTP för styrränta)"
-                    }
+        return [
+            {
+                "name": "riksbanken_lista_serier",
+                "description": (
+                    "Listar Riksbankens tillgängliga serier med id och beskrivning. "
+                    "Anropa ALLTID detta först — serie-id går inte att gissa. "
+                    "Filtrera med sok, t.ex. sok='reference' eller sok='EUR'."
+                ),
+                "input_schema": {
+                    "type": "object",
+                    "properties": {
+                        "sok": {
+                            "type": "string",
+                            "description": (
+                                "Fritext som matchas mot seriens beskrivning. "
+                                "Beskrivningarna är på engelska: 'reference rate', "
+                                "'policy rate', 'exchange rate'."
+                            ),
+                        }
+                    },
+                    "required": [],
                 },
-                "required": ["serie"]
-            }
-        }]
+            },
+            {
+                "name": "riksbanken_hamta",
+                "description": (
+                    "Hämtar senaste observation för en serie. Serie-id MÅSTE komma "
+                    "från riksbanken_lista_serier — gissa aldrig ett id."
+                ),
+                "input_schema": {
+                    "type": "object",
+                    "properties": {
+                        "serie": {
+                            "type": "string",
+                            "description": "Serie-id ur riksbanken_lista_serier, t.ex. SECBREFEFF",
+                        }
+                    },
+                    "required": ["serie"],
+                },
+            },
+        ]
+
+    # ------------------------------------------------------------------
+    # Seriekatalog
+    # ------------------------------------------------------------------
+
+    def _serier(self) -> list[dict]:
+        """Hämtar Riksbankens seriekatalog (117 serier). Cachas av transportlagret."""
+        try:
+            res = hamta_json(self.id, "GET", f"{self._kalla.bas_url}/Series")
+        except Exception:
+            logger.warning("%s: kunde inte hämta seriekatalogen", self.id, exc_info=True)
+            return []
+        return res if isinstance(res, list) else []
+
+    def _lista_serier(self, sok: str | None) -> list[Faktautkast]:
+        """Returnerar matchande serier som utkast, så modellen kan välja rätt.
+
+        Utan det här steget måste modellen gissa serie-id. Vid provkörning
+        2026-08-13 gissade den nio gånger, fick 429 från Riksbanken, och landade
+        på SECBREPOEFF (styrränta) när frågan gällde referensräntan SECBREFEFF —
+        ett tecken isär, helt annan ränta. Ett trovärdigt tal som är fel är
+        precis vad §5 regel 7 finns för att hindra.
+        """
+        serier = self._serier()
+        if not serier:
+            return []
+
+        if sok:
+            nal = sok.lower()
+            serier = [
+                s for s in serier
+                if nal in (s.get("shortDescription") or "").lower()
+                or nal in (s.get("midDescription") or "").lower()
+                or nal in (s.get("seriesId") or "").lower()
+            ]
+        if not serier:
+            logger.info("%s: ingen serie matchade sok=%r", self.id, sok)
+            return []
+
+        rader = [
+            f"{s['seriesId']} ({s.get('shortDescription') or '?'})"
+            for s in serier[:60]
+        ]
+        return [
+            Faktautkast(
+                etikett=f"Riksbankens serier som matchar {sok!r}" if sok
+                        else "Riksbankens tillgängliga serier",
+                varde=", ".join(rader),
+                kalla_id=self.id,
+                myndighet=self._kalla.myndighet or "Sveriges riksbank",
+                licens=self._kalla.licens,
+                attribution=self._kalla.attribution,
+                lank_manniska=self._kalla.manniskolank_mall or self._kalla.bas_url,
+                lank_maskin=f"{self._kalla.bas_url}/Series",
+            )
+        ]
+
+    def _beskrivning(self, serie: str) -> str | None:
+        for s in self._serier():
+            if s.get("seriesId") == serie:
+                return s.get("shortDescription") or s.get("midDescription")
+        return None
 
     def hamta(self, plan: Fragplan) -> list[Faktautkast]:
+        if plan.extra.get("verktyg") == "riksbanken_lista_serier":
+            return self._lista_serier(plan.extra.get("sok"))
+
         serie = plan.extra.get("serie")
         if not serie:
             logger.info("%s: anrop utan serie-id, inget att hämta", self.id)
@@ -59,9 +151,18 @@ class RiksbankenAdapter:
             logger.info("%s: serie %s gav inget värde", self.id, serie)
             return []
 
+        # Etiketten måste säga VAD serien är. "Riksbanken, serie SECBREPOEFF"
+        # gör det omöjligt för läsaren i källpanelen att se att det är
+        # styrräntan och inte referensräntan.
+        beskrivning = self._beskrivning(serie)
+        etikett = (
+            f"Riksbanken: {beskrivning} ({serie})" if beskrivning
+            else f"Riksbanken, serie {serie}"
+        )
+
         return [
             Faktautkast(
-                etikett=f"Riksbanken, serie {serie}",
+                etikett=etikett,
                 varde=str(data["value"]),
                 period=data.get("date"),
                 kalla_id=self.id,

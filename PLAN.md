@@ -363,9 +363,18 @@ Fas A:s text kastas; bara Faktaregistret returneras i `HamtningsResultat`.
 avaktiveras normalt; kör `pytest -m live` när `ANTHROPIC_API_KEY` är satt.
 Hela sviten: **110 passed**.
 
+**Rättat vid granskning 2026-08-13 — se "Granskning av steg 8–9" nedan.** Den
+incheckade versionen kunde inte köras alls: anropet skickade
+`thinking.budget_tokens` och beta-flaggorna `extended-thinking-*` /
+`prompt-caching-*`, som alla tre ger HTTP 400 på Opus 5. Att det inte upptäcktes
+berodde på att de enda testerna som rörde API:t var `@pytest.mark.live` och
+hoppades över. Rättat och verifierat live: fas A avslutas med `end_turn`,
+registrerar Faktaposter och `cache_read_input_tokens` var 17 937 på andra frågan
+— acceptanskriterium 4 uppfyllt.
+
 ---
 
-## Steg 10 — Fas B: syntes med tvingad citering
+## Steg 10 — Fas B: syntes med tvingad citering   ← NÄSTA STEG
 
 **Gör:** `motor/syntes.py`. Detta är systemets kärna — läs `ARKITEKTUR.md` §4 igen.
 
@@ -469,6 +478,46 @@ en `<script>`-tagg på quiet.nu.
 - Mätvyn visar andelen frågor som besvarades på nivå 3 (katalogsvar) — det är siffran
   som styr vilken adapter som byggs härnäst.
 - Frågetexter raderas automatiskt efter 30 dagar.
+
+---
+
+## Granskning av steg 8–9, 2026-08-13
+
+Steg 8 var rent: alla tio adaptrarna följer kontraktet, ingen konstruerar
+`Faktapost`, TED följer de utredda reglerna. Felen satt i steg 9 och i en äldre
+adapter.
+
+| # | Defekt | Var | Konsekvens om orättad |
+|---|---|---|---|
+| 1 | `thinking.budget_tokens` — borttaget på Opus 5 | `hamtning.py` | **HTTP 400 på varje anrop.** Fas A gick inte att köra |
+| 2 | Beta-flaggorna `extended-thinking-*` / `prompt-caching-*` finns inte längre | `hamtning.py` | **HTTP 400.** Funktionerna är GA |
+| 3 | `output_config.effort` skickades aldrig trots att docstringen lovade det | `hamtning.py` | `effort_hamtning` i config hade ingen verkan |
+| 4 | Riksbanken saknade seriekatalog — modellen måste gissa serie-id | `riksbanken.py` | **Fel svar.** Se nedan |
+| 5 | Inget omförsök vid 429/5xx | `transport.py` | Rate limit blev "källan hade inget att säga" |
+| 6 | `max_tokens=4096` hårdkodat med adaptiv thinking | `hamtning.py` | Risk för trunkering mitt i resonemang |
+
+**Defekt 4 är den allvarligaste** och värd att förstå, eftersom den är samma
+felklass som PxWeb hade före förra granskningen. Vid provkörning frågade jag
+"Vad är Riksbankens referensränta?". Adaptern tog bara ett serie-id och hade
+ingen katalog, så modellen gissade: `SEREFIRATE`, `SEREFI`, `SECRINTP`,
+`SEREFIRATENB`, `SEDP1MSTIBOR`, `SERENTF`, `SEREFRATE`, `SEREF`, `SERE1M` —
+nio gånger, tills Riksbanken svarade 429. Den landade till slut på
+**`SECBREPOEFF` = 1,75**, som är **styrräntan**. Rätt svar är `SECBREFEFF`
+= 2, referensräntan. Ett tecken isär i id:t, helt olika räntor, och svaret hade
+sett fullt trovärdigt ut med källänk och allt.
+
+Åtgärd: `riksbanken_lista_serier` hämtar SWEA:s katalog med 117 serier, och
+`riksbanken_hamta` säger uttryckligen att id måste komma därifrån. Etiketten
+namnger nu serien (`Riksbanken: Reference rate (SECBREFEFF)`) i stället för bara
+id:t. Riksbankens takt sänkt från 10/s till 2/s. Verifierat live: rätt serie,
+tre varv, inga 429.
+
+**Ny täckning:** `tests/test_steg9_fas_a.py` har fyra enhetstester som inspekterar
+anropsformen utan nätverkstrafik. De mutationstestades: `budget_tokens`
+återinfört, beta-flaggor återinförda respektive `effort` borttaget fångas alla
+tre. Det var frånvaron av just sådana tester som lät felet gå igenom.
+
+Sviten: **117 passerade**, 4 livetester avmarkerade.
 
 ---
 
