@@ -12,6 +12,9 @@ max_verktygsvarv  = 8
 # Tak för thinking + svarstext per varv i fas A. Adaptiv thinking räknas mot
 # samma tak som svarstexten, så för lågt värde trunkerar mitt i ett resonemang.
 max_tokens_hamtning = 16000
+# Tak för fas B (syntes) — schemat håller svaret kort, men täcker thinking +
+# JSON-utdata.
+max_tokens_syntes = 8000
 
 [kvot]
 fragor_per_ip_per_dygn  = 50

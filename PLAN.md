@@ -374,7 +374,7 @@ registrerar Faktaposter och `cache_read_input_tokens` var 17 937 på andra fråg
 
 ---
 
-## Steg 10 — Fas B: syntes med tvingad citering   ← NÄSTA STEG
+## Steg 10 — Fas B: syntes med tvingad citering ✅ Godkänt 2026-08-13
 
 **Gör:** `motor/syntes.py`. Detta är systemets kärna — läs `ARKITEKTUR.md` §4 igen.
 
@@ -394,9 +394,33 @@ registrerar Faktaposter och `cache_read_input_tokens` var 17 937 på andra fråg
 - Ett manuellt försök att få modellen att svara ur eget minne ("Vad hette Sveriges
   statsminister 1994?" utan att hämta något) ger `kan_besvaras: false`.
 
+**Utfall 2026-08-13:** Implementerade `motor/syntes.py` med `FasBSyntes`.
+Systemprompten är frusen; kontexten till modellen är exakt system + ett
+användarmeddelande (fråga + `serialisera_for_syntes()`) — inget verktygsspår,
+ingen historik. `output_config` skickar `effort: "medium"` och
+`format: {"type": "json_schema", "schema": SVARSSCHEMA}`; schemat kräver
+`minItems: 1` på `kallor` per stycke och `additionalProperties: false`
+överallt, inklusive toppnivån. Tomt Faktaregister kortsluter innan klienten
+någonsin instansieras — noll API-anrop, verifierat med en klientattrapp som
+kastar om `stream()` anropas. `stop_reason == "refusal"` hanteras som
+fail-closed, samma text som tomt register.
+
+9 tester i `tests/test_steg10_fas_b.py`, varav 2 livetester
+(`@pytest.mark.live`) körda mot API:t:
+- Tre Faktaposter (Riksbanken × 2, SCB × 1) gav två stycken, båda med giltiga
+  F-id (`F1`, `F2`) — modellen citerade bara de poster den faktiskt använde,
+  inte den irrelevanta SCB-posten. `forbehall` flaggade själv att datumen
+  skiljde sig åt.
+- "Vad hette Sveriges statsminister 1994?" med tomt register gav
+  `kan_besvaras: false` utan API-anrop (kortslutningen), vilket också täcker
+  acceptanskriterium 3 — fas A hade i det scenariot inte hämtat något att
+  citera, så fas B har inget annat val än att vägra.
+
+Hela sviten (utom livetester): **124 passed**.
+
 ---
 
-## Steg 11 — Fas C: validator
+## Steg 11 — Fas C: validator ✅ Godkänt 2026-08-13
 
 **Gör:** `motor/validator.py` enligt `ARKITEKTUR.md` §4 fas C.
 
@@ -408,6 +432,29 @@ registrerar Faktaposter och `cache_read_input_tokens` var 17 937 på andra fråg
 - pytest: ett svar som citerar `F99` (finns inte) avvisas.
 - pytest: ett svar där en CC-BY-källa citeras utan attribution avvisas.
 - pytest: efter två misslyckade försök returneras fail-closed-svaret, inte ett obelagt.
+
+**Utfall 2026-08-13:** Implementerade `motor/validator.py` med de fyra
+kontrollerna som rena funktioner (`validera(svar, register)`) och
+`FasCValidator` som kör fas B→C-flödet: första försök, vid fel ett omförsök
+av `FasBSyntes.syntetisera(..., felmeddelande=...)` med valideringsfelen
+inlagda i användarmeddelandet (inte i den frusna systemprompten), och
+fail-closed efter andra felet. `FasBSyntes.syntetisera` fick den nya
+`felmeddelande`-parametern och `SyntesSvar` fick ett `attribution`-fält.
+
+Beslut om kontroll 4 (attribution): attributionstexten hämtas deterministiskt
+ur Faktapostens `attribution`-fält av validatorn själv, inte av modellen —
+samma princip som `berakningar.py` i steg 12 (modellen ska aldrig återge
+något den kan göra fel). Kontrollen underkänner ett svar om en citerad
+CC-BY-post saknar `attribution` på källan; om den finns fylls den i på
+`SyntesSvar.attribution` när svaret godkänns.
+
+12 tester i `tests/test_steg11_validator.py`, alla utan nätverk (fyra
+kontrollerna är rena funktioner; omförsöksflödet testas med en
+attrapp-syntetiserare). Dessutom en manuell live-körning av hela
+fas B→C-kedjan ("Vad är referensräntan?") som gav ett giltigt, citerat svar
+redan i första försöket.
+
+Hela sviten (utom livetester): **136 passed**.
 
 ---
 

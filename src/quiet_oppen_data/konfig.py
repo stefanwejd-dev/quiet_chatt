@@ -33,6 +33,9 @@ class ModellKonfig:
     # Tak för thinking + svarstext per varv. Med adaptiv thinking räknas båda
     # mot samma tak, så ett snålt värde trunkerar mitt i ett resonemang.
     max_tokens_hamtning: int = 16000
+    # Tak för fas B (syntes). Mekaniskt jämfört med fas A — schemat håller
+    # utdata kort — men täcker ändå thinking + JSON-svarstext.
+    max_tokens_syntes: int = 8000
 
 
 @dataclass(frozen=True)

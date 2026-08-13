@@ -235,8 +235,10 @@ verktygsspår, ingen katalog. Utgången tvingas till JSON-schema:
 }
 ```
 
-Schemat kräver `minItems: 1` på `kallor` för varje stycke. Modellen kan inte producera
-ett ociterat stycke — det är inte ett giltigt svar enligt schemat.
+Schemat kräver `minItems: 1` på `kallor` för varje stycke och `additionalProperties: false`
+överallt, inklusive toppnivån. Modellen kan inte producera ett ociterat stycke eller ett
+extra fält — det är inte ett giltigt svar enligt schemat. Är Faktaregistret tomt anropas
+modellen inte alls; svaret kortsluts direkt till `kan_besvaras: false`.
 
 **Varför två faser i stället för en:** i ett enda agentiskt anrop bär modellen med sig
 allt den läst under vägen, inklusive sitt eget resonemang och sin förträning. Då blir
@@ -252,11 +254,16 @@ Innan svaret lämnar backend:
 2. Varje stycke som innehåller en siffra, ett datum eller ett egennamn måste ha minst
    en källa. (Schemat garanterar detta redan; kontrollen fångar schema-drift.)
 3. Varje Faktapost som citeras måste ha `lank_manniska` satt.
-4. Attribution för alla CC-BY-källor måste finnas i svarsobjektet.
+4. Varje citerad Faktapost med `licens == "CC-BY"` måste ha `attribution` satt på källan.
 
-Vid fel: ett omförsök av fas B med validatorns felmeddelande inlagt. Vid andra felet
-returneras `kan_besvaras: false` med texten *"Det hittade jag inte i källorna."* — aldrig
-ett obelagt svar.
+Attributionstexten skrivs aldrig av modellen — den hämtas deterministiskt ur den citerade
+Faktapostens `attribution`-fält av validatorn själv och bifogas svarsobjektet när
+kontrollerna går igenom. Samma princip som härledda beräkningar (§5 regel 2): allt som kan
+hämtas ur redan känd data ska hämtas därifrån, inte återges av modellen.
+
+Vid fel: ett omförsök av fas B med validatorns felmeddelande inlagt i användarmeddelandet
+(den frusna systemprompten rörs inte). Vid andra felet returneras `kan_besvaras: false` med
+texten *"Det hittade jag inte i källorna."* — aldrig ett obelagt svar.
 
 ---
 
