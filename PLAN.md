@@ -458,7 +458,7 @@ Hela sviten (utom livetester): **136 passed**.
 
 ---
 
-## Steg 12 — Beräkningsmodul
+## Steg 12 — Beräkningsmodul ✅ Godkänt 2026-08-13 (frontend-kriteriet kvarstår till steg 14)
 
 **Gör:** `motor/berakningar.py` med ett litet antal deterministiska funktioner
 (differens, procentuell förändring, kvot, indexuppräkning). Varje funktion tar
@@ -472,6 +472,42 @@ Exponeras som verktyg i fas A. **Modellen får aldrig räkna själv** — se
   pekar på den första ingångens källa och vars `harledd_av` är `("F1","F2")`.
 - pytest: beräkning på Faktaposter med olika enheter kastar.
 - Frontend visar härledda poster med en tydlig markering.
+
+**Utfall 2026-08-13:** Implementerade `motor/berakningar.py` med
+`differens`, `procentuell_forandring`, `kvot` och `indexupprakning`. Alla
+fyra tar `Faktaregister` + F-id, kontrollerar enhetslikhet där det krävs
+(differens, procentuell_forandring och indexräkningens två indexvärden —
+men INTE kvotens täljare/nämnare, där olika enheter är avsedd användning,
+t.ex. "kronor per invånare"), och registrerar resultatet via
+`register.registrera_utkast()` — precis som adaptrarna är detta den enda
+vägen in för en ny Faktapost, även en härledd. `lank_manniska` ärvs från
+första ingången; `lank_maskin` bär beräkningens spårbara formel eftersom
+det inte finns något API-anrop att peka på för ett härlett värde.
+
+Exponerade `berakna_differens`, `berakna_procentuell_forandring`,
+`berakna_kvot` och `berakna_indexupprakning` som verktyg i fas A
+(`motor/hamtning.py`): `_bygg_verktygsspecar` inkluderar dem i den
+deterministiskt sorterade verktygslistan, och `_kör_verktyg` dispatchar
+till `berakningar.kor_verktyg()` i stället för en adapters `hamta()` när
+verktygsnamnet matchar. Systemprompten fick en uttrycklig regel: modellen
+ska aldrig räkna själv, bara anropa rätt beräkningsverktyg.
+
+16 tester i `tests/test_steg12_berakningar.py`, alla utan nätverk. Live
+verifierat att `FasALopp` fortfarande kör rent med de fyra nya verktygen i
+listan (18 verktyg totalt) — frågan "Hur mycket har KPI förändrats i
+procent mellan juni 2026 och juli 2026?" löstes utan att beräkningsverktyget
+behövdes, eftersom SCB:s tabell redan innehåller den färdiga procentsatsen
+som egen kolumn. Det är korrekt beteende, inte en miss: modellen ska
+föredra ett redan uträknat källvärde framför att skapa en onödig härledd
+post.
+
+**Frontend-kriteriet ("härledda poster med en tydlig markering") är INTE
+uppfyllt** — ingen frontend finns än. `Faktapost.harledd` och
+`harledd_av` finns i datamodellen och är redan med i det Claude ser
+(`_formatera_poster` i `hamtning.py` skickar `harledd_av` till modellen för
+härledda poster), men den visuella markeringen hör till steg 14.
+
+Hela sviten (utom livetester): **152 passed**.
 
 ---
 

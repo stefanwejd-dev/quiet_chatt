@@ -41,6 +41,7 @@ from quiet_oppen_data.adaptrar import (
 )
 from quiet_oppen_data.konfig import las as las_konfig
 from quiet_oppen_data.modeller import Faktapost, Faktaregister, Faktautkast, Fragplan
+from quiet_oppen_data.motor import berakningar
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +61,12 @@ Regler:
 alternativ och hämta igen.
 4. Avsluta loopen när du har tillräckliga Faktaposter för att besvara frågan, \
 eller när det är uppenbart att ingen källa kan svara.
-5. Din text i denna fas kastas — skriv ingenting till användaren här. \
+5. Räkna ALDRIG själv — inte ens en enkel differens eller procentsats. Om \
+frågan kräver en beräkning på hämtade Faktaposter, använd något av \
+verktygen berakna_differens, berakna_procentuell_forandring, berakna_kvot \
+eller berakna_indexupprakning. De returnerar en ny Faktapost med \
+beräkningen redan gjord och spårbar.
+6. Din text i denna fas kastas — skriv ingenting till användaren här. \
 Kommunicera enbart via verktygskall.
 """
 
@@ -103,11 +109,12 @@ def _bygg_adaptrar() -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 def _bygg_verktygsspecar(adaptrar: dict[str, Any]) -> list[dict[str, Any]]:
-    """Bygg deterministisk lista med verktygsspecar från alla adaptrar.
+    """Bygg deterministisk lista med verktygsspecar från alla adaptrar,
+    plus beräkningsverktygen (motor/berakningar.py — ARKITEKTUR.md §5 regel 2).
 
     Sorteras på verktygetsnamn ('name') för stabil prompt-cacheträff.
     """
-    specs: list[dict[str, Any]] = []
+    specs: list[dict[str, Any]] = list(berakningar.VERKTYGSSPECAR)
     for kalla_id in sorted(adaptrar.keys()):
         adapter = adaptrar[kalla_id]
         try:
@@ -146,11 +153,47 @@ class _VerktygKontext:
     register: Faktaregister
 
 
+def _formatera_poster(poster: list[Faktapost]) -> list[dict[str, Any]]:
+    """Kompakt representation av Faktaposter för Claude — inte råa API-svar."""
+    resultat = []
+    for post in poster:
+        item: dict[str, Any] = {
+            "id": post.id,
+            "etikett": post.etikett,
+            "varde": post.varde,
+        }
+        if post.enhet:
+            item["enhet"] = post.enhet
+        if post.period:
+            item["period"] = post.period
+        if post.dimensioner:
+            item["dimensioner"] = post.dimensioner
+        if post.harledd:
+            item["harledd_av"] = list(post.harledd_av)
+        resultat.append(item)
+    return resultat
+
+
 def _kör_verktyg(kontext: _VerktygKontext, verktygsnamn: str, indata: dict[str, Any]) -> str:
     """Kör ett verktyg och registrerar svaret i Faktaregistret.
 
     Returnerar en JSON-sträng som Claude ser som verktygsresultat.
     """
+    if verktygsnamn in berakningar.VERKTYGSNAMN:
+        # Beräkningsverktygen (ARKITEKTUR.md §5 regel 2) registrerar redan
+        # sitt resultat själva — de arbetar direkt mot Faktaregistret, inte
+        # via Faktautkast + registrera_alla som adaptrarna.
+        try:
+            post = berakningar.kor_verktyg(verktygsnamn, kontext.register, indata)
+        except (ValueError, ZeroDivisionError, KeyError) as exc:
+            logger.info("Beräkningsverktyg '%s' avvisades: %s", verktygsnamn, exc)
+            return json.dumps({"fel": str(exc)}, ensure_ascii=False)
+        except Exception:
+            logger.warning("Beräkningsverktyg '%s' kastade undantag", verktygsnamn, exc_info=True)
+            return json.dumps({"fel": f"Verktyget {verktygsnamn} returnerade ett fel."})
+
+        return json.dumps({"resultat": _formatera_poster([post]), "antal": 1}, ensure_ascii=False)
+
     adapter = kontext.dispatcher.get(verktygsnamn)
     if adapter is None:
         logger.warning("Okänt verktyg begärt: '%s'", verktygsnamn)
@@ -171,23 +214,7 @@ def _kör_verktyg(kontext: _VerktygKontext, verktygsnamn: str, indata: dict[str,
 
     poster: list[Faktapost] = kontext.register.registrera_alla(utkast)
 
-    # Returnera kompakt representation till Claude (inte råa API-svar)
-    resultat = []
-    for post in poster:
-        item: dict[str, Any] = {
-            "id": post.id,
-            "etikett": post.etikett,
-            "varde": post.varde,
-        }
-        if post.enhet:
-            item["enhet"] = post.enhet
-        if post.period:
-            item["period"] = post.period
-        if post.dimensioner:
-            item["dimensioner"] = post.dimensioner
-        resultat.append(item)
-
-    return json.dumps({"resultat": resultat, "antal": len(resultat)}, ensure_ascii=False)
+    return json.dumps({"resultat": _formatera_poster(poster), "antal": len(poster)}, ensure_ascii=False)
 
 
 # ---------------------------------------------------------------------------
