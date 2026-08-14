@@ -38,6 +38,10 @@ _IGNORERADE_NYCKLAR = frozenset({
     "version",
     "uppdaterad",
     "kommentar",
+    # Verifieringsmiljöns adresser dokumenteras i registret men får aldrig
+    # anropas av adaptern — se bolagsverket_hvd.
+    "test_token_url",
+    "test_bas_url",
 })
 
 

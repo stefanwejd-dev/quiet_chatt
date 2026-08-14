@@ -1012,6 +1012,21 @@ när raden har en egen period, som en dimension. Ett svar ska aldrig kunna påst
 "antalet momsdeklarationer är X" utan att visa vilket år uppgiften avser och när
 den senast uppdaterades.
 
+**Rättelse 2026-08-14 — kravet går inte att uppfylla som det är skrivet.** Vid
+kontroll av alla åtta kurerade datamängder innehåller RowStore-svaret inget
+uppdateringsdatum alls: toppnycklarna är `limit`, `next`, `offset`, `queryTime`
+och `resultCount`, och raderna bär bara sina egna kolumner. Färskheten finns i
+katalogmetadatan hos dataportal.se och i Skatteverkets publiceringsuppgift — inte
+i anropet.
+
+Fältet `uppdaterad` per datamängd i `kallregister.yaml` bär nu de datumen. Men de
+är en **påstådd** färskhet, inte en avläst, och skillnaden måste överleva ända ut i
+svaret: en siffra får inte presenteras som "uppdaterad 2025-12-10" när det enda vi
+vet är att registret påstår det. Steg 17 ska antingen märka datumet som registrets
+uppgift, eller hämta det ur katalogindexet där det har en källa att peka på.
+Att tyst kopiera in det i `period` som om API:et lämnat det vore precis den
+osanning §5 regel 8 finns för att förhindra.
+
 **Acceptans:**
 - Alla tillagda UUID:n svarar 200 och returnerar rader. Ett som inte gör det tas
   bort ur registret — inte lämnas kvar i hopp om att det ska börja fungera.
@@ -1023,7 +1038,30 @@ den senast uppdaterades.
 
 ---
 
-## Steg 18 — VERIFIERINGSGRIND: Skatteverkets rättsliga regelfiler
+## Steg 18 — AVSLUTAT 2026-08-14: partner-API, ingen åtkomst
+
+**Utfallet är det som §0 kallar giltigt: källan lämnas oaktiverad.**
+
+Beställaren har konstaterat att **Rättsliga regler är ett partner-API** och att
+åtkomst saknas. Den öppna frågan nedan — om regelfilerna går att hämta utan avtal
+medan API:et är den avtalsbundna vägen — behöver därmed inte utredas vidare för att
+komma till ett beslut: utan åtkomst finns ingen fil att inspektera, och utan
+inspekterat format skrivs ingen adapter.
+
+Ingen post läggs i `kallregister.yaml`. En källa vi varken kan nå eller beskriva
+tillför ingenting genom att stå där som `verifierad: nej` — till skillnad från
+`bolagsverket_hvd`, där protokollet nu faktiskt är avläst och posten bär kunskap.
+
+Om åtkomst senare beviljas återupptas steget som det står nedan. Texten bevaras
+oförändrad av det skälet.
+
+**Det som ändå kvarstår från steg 18:s bakgrund:** luckan är verklig. Steg 16 ger
+lagens bokstav, och en fråga om reseräkning besvaras av tillämpningen. Den luckan är
+nu utan planerad lösning, och det ska stå skrivet i stället för att glömmas bort.
+
+---
+
+## Steg 18 (arkiverat underlag) — Skatteverkets rättsliga regelfiler
 
 **Detta steg skriver ingen produktionskod förrän frågan nedan är besvarad.**
 Samma form som steg 7.
@@ -1080,6 +1118,40 @@ Fråga om skatteavdrag, Beslutade skatteuppgifter och Bilförmån hör hemma i
 sie-mcp, inte i den publika chatten. Att lägga person- eller företagsspecifika
 skatteuppgifter i en fritextsökbar bot vore fel även med avtal på plats — och
 `ARKITEKTUR.md` §7 spärrar redan källor med uppgifter om enskilda.
+
+---
+
+## Steg 7 (återupptaget) — Bolagsverket HVD: protokollet avläst 2026-08-14
+
+Verifieringsgrinden från steg 7 stod öppen i väntan på åtkomst. Beställaren
+levererade klientuppgifter till **verifieringsmiljön** 2026-08-14. Anrop gjorda
+samma dag; hela protokollet står i `kallregister.yaml` under `bolagsverket_hvd`
+och sammanfattas här:
+
+* Token: `POST https://portal-accept2.api.bolagsverket.se/oauth2/token`,
+  `grant_type=client_credentials` med HTTP Basic → **200**, Bearer, 3600 s.
+* Scopes: `vardefulla-datamangder:read` och `:ping`, beviljas var för sig och ihop.
+* Hälsa: `GET {gw-accept2}/vardefulla-datamangder/v1/isalive` → **200 `OK`**.
+  Kräver `:ping`; enbart `:read` ger 403 *scope validation failed*.
+* Data: `POST /v1/organisationer` tar `{"identitetsbeteckning": "<orgnr>"}` — en
+  **sträng**. Objekt ger deserialiseringsfel, lista ger valideringsfel.
+  `POST /v1/dokumentlista` finns och validerar mot `dokumentlistaBegaran`.
+* Ingen OpenAPI-spec exponeras på gatewayen.
+
+**Källan är trots detta inte aktiverad, och ska inte aktiveras.** Två skäl:
+
+1. **Accept2 svarar för påhittade företag.** Chatten lovar verkliga uppgifter med
+   källänk. Fiktiva bolagsuppgifter under det löftet är sämre än inget svar.
+   Verifieringsmiljön duger till att bygga och testa adaptern — inte till att
+   besvara frågor.
+2. **Svarsformatet är osett.** Giltiga testidentitetsbeteckningar står i en
+   testdokumentation vi inte har, så inget anrop har gett 200 med en
+   organisationskropp. §0 tillåter ingen adapter mot ett osett svarsformat.
+
+**Nästa åtgärd är beställarens, inte implementatörens:** begär Bolagsverkets
+**testdokumentation med giltiga identitetsbeteckningar**, och därefter
+**produktionsuppgifter**. Med det första kan adaptern byggas och testas mot
+accept2. Med det andra — och först då — kan källan aktiveras.
 
 ---
 

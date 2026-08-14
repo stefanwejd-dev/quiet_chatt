@@ -27,7 +27,7 @@ varje uppgift med fotnot och klickbar källänk.
 | 16A | Lagkorpus — de fem huvudlagarna | ✅ |
 | 16B | Lagkorpus — resterande 57 författningar | ✅ |
 | 17 | Skatteverkets statistik — elva RowStore-datamängder + färskhet i `period` | ⬜ |
-| 18 | Verifieringsgrind: Skatteverkets rättsliga regelfiler (utredning) | ⬜ |
+| 18 | Skatteverkets rättsliga regelfiler | ⛔ avslutat — partner-API, ingen åtkomst |
 | 19 | Nattlig färskhetskontroll av lagkorpuset | ⬜ föreslaget |
 
 **Hela testsviten: 213 passed**, `ruff check .` rent (2026-08-14).
@@ -105,3 +105,11 @@ verifierades 2026-08-14 och ligger som kurerad katalog under
 Fyra till är listade men **ej verifierade** — deras sökvägar är inte bekräftade och
 de är avstängda i registret (`aktiverad: false`). Ingen kod får skrivas mot en gissad
 endpoint — se `kallor/kallregister.yaml` och `ARKITEKTUR.md §0`.
+
+**Bolagsverket HVD** är ett mellanläge sedan 2026-08-14: OAuth2-flödet, båda scopes,
+`/isalive` och kroppsschemat för `/organisationer` är anropade och avlästa mot
+Bolagsverkets **verifieringsmiljö**. Källan är ändå kvar som `aktiverad: false`, och
+ska förbli det. Accept2 svarar för påhittade företag, och en chatt som lovar verkliga
+uppgifter med källänk får inte servera fiktiva bolagsuppgifter. Dessutom är
+svarsformatet fortfarande osett — giltiga testidentitetsbeteckningar kräver
+Bolagsverkets testdokumentation. Se steg 7 (återupptaget) i `PLAN.md`.

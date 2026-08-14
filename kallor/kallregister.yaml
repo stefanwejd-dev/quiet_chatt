@@ -268,18 +268,52 @@ kallor:
     # huvudmän är UTANFÖR omfattningen — den senare är dessutom blockerad,
     # se posten bolagsverket_verkliga_huvudman överst i denna fil.
     kommentar: >
-      Kundanmälan till API för värdefulla datamängder inskickad 2026-08-13.
-      Avgiftsfritt API, inget avtal krävs — bara kundanmälan. Väntar på
-      API-nyckel. Aktivera först när åtkomst bekräftats — gissa aldrig sökväg
-      eller svarsformat under väntetiden.
+      Kundanmälan inskickad 2026-08-13. Klientuppgifter till VERIFIERINGSMILJÖN
+      mottagna 2026-08-14 och anropade live samma dag. Protokollet nedan är
+      därmed avläst, inte gissat. Produktionsåtkomst saknas fortfarande.
+    verifierat_anrop: >
+      Verifieringsmiljön 2026-08-14:
+      POST https://portal-accept2.api.bolagsverket.se/oauth2/token
+      (grant_type=client_credentials, HTTP Basic) -> 200, Bearer, expires_in 3600.
+      Scoperna vardefulla-datamangder:read och :ping beviljas var för sig och
+      tillsammans.
+      GET  https://gw-accept2.api.bolagsverket.se/vardefulla-datamangder/v1/isalive
+      -> 200 "OK" (kräver :ping — med enbart :read ges 403 scope validation failed).
+      POST /v1/organisationer med {"identitetsbeteckning": "<orgnr>"} -> 400 med
+      texten "Ogiltig identitetsbeteckning i begäran. Se testdokumentation för
+      giltiga identitetsbeteckningar." Kroppsschemat är alltså bekräftat; fältet
+      är en sträng, inte ett objekt eller en lista.
+      POST /v1/dokumentlista finns och validerar mot 'dokumentlistaBegaran'.
+      Ingen OpenAPI-spec exponeras på gatewayen (openapi.json, swagger.json,
+      api-docs: alla 404).
     hinder: >
-      Bas-URL:en ovan är Bolagsverkets egen registrering av tjänsten på
-      dataportal.se, inte ett anrop vi själva har gjort. Roten svarade 404 vid
-      test 2026-08-13, vilket är väntat för en gateway som bara serverar
-      specifika sökvägar och kräver autentisering. De konkreta sökvägarna måste
-      läsas ur dokumentationen när API-nyckeln kommit — se steg 7 i PLAN.md.
-    autentisering: API-nyckel (kommer efter kundanmälan; lagras utanför repot)
+      TVÅ hinder kvarstår, båda blockerande för aktivering.
+
+      1. MILJÖN ÄR EN TESTMILJÖ. De mottagna nycklarna gäller accept2, som svarar
+      för PÅHITTADE testföretag. Chatten lovar verkliga uppgifter med källänk;
+      att servera fiktiva bolagsuppgifter under det löftet vore värre än att inte
+      svara alls. Källan får inte aktiveras mot accept2 — verifieringsmiljön
+      duger till att bygga och testa adaptern, inte till att besvara frågor.
+
+      2. SVARSFORMATET ÄR OSETT. Inget anrop har ännu gett 200 med en
+      organisationskropp, eftersom giltiga testidentitetsbeteckningar står i en
+      testdokumentation vi inte har. Enligt §0 skrivs ingen adapter mot ett
+      svarsformat som ingen har sett — felmeddelandet ger fältnamnet i begäran,
+      inte formen på svaret.
+
+      Bas-URL:en ovan pekar på produktionsgatewayen och är fortfarande obekräftad:
+      gw.api.bolagsverket.se/oauth2/token svarar 404 och /v1/isalive ger 900900
+      Unclassified Authentication Failure med en accept2-token, vilket är väntat.
+    autentisering: >
+      OAuth2 client_credentials (HTTP Basic mot token-endpointen), inte en enkel
+      API-nyckel som posten tidigare angav. Två scopes: :read för data, :ping för
+      hälsokontroll. Klientuppgifter lagras utanför repot som
+      BOLAGSVERKET_CLIENT_ID och BOLAGSVERKET_CLIENT_SECRET.
     dokumentation: https://bolagsverket.se/apierochoppnadata/hamtaforetagsinformation/vardefulladatamangder/apiforvardefulladatamangder.5513.html
+    # Verifieringsmiljöns adresser, avlästa 2026-08-14. Står här som dokumentation
+    # av vad som testats — de får ALDRIG bli bas_url för en aktiverad källa.
+    test_token_url: https://portal-accept2.api.bolagsverket.se/oauth2/token
+    test_bas_url: https://gw-accept2.api.bolagsverket.se/vardefulla-datamangder/v1
     licens: okänd
     attribution: "Källa: Bolagsverket"
     takt: { anrop: 2, per_sekunder: 1 }
@@ -297,6 +331,8 @@ kallor:
     aktiverad: true
     verifierat_anrop: >
       Samtliga dataset nedan anropade 2026-08-14, alla 200 OK med rader.
+      Omkontrollerade 2026-08-14 mot beställarens förteckning över Skatteverkets
+      öppna API:er — samma åtta, alla fortfarande 200 med oförändrat radantal.
     licens: CC0
     attribution: "Källa: Skatteverket"
     takt: { anrop: 3, per_sekunder: 1 }
@@ -309,6 +345,13 @@ kallor:
     # Urvalet kommer från beställarens genomgång av Skatteverkets öppna data
     # 2026-08-14 och innehåller bara datamängder som INTE kräver partneravtal.
     # Kolumnnamnen är avlästa ur faktiska svar, inte gissade.
+    #
+    # FÄLTET `uppdaterad`: RowStore-svaret bär INGET uppdateringsdatum — topp-
+    # nycklarna är bara limit/next/offset/queryTime/resultCount. Färskheten går
+    # alltså inte att läsa ur anropet, vilket §5 regel 8 kräver att den ska
+    # kunna. Datumen nedan är Skatteverkets egen publiceringsuppgift. De är
+    # därmed en påstådd färskhet, inte en avläst — och måste märkas som sådan
+    # när steg 17 för in dem i Faktapost.period.
     dataset:
       - uuid: c67b320b-ffee-4876-b073-dd9236cd2a99
         namn: Skattesatser per kommun
@@ -322,6 +365,7 @@ kallor:
                    landstings-skatt, begravnings-avgift, kyrkoavgift,
                    "summa, exkl. kyrkoavgift", "summa, inkl. kyrkoavgift"]
         rader: 17254
+        uppdaterad: "2025-12-10"
 
       - uuid: 88320397-5c32-4c16-ae79-d36d95b17b95
         namn: Skattetabeller för månadslön
@@ -332,11 +376,13 @@ kallor:
                    "kolumn 1", "kolumn 2", "kolumn 3", "kolumn 4", "kolumn 5",
                    "kolumn 6", "kolumn 7"]
         rader: 76034
+        uppdaterad: "2025-12-10"
 
       - uuid: 293993a8-1b6d-437b-9949-6665836776d5
         namn: Skattetabeller för dagpenning, personer under 66 år
         kolumner: [år, tabellnr, "inkomst fr.om.", "inkomst t.o.m.", "skatt i kr"]
         rader: 149360
+        uppdaterad: "2025-12-10"
 
       - uuid: 0d3eae5d-99c5-4fd3-b954-9ab3bc705671
         namn: Skattetabeller för dagpenning, personer 66 år och äldre
@@ -344,6 +390,7 @@ kallor:
           Preliminär A-skatt på dagpenning för personer över 65 år.
         kolumner: [år, tabellnr, "inkomst fr.om.", "inkomst t.o.m.", "skatt i kr"]
         rader: 136549
+        uppdaterad: "2025-12-10"
 
       - uuid: 006353ad-aa05-4757-bdfd-fae344433a50
         namn: Schablonbelopp för traktamenten
@@ -352,6 +399,7 @@ kallor:
           och framåt.
         kolumner: [år, "vid tjänsteresa", "i sverige, kr", utomlands]
         rader: 45
+        uppdaterad: "2025-12-01"
 
       - uuid: 28cbac7c-395a-438a-80db-12b955ea3caf
         namn: Schablonvärden för kostförmån
@@ -360,6 +408,7 @@ kallor:
           skattepliktig förmån. Inkomstår 2018 och framåt.
         kolumner: [år, kost, "kr per dag"]
         rader: 27
+        uppdaterad: "2025-12-11"
 
       - uuid: b4de7df7-63c0-4e7e-bb59-1f156a591763
         namn: Testpersonnummer
@@ -369,6 +418,7 @@ kallor:
           redovisningsfrågor.
         kolumner: [testpersonnummer]
         rader: 43895
+        uppdaterad: "2025-12-16"
 
       - uuid: 9f29fe09-4dbc-4d2f-848f-7cffdd075383
         namn: Testsamordningsnummer
@@ -377,6 +427,7 @@ kallor:
           aldrig i produktion. Utvecklardata.
         kolumner: [testsamordningsnummer]
         rader: 4088
+        uppdaterad: "2025-12-12"
 
     tacker:
       - skattesatser per kommun och församling
