@@ -78,7 +78,10 @@ inte i en systemprompt. Polisens *händelse*-API är tillåtet.
 
 ## Källverifiering
 
-Elva källor är anropade live och bekräftade 2026-08-13.
+Elva källor är anropade live och bekräftade 2026-08-13. Skatteverkets åtta
+öppna datamängder (skattesatser, skattetabeller, traktamenten, kostförmån)
+verifierades 2026-08-14 och ligger som kurerad katalog under
+`skatteverket_rowstore`.
 Fyra till är listade men **ej verifierade** — deras sökvägar är inte bekräftade och
 de är avstängda i registret (`aktiverad: false`). Ingen kod får skrivas mot en gissad
 endpoint — se `kallor/kallregister.yaml` och `ARKITEKTUR.md §0`.

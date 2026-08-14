@@ -82,12 +82,43 @@ class RowStoreAdapter:
                     "required": ["bas_url", "uuid"]
                 }
             }]
-        else:
-            return [{
+        specar: list[dict[str, Any]] = []
+
+        # Har källan en kurerad datasetkatalog exponeras den som eget verktyg.
+        # Ett RowStore-UUID går inte att gissa; utan katalogen är källan i
+        # praktiken oanvändbar för modellen (ARKITEKTUR.md §5 regel 7).
+        if self._kalla.dataset:
+            specar.append({
+                "name": f"{self.id}_lista_dataset",
+                "description": (
+                    f"Listar tillgängliga datamängder hos "
+                    f"{self._kalla.myndighet or self.id} med UUID, innehåll och "
+                    "kolumnnamn. Anropa ALLTID detta först — UUID går inte att gissa."
+                ),
+                "input_schema": {
+                    "type": "object",
+                    "properties": {
+                        "sok": {
+                            "type": "string",
+                            "description": (
+                                "Fritext som matchas mot datamängdens namn och "
+                                "beskrivning, t.ex. 'skattesats' eller 'traktamente'."
+                            ),
+                        }
+                    },
+                    "required": [],
+                },
+            })
+
+        if True:
+            specar.append({
                 "name": self.id,
                 "description": (
                     f"Hämtar data från {self._kalla.myndighet or self.id} via RowStore. "
-                    "Anger dataset-UUID och eventuellt filter."
+                    + ("UUID MÅSTE komma från "
+                       f"{self.id}_lista_dataset — gissa aldrig ett UUID."
+                       if self._kalla.dataset else
+                       "Anger dataset-UUID och eventuellt filter.")
                 ),
                 "input_schema": {
                     "type": "object",
@@ -114,9 +145,52 @@ class RowStoreAdapter:
                     },
                     "required": ["uuid"]
                 }
-            }]
+            })
+
+        return specar
+
+    # ------------------------------------------------------------------
+    # Datasetkatalog
+    # ------------------------------------------------------------------
+
+    def _lista_dataset(self, sok: str | None) -> list[Faktautkast]:
+        """Returnerar den kurerade katalogen som utkast, så modellen kan välja."""
+        poster = self._kalla.dataset or []
+        if sok:
+            nal = sok.lower()
+            poster = [
+                d for d in poster
+                if nal in str(d.get("namn", "")).lower()
+                or nal in str(d.get("beskrivning", "")).lower()
+            ]
+        if not poster:
+            logger.info("%s: ingen datamängd matchade sok=%r", self.id, sok)
+            return []
+
+        rader = [
+            f"{d['uuid']} — {d.get('namn', '?')}"
+            + (f" (kolumner: {', '.join(d['kolumner'])})" if d.get("kolumner") else "")
+            for d in poster
+        ]
+        return [
+            Faktautkast(
+                etikett=(f"Datamängder hos {self._kalla.myndighet or self.id} "
+                         f"som matchar {sok!r}" if sok
+                         else f"Tillgängliga datamängder hos {self._kalla.myndighet or self.id}"),
+                varde=" | ".join(rader),
+                kalla_id=self.id,
+                myndighet=self._kalla.myndighet or self.id,
+                licens=self._kalla.licens,
+                attribution=self._kalla.attribution,
+                lank_manniska=self._kalla.manniskolank_mall or self._kalla.bas_url,
+                lank_maskin=self._kalla.bas_url,
+            )
+        ]
 
     def hamta(self, plan: Fragplan) -> list[Faktautkast]:
+        if plan.extra.get("verktyg") == f"{self.id}_lista_dataset":
+            return self._lista_dataset(plan.extra.get("sok"))
+
         uuid = plan.extra.get("uuid")
         if not uuid:
             logger.info("%s: anrop utan UUID", self.id)
@@ -159,17 +233,44 @@ class RowStoreAdapter:
         myndighet = self._kalla.myndighet or urlparse(bas_url).netloc
         manniska = self._kalla.manniskolank_mall or bas_url
 
+        # Namnet ur den kurerade katalogen. Etiketten måste säga VAD uppgiften
+        # är, inte bara vilket UUID den hämtades med (ARKITEKTUR.md §5) —
+        # "Skatteverket, dataset 006353ad-…" gör felet osynligt i källpanelen.
+        katalogpost = next(
+            (d for d in (self._kalla.dataset or []) if d.get("uuid") == uuid), {}
+        )
+        datasetnamn = katalogpost.get("namn")
+
+        # Kolumner som fungerar som period. RowStore-datamängderna hos
+        # Skatteverket bär årtalet i "år"; andra instanser kan använda andra namn.
+        _PERIODKOLUMNER = ("år", "ar", "period", "inkomstår", "inkomstar", "ankomstår")
+
         utkast: list[Faktautkast] = []
         for rad in results:
             if not isinstance(rad, dict):
                 continue
-            # Serialisera hela raden till ett läsbart strängvärde
-            varde = "; ".join(f"{k}: {v}" for k, v in rad.items() if v is not None)
+
+            period = next(
+                (str(rad[k]) for k in _PERIODKOLUMNER if rad.get(k) not in (None, "")),
+                None,
+            )
+            # Periodkolumnen upprepas inte i värdet — den bärs av period-fältet.
+            varde = "; ".join(
+                f"{k}: {v}" for k, v in rad.items()
+                if v is not None and not (period and k in _PERIODKOLUMNER)
+            )
             if not varde:
                 continue
 
+            if datasetnamn:
+                etikett = f"{myndighet}: {datasetnamn}"
+            else:
+                etikett = f"{myndighet}, dataset {uuid}"
+            etikett += f" (rad {offset + len(utkast) + 1}/{total})"
+
             utkast.append(Faktautkast(
-                etikett=f"{myndighet}, dataset {uuid} (rad {offset + len(utkast) + 1}/{total})",
+                etikett=etikett,
+                period=period,
                 varde=varde,
                 kalla_id=self.id,
                 myndighet=myndighet,

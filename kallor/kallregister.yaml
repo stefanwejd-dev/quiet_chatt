@@ -280,17 +280,100 @@ kallor:
     bas_url: https://skatteverket.entryscape.net/rowstore/dataset
     verifierad: ja
     aktiverad: true
-    verifierat_anrop: GET /080c60de-c7e3-4d65-a386-5e72b2aa4bcd/json?_limit=1 -> 200 OK
-    licens: okänd
+    verifierat_anrop: >
+      Samtliga dataset nedan anropade 2026-08-14, alla 200 OK med rader.
+    licens: CC0
     attribution: "Källa: Skatteverket"
     takt: { anrop: 3, per_sekunder: 1 }
     cache_ttl: 86400
+    manniskolank_mall: "https://www.dataportal.se/datasets?q=Skatteverket"
+    # Kurerad katalog. Ett RowStore-UUID går inte att gissa, så utan den här
+    # listan är källan i praktiken oanvändbar för modellen — adaptern exponerar
+    # den som ett katalogverktyg (ARKITEKTUR.md §5 regel 7).
+    #
+    # Urvalet kommer från beställarens genomgång av Skatteverkets öppna data
+    # 2026-08-14 och innehåller bara datamängder som INTE kräver partneravtal.
+    # Kolumnnamnen är avlästa ur faktiska svar, inte gissade.
+    dataset:
+      - uuid: c67b320b-ffee-4876-b073-dd9236cd2a99
+        namn: Skattesatser per kommun
+        beskrivning: >
+          Kommunalskatt, landstingsskatt, begravningsavgift och kyrkoavgift per
+          församling och år. Summa både med och utan kyrkoavgift.
+          VIKTIGT: kommun- och församlingsnamn lagras med VERSALER
+          (kommun=MALMÖ, inte Malmö). Filtret är skiftlägeskänsligt.
+          År 2023-2026 finns, cirka 1 270 rader per år.
+        kolumner: [år, kommun, församling, församlings-kod, kommunal-skatt,
+                   landstings-skatt, begravnings-avgift, kyrkoavgift,
+                   "summa, exkl. kyrkoavgift", "summa, inkl. kyrkoavgift"]
+        rader: 17254
+
+      - uuid: 88320397-5c32-4c16-ae79-d36d95b17b95
+        namn: Skattetabeller för månadslön
+        beskrivning: >
+          Preliminär A-skatt på månadslön per tabellnummer och inkomstintervall.
+          Kolumn 1–7 motsvarar skattetabellernas kolumnindelning.
+        kolumner: [år, tabellnr, "inkomst fr.o.m.", "inkomst t.o.m.", "antal dgr",
+                   "kolumn 1", "kolumn 2", "kolumn 3", "kolumn 4", "kolumn 5",
+                   "kolumn 6", "kolumn 7"]
+        rader: 76034
+
+      - uuid: 293993a8-1b6d-437b-9949-6665836776d5
+        namn: Skattetabeller för dagpenning, personer under 66 år
+        kolumner: [år, tabellnr, "inkomst fr.om.", "inkomst t.o.m.", "skatt i kr"]
+        rader: 149360
+
+      - uuid: 0d3eae5d-99c5-4fd3-b954-9ab3bc705671
+        namn: Skattetabeller för dagpenning, personer 66 år och äldre
+        beskrivning: >
+          Preliminär A-skatt på dagpenning för personer över 65 år.
+        kolumner: [år, tabellnr, "inkomst fr.om.", "inkomst t.o.m.", "skatt i kr"]
+        rader: 136549
+
+      - uuid: 006353ad-aa05-4757-bdfd-fae344433a50
+        namn: Schablonbelopp för traktamenten
+        beskrivning: >
+          Traktamente vid tjänsteresa, i Sverige och utomlands. Inkomstår 2018
+          och framåt.
+        kolumner: [år, "vid tjänsteresa", "i sverige, kr", utomlands]
+        rader: 45
+
+      - uuid: 28cbac7c-395a-438a-80db-12b955ea3caf
+        namn: Schablonvärden för kostförmån
+        beskrivning: >
+          Förmånsvärde per kosttyp och dag. Kost från arbetsgivaren är en
+          skattepliktig förmån. Inkomstår 2018 och framåt.
+        kolumner: [år, kost, "kr per dag"]
+        rader: 27
+
+      - uuid: b4de7df7-63c0-4e7e-bb59-1f156a591763
+        namn: Testpersonnummer
+        beskrivning: >
+          Påhittade personnummer avsedda ENBART för testmiljö, aldrig i
+          produktion. Utvecklardata — inte relevant för skatte- eller
+          redovisningsfrågor.
+        kolumner: [testpersonnummer]
+        rader: 43895
+
+      - uuid: 9f29fe09-4dbc-4d2f-848f-7cffdd075383
+        namn: Testsamordningsnummer
+        beskrivning: >
+          Påhittade samordningsnummer (12 tecken) avsedda ENBART för testmiljö,
+          aldrig i produktion. Utvecklardata.
+        kolumner: [testsamordningsnummer]
+        rader: 4088
+
     tacker:
-      - skattetabeller
-      - momsstatistik, arbetsgivaravgifter, ROT/RUT, fastighetsskatt
+      - skattesatser per kommun och församling
+      - skattetabeller (månadslön, dagpenning)
+      - traktamenten och kostförmån
+    varning: >
+      RowStore-filter är SKIFTLÄGESKÄNSLIGA. kommun=MALMÖ ger 78 rader,
+      kommun=Malmö ger noll. Ett filter som inte träffar ser ut som
+      "källan hade inget att säga" — verifierat 2026-08-14.
     notering: >
-      Detta är STATISTIK, inte rättslig vägledning. Skatteverkets ställningstaganden
-      finns inte som API.
+      Detta är faktauppgifter och tabellvärden, inte rättslig vägledning.
+      Skatteverkets ställningstaganden finns inte som API.
 
   - id: kronofogden_rowstore
     myndighet: Kronofogdemyndigheten

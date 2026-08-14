@@ -194,3 +194,85 @@ def test_json_rest_jobtech(isolerad_cache):
     post = poster[0]
     assert post.kalla_id == "jobtech"
     assert post.lank_maskin.startswith("https://jobsearch.api.jobtechdev.se")
+
+
+# ---------------------------------------------------------------------------
+# Skatteverkets datasetkatalog — tillagd 2026-08-14
+# ---------------------------------------------------------------------------
+
+def test_skatteverket_exponerar_datasetkatalog():
+    """Ett RowStore-UUID går inte att gissa.
+
+    Utan katalogverktyg är källan i praktiken oanvändbar för modellen — samma
+    felklass som PxWeb-dimensioner och Riksbankens serie-id
+    (ARKITEKTUR.md §5 regel 7).
+    """
+    specar = {s["name"]: s for s in RowStoreAdapter("skatteverket_rowstore").beskriv()}
+    assert "skatteverket_rowstore_lista_dataset" in specar
+    assert "skatteverket_rowstore" in specar
+    # Hämtverktyget ska säga åt modellen att inte gissa.
+    assert "gissa aldrig" in specar["skatteverket_rowstore"]["description"].lower()
+
+
+def test_skatteverket_katalog_hittar_traktamenten():
+    utkast = RowStoreAdapter("skatteverket_rowstore").hamta(
+        Fragplan(fraga="", extra={
+            "verktyg": "skatteverket_rowstore_lista_dataset", "sok": "traktamente"})
+    )
+    assert len(utkast) == 1
+    assert "006353ad-aa05-4757-bdfd-fae344433a50" in utkast[0].varde
+    # Katalogen är kurerad, så en irrelevant datamängd ska inte matcha.
+    assert "Testpersonnummer" not in utkast[0].varde
+
+
+def test_skatteverket_katalogen_dokumenterar_skiftlagesfallan():
+    """kommun=MALMÖ ger 78 rader, kommun=Malmö ger noll.
+
+    Ett filter som inte träffar ser ut som "källan hade inget att säga". Fällan
+    måste stå i katalogtexten som modellen faktiskt läser, inte bara i en
+    kommentar i registret.
+    """
+    utkast = RowStoreAdapter("skatteverket_rowstore").hamta(
+        Fragplan(fraga="", extra={
+            "verktyg": "skatteverket_rowstore_lista_dataset", "sok": "skattesats"})
+    )
+    from quiet_oppen_data.register import hamta as hamta_kalla
+    post = next(d for d in hamta_kalla("skatteverket_rowstore").dataset
+                if d["namn"] == "Skattesatser per kommun")
+    assert "VERSALER" in post["beskrivning"]
+    assert utkast, "katalogsökningen ska hitta skattesatsdatamängden"
+
+
+@vcr.use_cassette(**VCR_CONFIG)
+def test_skatteverket_etikett_namnger_datamangden(isolerad_cache):
+    """Etiketten måste säga VAD uppgiften är, inte bara vilket UUID den kom från.
+
+    "Skatteverket, dataset 006353ad-aa05-…" gör felet osynligt i källpanelen;
+    "Skatteverket: Schablonbelopp för traktamenten" gör det uppenbart
+    (ARKITEKTUR.md §5).
+    """
+    utkast = RowStoreAdapter("skatteverket_rowstore").hamta(
+        Fragplan(fraga="", extra={
+            "uuid": "006353ad-aa05-4757-bdfd-fae344433a50",
+            "filter": {"år": "2026"}, "limit": 2})
+    )
+    assert utkast
+    assert "Schablonbelopp för traktamenten" in utkast[0].etikett
+    assert "006353ad" not in utkast[0].etikett
+
+
+@vcr.use_cassette(**VCR_CONFIG)
+def test_skatteverket_arskolumn_blir_period(isolerad_cache):
+    """Årtalet hör hemma i period, inte begravt i värdesträngen.
+
+    Utan det kan ett svar säga "traktamentet är 300 kr" utan att visa vilket år
+    som avses — en uppgift som byter värde varje år.
+    """
+    utkast = RowStoreAdapter("skatteverket_rowstore").hamta(
+        Fragplan(fraga="", extra={
+            "uuid": "006353ad-aa05-4757-bdfd-fae344433a50",
+            "filter": {"år": "2026"}, "limit": 2})
+    )
+    assert utkast
+    assert utkast[0].period == "2026"
+    assert "år:" not in utkast[0].varde, "periodkolumnen ska inte upprepas i värdet"

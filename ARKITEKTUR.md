@@ -315,6 +315,9 @@ adapter vars data har en identifierare — tabell-id, dimensionskod, serie-id,
 dataset-UUID — måste exponera ett katalogverktyg som listar de giltiga
 värdena.** Utan det gissar modellen, och den gissar övertygande.
 
+RowStore är tredje fallet: dataset-UUID går inte att gissa alls, så källan var i
+praktiken oanvändbar tills en kurerad katalog lades i registret (`dataset:`).
+
 PxWeb saknade det först och hade returnerat en godtycklig skiva. Riksbanken
 saknade det och besvarade en fråga om referensräntan med styrräntan
 (`SECBREPOEFF` i stället för `SECBREFEFF` — ett tecken isär). Båda felen hade

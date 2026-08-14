@@ -59,6 +59,10 @@ class Kalla:
     manniskolank_mall: str | None = None
     faltval: list | None = None        # kurerat fältunderval (TED)
     maxceller: int | None = None       # celltak (PxWeb)
+    # Kurerad datasetkatalog för källor vars data nås via en identifierare som
+    # inte går att gissa (RowStore-UUID). Utan den måste modellen gissa —
+    # se ARKITEKTUR.md §5 regel 7.
+    dataset: list | None = None
 
 
 @dataclass(frozen=True)
@@ -170,6 +174,7 @@ def las(registersokväg: Path | str | None = None) -> list[KallaPost]:
                     manniskolank_mall=post.get("manniskolank_mall"),
                     faltval=post.get("faltval"),
                     maxceller=post.get("maxceller"),
+                    dataset=post.get("dataset"),
                 )
             )
 
