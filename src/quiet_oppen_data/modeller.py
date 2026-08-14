@@ -285,3 +285,27 @@ class Sokresultat:
     format: str | None = None
     access_url: str | None = None
     adapter_hint: str | None = None  # vilken adapter som troligen kan exekvera
+
+
+@dataclass
+class LagSokresultat:
+    """Ett sökresultat från lagindexet (steg 16)."""
+
+    chunk_id: str
+    sfs: str
+    dok_id: str
+    lag_namn: str
+    kortnamn: str
+    kapitel_nr: str | None
+    kapitel_rubrik: str | None
+    paragraf_nr: str
+    paragraf_rubrik: str | None
+    paragraf_text: str
+    andringsnotis: str | None
+    tom_sfs: str
+    hamtad: str
+    lank_manniska: str
+    lank_maskin: str
+    relevans: float
+    full_text: str
+

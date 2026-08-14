@@ -177,7 +177,7 @@ _MAX_OMFORSOK = 3
 
 
 def _anropa_med_omforsok(method: str, url: str, return_json: bool, **kwargs) -> Any:
-    """Utför HTTP-anropet och gör om vid tillfälliga fel.
+    """Utför HTTP-anropet och gör om vid tillfälliga fel (statuskoder och transportfel).
 
     Respekterar Retry-After när servern skickar den; annars exponentiell
     backoff. Permanenta fel (4xx utom 429) kastas direkt — de blir inte bättre
@@ -185,33 +185,51 @@ def _anropa_med_omforsok(method: str, url: str, return_json: bool, **kwargs) -> 
     """
     sista: Exception | None = None
     for forsok in range(_MAX_OMFORSOK):
-        with httpx.Client(timeout=TIMEOUT, follow_redirects=True) as client:
-            res = client.request(method, url, **kwargs)
+        try:
+            with httpx.Client(timeout=TIMEOUT, follow_redirects=True) as client:
+                res = client.request(method, url, **kwargs)
 
-        if res.status_code not in _OMFORSOK_STATUS:
-            res.raise_for_status()
-            return res.json() if return_json else res.text
+            if res.status_code not in _OMFORSOK_STATUS:
+                res.raise_for_status()
+                if return_json:
+                    return res.json()
+                # Om texten innehåller \ufffd (felaktigt angiven charset), försök med cp1252
+                if "\ufffd" in res.text:
+                    try:
+                        return res.content.decode("cp1252")
+                    except Exception:
+                        pass
+                return res.text
 
-        sista = httpx.HTTPStatusError(
-            f"{res.status_code} från {url}", request=res.request, response=res
-        )
+            sista = httpx.HTTPStatusError(
+                f"{res.status_code} från {url}", request=res.request, response=res
+            )
+        except (httpx.TransportError, OSError) as exc:
+            sista = exc
+            logger.info(
+                "Nätverksfel %s mot %s — försök %d/%d",
+                exc, url, forsok + 1, _MAX_OMFORSOK,
+            )
+
         if forsok == _MAX_OMFORSOK - 1:
             break
 
-        retry_after = res.headers.get("Retry-After")
+        retry_after = getattr(sista, "response", None)
+        retry_val = retry_after.headers.get("Retry-After") if retry_after else None
         try:
-            vanta = float(retry_after) if retry_after else 2.0 ** forsok
+            vanta = float(retry_val) if retry_val else 2.0 ** forsok
         except ValueError:
             vanta = 2.0 ** forsok
         vanta = min(vanta, 30.0)
         logger.info(
-            "Tillfälligt fel %s från %s — försök %d/%d om %.1f s",
-            res.status_code, url, forsok + 1, _MAX_OMFORSOK, vanta,
+            "Tillfälligt fel mot %s — väntar %.1f s före försök %d/%d",
+            url, vanta, forsok + 2, _MAX_OMFORSOK,
         )
         time.sleep(vanta)
 
     assert sista is not None
     raise sista
+
 
 
 def _hamta_generisk(kalla_id: str, method: str, url: str, return_json: bool, **kwargs) -> Any:

@@ -692,7 +692,7 @@ förbehåll) utan riktig backend.
 
 ---
 
-## Steg 16A — Lagkorpus, de fem huvudlagarna   ← NÄSTA STEG
+## Steg 16A — Lagkorpus, de fem huvudlagarna ✅ Godkänt 2026-08-14
 
 **Läs `ARKITEKTUR.md` §3.2b (lagindex) och §5 regel 8 (en kopia måste bära sin
 färskhetsstämpel) innan du börjar.** Steget inför systemets enda lokala kopia, och
@@ -794,13 +794,38 @@ kopian den bakdörr in i arkitekturen som §1 finns för att stänga.
   en författning och verifiera att den flaggas för omhämtning.
 - `python -m ruff check .` och `python -m pytest -q` är rena.
 
+**Utfall 2026-08-14:** Implementerade lagkorpus för de fem huvudlagarna:
+* `lagar/lagregister.yaml` och `lagregister.py` — deklarativ katalog över författningarna.
+* `index/lag_parser.py` — robust parser som hanterar dokumenthuvud, konsolideringspunkt,
+  kapitel (inkl. inskjutna a/b-kapitel som `6 a kap.`), rubriker, punktlistor,
+  ändringsnotiser (`Lag (ÅÅÅÅ:NNN)`) och avskiljer övergångsbestämmelser.
+* `index/db.py` utökat med `lag_dokument`, `lag_chunk`, `lag_chunk_fts` och `lag_embedding`.
+* `index/lag_ingest.py` — hämtar konsoliderad text från Riksdagen, sparar råtext och metadata,
+  parsar till chunks, genererar och lagrar embeddings (`KBLab/sentence-bert-swedish-cased`),
+  och erbjuder `kontrollera_andringar()`.
+* `index/sok.py` utökat med `sok_lag()` — hybridsökning (BM25 + Vektorsökning + RRF k=60)
+  med stöd för filtrering på SFS/kortnamn, kapitel och paragraf.
+* `adaptrar/lagtext.py` — `LagtextAdapter` med strikt efterlevnad av §5 regel 8:
+  båda länkarna, `period = tom_sfs` och `hamtad` från hämtningstillfället.
+* 12 nya tester i `tests/test_steg16a_lagkorpus.py`.
+
+Utfall av ingest för de fem lagarna:
+* IL (1999:1229): 1 932 chunks, 80 unika kapitel (minst 60 uppfyllt), `t.o.m. SFS 2026:1393`.
+* ML (2023:200): 810 chunks, 24 kapitel, `t.o.m. SFS 2026:1025`.
+* SFL (2011:1244): 1 106 chunks, 71 kapitel, `t.o.m. SFS 2026:1305`.
+* BFL (1999:1078): 66 chunks, 9 kapitel, `t.o.m. SFS 2024:342`.
+* ÅRL (1995:1554): 222 chunks, 10 kapitel, `t.o.m. SFS 2026:780`.
+
+Hela testsviten: **208 passed**, 6 deselected (livetester), 1 warning. `ruff check .` är ren.
+
 ---
 
-## Steg 16B — Lagkorpus, resterande författningar
+## Steg 16B — Lagkorpus, resterande författningar ✅ Godkänt 2026-08-14
 
 **Gör detta först när 16A är godkänt och parsningen bevisat sig mot
 inkomstskattelagens 70 kapitel.** Att skala en parser som inte håller ger 60
 tysta fel i stället för ett.
+
 
 Arbetet är att fylla på `lagar/lagregister.yaml`. Ingen ny kod ska behövas — och
 behövs det ny kod är det ett tecken på att 16A:s parser var för snäv.
@@ -916,6 +941,18 @@ användares fråga råkar hamna utanför.
 - Ett stickprov på tio författningar: `t.o.m. SFS` i indexet stämmer mot
   Riksdagens aktuella metadata.
 - `python -m ruff check .` och `python -m pytest -q` är rena.
+
+**Utfall 2026-08-14:** Samtliga 62 författningar (5 från 16A + 57 nya) hämtade,
+parsade, indexerade och vektoriserade utan fel:
+* `lagar/lagregister.yaml` uppdaterad med samtliga 62 författningar.
+* Samtliga 62 författningar finns i SQLite-databasen med sammanlagt **8 827 chunks**
+  och 8 827 embeddings. Ingen författning har noll paragrafer.
+* Stickprov på tio författningar (IL, ML, SFL, SFB, LSEn, ABL, JB, FOL, SINK, ISKL)
+  har korrekta `tom_sfs`, `dok_id` och `systemdatum`.
+* Nattlig ändringskontroll testad över samtliga 62 författningar.
+* Nya tester i `tests/test_steg16b_lagkorpus.py`.
+* Hela testsviten: **213 passed**, 7 deselected (livetester), 1 warning. `ruff check .` är ren.
+
 
 ---
 

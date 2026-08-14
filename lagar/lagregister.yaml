@@ -1,0 +1,343 @@
+# Lagregister för Quiet Öppen Data (SFS-korpus)
+# Steg 16 — 62 skatte- och redovisningsförfattningar
+
+version: "1.1"
+uppdaterad: "2026-08-14"
+
+lagar:
+  # ===========================================================================
+  # Huvudlagar (16A)
+  # ===========================================================================
+  - sfs: "1999:1229"
+    namn: "Inkomstskattelag"
+    kortnamn: "IL"
+    beskrivning: "Bestämmelser om kommunal och statlig inkomstskatt för fysiska och juridiska personer."
+
+  - sfs: "2023:200"
+    namn: "Mervärdesskattelag"
+    kortnamn: "ML"
+    beskrivning: "Bestämmelser om mervärdesskatt vid omsättning av varor och tjänster."
+
+  - sfs: "2011:1244"
+    namn: "Skatteförfarandelag"
+    kortnamn: "SFL"
+    beskrivning: "Bestämmelser om förfarandet vid beskattning och betalning av skatter och avgifter."
+
+  - sfs: "1999:1078"
+    namn: "Bokföringslag"
+    kortnamn: "BFL"
+    beskrivning: "Bestämmelser om bokföringsskyldighet, löpande bokföring och arkivering."
+
+  - sfs: "1995:1554"
+    namn: "Årsredovisningslag"
+    kortnamn: "ÅRL"
+    beskrivning: "Bestämmelser om upprättande och offentliggörande av årsredovisning, koncernredovisning och delårsrapport."
+
+  # ===========================================================================
+  # Inkomstskatt m.m.
+  # ===========================================================================
+  - sfs: "2011:1268"
+    namn: "Lag om investeringssparkonto"
+    kortnamn: "ISKL"
+    beskrivning: "Bestämmelser om sparande på investeringssparkonto."
+
+  - sfs: "2018:1384"
+    namn: "Lag om uppskovsbelopp vid betydande samhällsförflyttning"
+    kortnamn: "LUB"
+    beskrivning: "Bestämmelser om uppskovsbelopp vid avyttring av privatbostadsfastighet på grund av samhällsförflyttning."
+
+  - sfs: "2022:1843"
+    namn: "Lag om tillfällig skatt på extraordinära vinster för vissa företag under 2023"
+    kortnamn: "LTS"
+    beskrivning: "Tillfällig skatt på extraordinära vinster inom fossilsektorn."
+
+  - sfs: "2023:75"
+    namn: "Lag om skatt på överintäkter från el"
+    kortnamn: "LÖE"
+    beskrivning: "Bestämmelser om tillfällig skatt på överintäkter från elproduktion."
+
+  - sfs: "2023:875"
+    namn: "Tilläggsskattelag"
+    kortnamn: "TSL"
+    beskrivning: "Bestämmelser om tilläggsskatt för stora koncerner (Pelare 2)."
+
+  # ===========================================================================
+  # Internationellt, svenska författningar
+  # ===========================================================================
+  - sfs: "1970:624"
+    namn: "Kupongskattelag"
+    kortnamn: "KupL"
+    beskrivning: "Bestämmelser om kupongskatt på utdelning på aktier i svenska aktiebolag m.m."
+
+  - sfs: "1986:468"
+    namn: "Lag om avräkning av utländsk skatt"
+    kortnamn: "AvrL"
+    beskrivning: "Bestämmelser om avräkning av utländsk skatt (credit of foreign tax)."
+
+  - sfs: "1990:314"
+    namn: "Lag om ömsesidig handräckning i skatteärenden"
+    kortnamn: "HandrL"
+    beskrivning: "Bestämmelser om internationell handräckning och informationsutbyte i skatteärenden."
+
+  - sfs: "1991:481"
+    namn: "Folkbokföringslag"
+    kortnamn: "FOL"
+    beskrivning: "Bestämmelser om folkbokföring av fysiska personer."
+
+  - sfs: "1991:586"
+    namn: "Lag om särskild inkomstskatt för utomlands bosatta"
+    kortnamn: "SINK"
+    beskrivning: "Bestämmelser om särskild inkomstskatt på arbetsinkomster för personer bosatta utomlands."
+
+  - sfs: "1991:591"
+    namn: "Lag om särskild inkomstskatt för utomlands bosatta artister m.fl."
+    kortnamn: "A-SINK"
+    beskrivning: "Bestämmelser om särskild inkomstskatt för utomlands bosatta artister och idrottsutövare."
+
+  - sfs: "2009:1289"
+    namn: "Lag om prissättningsbesked vid internationella transaktioner"
+    kortnamn: "LPB"
+    beskrivning: "Bestämmelser om bindande förhandsbesked om internprissättning (APA)."
+
+  - sfs: "2019:601"
+    namn: "Lag om tvistlösningsförfarande inom Europeiska unionen"
+    kortnamn: "TLF"
+    beskrivning: "Bestämmelser om tvistlösningsmekanism vid skattetvister inom EU."
+
+  # ===========================================================================
+  # Mervärdesskatt
+  # ===========================================================================
+  - sfs: "2005:807"
+    namn: "Lag om ersättning för viss mervärdesskatt för kommuner och regioner"
+    kortnamn: "LEMK"
+    beskrivning: "Kommunkontosystemet för momsåterbetalning till kommuner och regioner."
+
+  - sfs: "2005:811"
+    namn: "Förordning om ersättning för viss mervärdesskatt för kommuner och regioner"
+    kortnamn: "FEMK"
+    beskrivning: "Närmare föreskrifter om momsersättning för kommuner och regioner."
+
+  - sfs: "2023:328"
+    namn: "Mervärdesskatteförordning"
+    kortnamn: "MF"
+    beskrivning: "Tillämpningsföreskrifter till mervärdesskattelagen (2023:200)."
+
+  # ===========================================================================
+  # Socialavgifter m.m.
+  # ===========================================================================
+  - sfs: "1967:531"
+    namn: "Lag om tryggande av pensionsutfästelse m.m."
+    kortnamn: "TryggL"
+    beskrivning: "Bestämmelser om pensionsstiftelser och avsättning till pensionsreserv."
+
+  - sfs: "1990:659"
+    namn: "Lag om särskild löneskatt på vissa förvärvsinkomster"
+    kortnamn: "SLF"
+    beskrivning: "Bestämmelser om särskild löneskatt på aktiva förvärvsinkomster."
+
+  - sfs: "1990:661"
+    namn: "Lag om avkastningsskatt på pensionsmedel"
+    kortnamn: "AvkL"
+    beskrivning: "Bestämmelser om statlig skatt på avkastning på pensionskapital och livförsäkringar."
+
+  - sfs: "1991:687"
+    namn: "Lag om särskild löneskatt på pensionskostnader"
+    kortnamn: "SLP"
+    beskrivning: "Bestämmelser om särskild löneskatt på arbetsgivares pensionskostnader."
+
+  - sfs: "1991:1047"
+    namn: "Lag om sjuklön"
+    kortnamn: "SjuklL"
+    beskrivning: "Bestämmelser om arbetsgivares skyldighet att utge sjuklön."
+
+  - sfs: "1993:931"
+    namn: "Lag om individuellt pensionssparande"
+    kortnamn: "IPSL"
+    beskrivning: "Bestämmelser om sparande på individuellt pensionssparkonto."
+
+  - sfs: "1994:1744"
+    namn: "Lag om allmän pensionsavgift"
+    kortnamn: "LPA"
+    beskrivning: "Bestämmelser om allmän pensionsavgift för förvärvsinkomster."
+
+  - sfs: "1994:1920"
+    namn: "Lag om allmän löneavgift"
+    kortnamn: "LAL"
+    beskrivning: "Bestämmelser om allmän löneavgift för arbetsgivare och egenföretagare."
+
+  - sfs: "2000:980"
+    namn: "Socialavgiftslag"
+    kortnamn: "SAL"
+    beskrivning: "Bestämmelser om arbetsgivaravgifter och egenavgifter."
+
+  - sfs: "2001:1170"
+    namn: "Lag om särskilda avdrag i vissa fall vid avgiftsberäkningen enligt socialavgiftslagen (2000:980) och lagen (1994:1920) om allmän löneavgift"
+    kortnamn: "LSA"
+    beskrivning: "Bestämmelser om regionalt nedsättningsavdrag för socialavgifter i stödområden."
+
+  - sfs: "2010:110"
+    namn: "Socialförsäkringsbalk"
+    kortnamn: "SFB"
+    beskrivning: "Bestämmelser om social trygghet, förmåner och försäkringstillhörighet."
+
+  - sfs: "2016:1053"
+    namn: "Lag om särskild beräkning av vissa avgifter för enmansföretag"
+    kortnamn: "LSE"
+    beskrivning: "Växastöd vid anställning av första medarbetaren i enmansföretag."
+
+  - sfs: "2023:747"
+    namn: "Lag om särskilt avdrag för personer som arbetar med forskning eller utveckling vid beräkning av arbetsgivaravgifter och allmän löneavgift"
+    kortnamn: "LFOU"
+    beskrivning: "FoU-avdrag på arbetsgivaravgifter för anställda som arbetar med forskning/utveckling."
+
+  - sfs: "2023:748"
+    namn: "Lag om särskilt avdrag vid beräkning av egenavgifter och allmän löneavgift för personer som arbetar med forskning eller utveckling"
+    kortnamn: "LFOUE"
+    beskrivning: "FoU-avdrag på egenavgifter för enskilda näringsidkare inom forskning/utveckling."
+
+  # ===========================================================================
+  # Punktskatter
+  # ===========================================================================
+  - sfs: "1994:1776"
+    namn: "Lag om skatt på energi"
+    kortnamn: "LSEn"
+    beskrivning: "Bestämmelser om punktskatt på bränslen och elektrisk kraft."
+
+  - sfs: "2004:629"
+    namn: "Lag om trängselskatt"
+    kortnamn: "LTSk"
+    beskrivning: "Bestämmelser om trängselskatt för fordon i Stockholm och Göteborg."
+
+  - sfs: "2017:1200"
+    namn: "Lag om skatt på flygresor"
+    kortnamn: "FlygSL"
+    beskrivning: "Bestämmelser om punktskatt på kommersiella flygresor från svensk flygplats."
+
+  - sfs: "2018:1893"
+    namn: "Lag om finansiering av radio och tv i allmänhetens tjänst"
+    kortnamn: "RTVL"
+    beskrivning: "Bestämmelser om public service-avgift på fysiska personers beskattningsbara förvärvsinkomst."
+
+  - sfs: "2022:156"
+    namn: "Alkoholskattelag"
+    kortnamn: "ALSL"
+    beskrivning: "Bestämmelser om punktskatt på alkohol och alkoholdrycker."
+
+  # ===========================================================================
+  # Fastigheter
+  # ===========================================================================
+  - sfs: "1970:994"
+    namn: "Jordabalk"
+    kortnamn: "JB"
+    beskrivning: "Grundläggande fastighetsrätt, köp, arrende, hyra och inskrivning."
+
+  - sfs: "1979:1152"
+    namn: "Fastighetstaxeringslag"
+    kortnamn: "FTL"
+    beskrivning: "Bestämmelser om taxering och åsättande av taxeringsvärde för fastigheter."
+
+  - sfs: "1984:404"
+    namn: "Lag om stämpelskatt vid inskrivningsmyndigheter"
+    kortnamn: "StämpL"
+    beskrivning: "Bestämmelser om stämpelskatt vid förvärv av fast egendom och inteckning (lagfart/pantbrev)."
+
+  - sfs: "1984:1052"
+    namn: "Lag om statlig fastighetsskatt"
+    kortnamn: "FSL"
+    beskrivning: "Bestämmelser om statlig fastighetsskatt för kommersiella fastigheter m.fl."
+
+  - sfs: "2007:1398"
+    namn: "Lag om kommunal fastighetsavgift"
+    kortnamn: "LKFA"
+    beskrivning: "Bestämmelser om kommunal fastighetsavgift för bostadsfastigheter och småhus."
+
+  # ===========================================================================
+  # Skatteförfarandet
+  # ===========================================================================
+  - sfs: "1971:69"
+    namn: "Skattebrottslag"
+    kortnamn: "SkbL"
+    beskrivning: "Bestämmelser om straff för skattebrott, vårdslös skatteuppgift och försvårande av skattekontroll."
+
+  - sfs: "1971:291"
+    namn: "Förvaltningsprocesslag"
+    kortnamn: "FPL"
+    beskrivning: "Bestämmelser om handläggning av mål i allmän förvaltningsdomstol."
+
+  - sfs: "1974:152"
+    namn: "Kungörelse om beslutad ny regeringsform"
+    kortnamn: "RF"
+    beskrivning: "Sveriges grundlag om statsskicket, normgivning och normhierarki."
+
+  - sfs: "1982:188"
+    namn: "Lag om preskription av skattefordringar m.m."
+    kortnamn: "PreskrL"
+    beskrivning: "Bestämmelser om preskriptionstid för fordringar på skatt och allmänna avgifter."
+
+  - sfs: "1995:575"
+    namn: "Lag mot skatteflykt"
+    kortnamn: "Skatteflyktslag"
+    beskrivning: "Generalklausul mot skatteflyktsrättshandlingar."
+
+  - sfs: "1997:484"
+    namn: "Lag om dröjsmålsavgift"
+    kortnamn: "DröjsmL"
+    beskrivning: "Bestämmelser om dröjsmålsavgift vid försenad betalning av skatter och avgifter."
+
+  - sfs: "1998:189"
+    namn: "Lag om förhandsbesked i skattefrågor"
+    kortnamn: "LFSk"
+    beskrivning: "Bestämmelser om förhandsbesked från Skatterättsnämnden."
+
+  - sfs: "2006:304"
+    namn: "Lag om rättsprövning av vissa regeringsbeslut"
+    kortnamn: "RättsprL"
+    beskrivning: "Bestämmelser om Högsta förvaltningsdomstolens prövning av regeringsbeslut."
+
+  - sfs: "2006:502"
+    namn: "Lag om förhandsavgörande från Europeiska gemenskapernas domstol"
+    kortnamn: "FADL"
+    beskrivning: "Bestämmelser om inhämtande av förhandsavgörande från EU-domstolen."
+
+  - sfs: "2008:826"
+    namn: "Lag om skattereduktion för kommunal fastighetsavgift"
+    kortnamn: "SKFA"
+    beskrivning: "Bestämmelser om skattereduktion för fastighetsavgift för pensionärer m.fl."
+
+  - sfs: "2009:99"
+    namn: "Lag om anstånd med inbetalning av skatt i vissa fall"
+    kortnamn: "AnstL"
+    beskrivning: "Bestämmelser om tillfälligt anstånd med skatteinbetalning vid extraordinära händelser."
+
+  - sfs: "2009:194"
+    namn: "Lag om förfarandet vid skattereduktion för hushållsarbete"
+    kortnamn: "HUSFL"
+    beskrivning: "Bestämmelser om ansökan, utbetalning och förfarande vid ROT- och RUT-avdrag."
+
+  - sfs: "2011:1261"
+    namn: "Skatteförfarandeförordning"
+    kortnamn: "SFF"
+    beskrivning: "Verkställighetsföreskrifter till skatteförfarandelagen (2011:1244)."
+
+  - sfs: "2015:632"
+    namn: "Lag om skattetillägg i vissa fall"
+    kortnamn: "Skattelag"
+    beskrivning: "Bestämmelser om särskilda regler vid samordning av skattetillägg och skattebrott."
+
+  - sfs: "2017:900"
+    namn: "Förvaltningslag"
+    kortnamn: "FL"
+    beskrivning: "Grundläggande förvaltningsrättsliga principer för myndigheters handläggning av ärenden."
+
+  - sfs: "2020:1066"
+    namn: "Lag om förfarandet vid skattereduktion för installation av grön teknik"
+    kortnamn: "GRÖNFL"
+    beskrivning: "Bestämmelser om förfarandet vid skattereduktion för grön teknik (solceller, batterilagring, laddboxar)."
+
+  # ===========================================================================
+  # Redovisning och bolag
+  # ===========================================================================
+  - sfs: "2005:551"
+    namn: "Aktiebolagslag"
+    kortnamn: "ABL"
+    beskrivning: "Grundläggande associationsrätt för privata och publika aktiebolag."

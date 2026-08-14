@@ -133,6 +133,21 @@ kallor:
       - dokument (propositioner, motioner, betänkanden, SOU)
       - SFS, ledamöter, voteringar, anföranden, kalender
 
+  - id: lagtext
+    myndighet: Sveriges riksdag
+    adapter: lagtext
+    bas_url: https://data.riksdagen.se
+    verifierad: ja
+    autentisering: ingen
+    licens: okänd
+    attribution: "Källa: Sveriges riksdag"
+    takt: { anrop: 100, per_sekunder: 1 }
+    cache_ttl: 86400
+    manniskolank_mall: "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/_{dok_id}/"
+    tacker:
+      - konsoliderad svensk lagtext (SFS)
+      - skatte- och redovisningsförfattningar
+
   - id: kolada
     myndighet: Rådet för främjande av kommunala analyser (RKA)
     adapter: kolada

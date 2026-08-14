@@ -8,6 +8,7 @@ from quiet_oppen_data.adaptrar.kolada import KoladaAdapter
 from quiet_oppen_data.adaptrar.dataportal import DataportalAdapter
 from quiet_oppen_data.adaptrar.rowstore import RowStoreAdapter
 from quiet_oppen_data.adaptrar.json_rest import JsonRestAdapter
+from quiet_oppen_data.adaptrar.lagtext import LagtextAdapter
 
 __all__ = [
     "Adapter",
@@ -20,4 +21,6 @@ __all__ = [
     "DataportalAdapter",
     "RowStoreAdapter",
     "JsonRestAdapter",
+    "LagtextAdapter",
 ]
+

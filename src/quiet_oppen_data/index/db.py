@@ -65,6 +65,58 @@ CREATE TABLE IF NOT EXISTS embedding (
     vektor       BLOB,
     FOREIGN KEY (datamangd_id) REFERENCES datamangd(id) ON DELETE CASCADE
 );
+
+-- ===========================================================================
+-- Lagindex (steg 16)
+-- ===========================================================================
+
+-- Huvudpost per SFS-författning
+CREATE TABLE IF NOT EXISTS lag_dokument (
+    sfs           TEXT PRIMARY KEY,   -- "1999:1229"
+    dok_id        TEXT NOT NULL,      -- "sfs-1999-1229"
+    namn          TEXT NOT NULL,      -- "Inkomstskattelag"
+    kortnamn      TEXT NOT NULL,      -- "IL"
+    tom_sfs       TEXT,               -- "t.o.m. SFS 2026:1393"
+    systemdatum   TEXT,               -- "2026-07-10 04:42:25"
+    hamtad        TEXT NOT NULL,      -- ISO-timestamp UTC när kopian togs
+    lank_manniska TEXT NOT NULL,      -- https://www.riksdagen.se/...
+    lank_maskin   TEXT NOT NULL,      -- https://data.riksdagen.se/...
+    ratext        TEXT                -- Råtexten sparad lokalt
+);
+
+-- Lagparagrafer / sökbara chunks
+CREATE TABLE IF NOT EXISTS lag_chunk (
+    id             TEXT PRIMARY KEY,  -- "1999:1229#3:9"
+    sfs            TEXT NOT NULL,     -- FK → lag_dokument.sfs
+    dok_id         TEXT NOT NULL,
+    kapitel_nr     TEXT,              -- "3" (eller NULL om lagen saknar kapitel)
+    kapitel_rubrik TEXT,              -- "Fysiska personer"
+    paragraf_nr    TEXT NOT NULL,     -- "9"
+    paragraf_rubrik TEXT,             -- "Undantag från skattskyldighet vid vistelse utomlands"
+    paragraf_text  TEXT NOT NULL,     -- Själva lagtexten
+    andringsnotis  TEXT,              -- "Lag (2019:907)"
+    full_text      TEXT NOT NULL,     -- Kapitel + rubrik + text + ändring för sökning
+    FOREIGN KEY (sfs) REFERENCES lag_dokument(sfs) ON DELETE CASCADE
+);
+
+-- FTS5-index för lag_chunk
+CREATE VIRTUAL TABLE IF NOT EXISTS lag_chunk_fts USING fts5(
+    id UNINDEXED,
+    sfs UNINDEXED,
+    kapitel_rubrik,
+    paragraf_rubrik,
+    paragraf_text,
+    full_text,
+    tokenize = "unicode61 remove_diacritics 1",
+    prefix = '2 3'
+);
+
+-- Embedding-tabell för lag_chunk
+CREATE TABLE IF NOT EXISTS lag_embedding (
+    chunk_id TEXT PRIMARY KEY,
+    vektor   BLOB,
+    FOREIGN KEY (chunk_id) REFERENCES lag_chunk(id) ON DELETE CASCADE
+);
 """
 
 

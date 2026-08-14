@@ -24,10 +24,12 @@ varje uppgift med fotnot och klickbar källänk.
 | 13 | HTTP-API och kvoter (`api.py`) | ✅ |
 | 14 | Frontend (`frontend/widget.js`) | ✅ |
 | 15 | Drift och mätning (`matning.py`, `nattlig_ingest.py`, `GET /matning`) | ✅ |
-| 16A | Lagkorpus — de fem huvudlagarna | ⬜ |
-| 16B | Lagkorpus — resterande 57 författningar | ⬜ |
+| 16A | Lagkorpus — de fem huvudlagarna | ✅ |
+| 16B | Lagkorpus — resterande 57 författningar | ✅ |
 
-**Hela testsviten: 189 passed** (2026-08-14).
+**Hela testsviten: 213 passed** (2026-08-14).
+
+
 
 ## Dokumenten
 
