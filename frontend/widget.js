@@ -466,6 +466,18 @@
   text-decoration: underline;
 }
 
+/* Härledda poster har ingen URL att peka på — maskinfältet bär formeln som
+   text. Den ska inte se ut som, eller bete sig som, en länk. */
+.qw-lank--text {
+  cursor: default;
+  opacity: .85;
+}
+
+.qw-lank--text:hover {
+  background: none;
+  text-decoration: none;
+}
+
 .qw-lank-maskin {
   color: var(--qw-text-muted);
   font-family: var(--qw-mono);
@@ -684,14 +696,24 @@
     }
 
     if (post.lank_maskin) {
+      // En härledd post har inget API-anrop — lank_maskin bär formeln som text
+      // ("beräkning: (F1 − F2) / F2"). Den får inte renderas som en <a href>:
+      // webbläsaren tolkar den då som en relativ URL och användaren får en
+      // klickbar länk som leder ingenstans.
+      const arLank = /^https?:\/\//i.test(post.lank_maskin);
       lankar.appendChild(
-        el("a", {
-          className: "qw-lank qw-lank-maskin",
-          href: post.lank_maskin,
-          target: "_blank",
-          rel: "noopener noreferrer",
-          title: post.lank_maskin,
-        }, "API-anrop")
+        arLank
+          ? el("a", {
+              className: "qw-lank qw-lank-maskin",
+              href: post.lank_maskin,
+              target: "_blank",
+              rel: "noopener noreferrer",
+              title: post.lank_maskin,
+            }, "API-anrop")
+          : el("span", {
+              className: "qw-lank qw-lank-maskin qw-lank--text",
+              title: post.lank_maskin,
+            }, post.lank_maskin)
       );
     }
 

@@ -271,7 +271,7 @@ def test_serialisera_harledd_post():
         myndighet="Riksbanken",
         licens="okänd",
         lank_manniska="https://www.riksbank.se/",
-        lank_maskin="beraknat://F1+F2",
+        lank_maskin="beräkning: (F1 − F2) / F2",
         harledd=True,
         harledd_av=("F1", "F2"),
     )
@@ -296,3 +296,67 @@ def test_hamtad_sätts_automatiskt_om_den_utelamnas():
     reg = Faktaregister()
     p = _minipost(reg)
     assert isinstance(p.hamtad, datetime)
+
+
+# ---------------------------------------------------------------------------
+# Länkschema — tillagt vid granskningen 2026-08-14
+# ---------------------------------------------------------------------------
+
+def _falt(**over):
+    bas = dict(
+        etikett="x", varde="1", kalla_id="k", myndighet="M", licens="CC0",
+        lank_manniska="https://exempel.se/sida",
+        lank_maskin="https://exempel.se/api",
+    )
+    bas.update(over)
+    return bas
+
+
+@pytest.mark.parametrize("falt,ond", [
+    ("lank_manniska", "javascript:alert(document.cookie)"),
+    ("lank_maskin", "javascript:alert(1)"),
+    ("lank_manniska", "data:text/html,<script>alert(1)</script>"),
+    ("lank_manniska", "  JavaScript:alert(1)".strip()),
+])
+def test_registrera_avvisar_farliga_lanksscheman(falt, ond):
+    """Frontend renderar båda länkarna som href.
+
+    En länk med schemat javascript: eller data: blir körbar kod i besökarens
+    webbläsare. Kontrollen ligger i registret, inte i renderaren — invarianten
+    ska hållas där fakta passerar (ARKITEKTUR.md §1).
+    """
+    reg = Faktaregister()
+    with pytest.raises(ValueError, match="http- eller https-länk"):
+        reg.registrera(**_falt(**{falt: ond}))
+
+
+def test_registrera_slapper_igenom_http_och_https():
+    reg = Faktaregister()
+    p = reg.registrera(**_falt(lank_manniska="http://exempel.se/x"))
+    assert p.id == "F1"
+
+
+def test_harledd_post_kraver_harledd_av():
+    """En härledd post utan ingångar är ett obelagt påstående.
+
+    Härledda poster undantas från länkschemakontrollen eftersom de saknar
+    API-anrop — beviset är i stället ingångarna. Då måste de finnas.
+    """
+    reg = Faktaregister()
+    with pytest.raises(ValueError, match="harledd_av"):
+        reg.registrera(**_falt(
+            harledd=True,
+            lank_maskin="beräkning: (F1 − F2) / F2",
+        ))
+
+
+def test_harledd_post_far_icke_url_som_maskinfalt():
+    """Med ingångar angivna släpps formeltexten igenom."""
+    reg = Faktaregister()
+    p = reg.registrera(**_falt(
+        harledd=True,
+        harledd_av=("F1", "F2"),
+        lank_maskin="beräkning: (F1 − F2) / F2",
+    ))
+    assert p.harledd is True
+    assert p.lank_maskin.startswith("beräkning:")

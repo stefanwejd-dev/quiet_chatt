@@ -80,6 +80,32 @@ class Faktautkast:
 
 
 # ---------------------------------------------------------------------------
+# Länkkontroll
+# ---------------------------------------------------------------------------
+
+# Bara dessa scheman får förekomma i en Faktaposts länkar.
+_TILLATNA_SCHEMAN = ("https://", "http://")
+
+
+def _kontrollera_lanksschema(faltnamn: str, varde: str) -> None:
+    """Avvisar länkar med annat schema än http/https.
+
+    Frontend renderar båda länkarna som `href`. En länk med schemat
+    `javascript:` eller `data:` blir då körbar kod i besökarens webbläsare.
+
+    Länkarna byggs av adaptrarna ur mallar i källregistret, men med värden som
+    kommer från myndigheternas API-svar. Att inget hittills har varit skadligt
+    är inte en garanti — invarianten ska hållas där fakta passerar, inte i
+    renderaren (ARKITEKTUR.md §1).
+    """
+    if not varde.lower().startswith(_TILLATNA_SCHEMAN):
+        raise ValueError(
+            f"Faktapost.{faltnamn} måste vara en http- eller https-länk, fick: "
+            f"{varde[:60]!r}. Andra scheman renderas som körbar kod i webbläsaren."
+        )
+
+
+# ---------------------------------------------------------------------------
 # Faktaregister — per-session-behållare
 # ---------------------------------------------------------------------------
 
@@ -124,6 +150,20 @@ class Faktaregister:
                 "Faktapost måste ha 'lank_maskin' satt — "
                 "det är det exakta API-anropet som är beviset för uppgiften."
             )
+
+        _kontrollera_lanksschema("lank_manniska", falt["lank_manniska"])
+
+        # En härledd post har inget API-anrop att peka på — beviset är
+        # ingångarna. Då bär lank_maskin formeln som text i stället, och
+        # harledd_av måste finnas, annars är påståendet obelagt.
+        if falt.get("harledd"):
+            if not falt.get("harledd_av"):
+                raise ValueError(
+                    "En härledd Faktapost måste ha 'harledd_av' satt — "
+                    "det är de ingångar beräkningen vilar på."
+                )
+        else:
+            _kontrollera_lanksschema("lank_maskin", falt["lank_maskin"])
 
         if "hamtad" not in falt:
             falt["hamtad"] = datetime.now(UTC)

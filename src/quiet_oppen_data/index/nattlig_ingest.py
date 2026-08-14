@@ -94,13 +94,25 @@ def kör_nattlig_ingest(db_sökväg: Path | None = None) -> dict:
         "varaktighet_sek": round(varaktighet, 1),
     }
 
-    # Logga i mätningsdatabasen
-    matning.logga_ingest(**{k: v for k, v in resultat.items() if k != "db"})
+    # Rensa gamla frågetexter FÖRST (§11: raderas efter 30 dagar).
+    #
+    # Ordningen är avsiktlig. Raderingen är en bevarandeplikt; ingest-statistiken
+    # är trevlig att ha. Låg raderingen efter loggningen skulle ett undantag i
+    # logga_ingest tyst hoppa över den, och frågetexter behållas i månader utan
+    # att någon märkte det. Egen try/except av samma skäl.
+    rensade = 0
+    try:
+        rensade = matning.rensa_gamla_fragor(dagar=30)
+        if rensade:
+            logger.info("Rensade %d gamla frågetexter (>30 dagar)", rensade)
+    except Exception:
+        logger.warning("Kunde inte rensa gamla frågetexter", exc_info=True)
 
-    # Rensa gamla frågetexter (§11: raderas efter 30 dagar)
-    rensade = matning.rensa_gamla_fragor(dagar=30)
-    if rensade:
-        logger.info("Rensade %d gamla frågetexter (>30 dagar)", rensade)
+    # Logga i mätningsdatabasen
+    try:
+        matning.logga_ingest(**{k: v for k, v in resultat.items() if k != "db"})
+    except Exception:
+        logger.warning("Kunde inte logga ingest-statistik", exc_info=True)
 
     # Skriv deltarapport till stdout
     print("=" * 60)

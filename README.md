@@ -27,7 +27,7 @@ varje uppgift med fotnot och klickbar källänk.
 | 16A | Lagkorpus — de fem huvudlagarna | ⬜ |
 | 16B | Lagkorpus — resterande 57 författningar | ⬜ |
 
-**Hela testsviten: 179 passed** (2026-08-14).
+**Hela testsviten: 189 passed** (2026-08-14).
 
 ## Dokumenten
 
@@ -51,13 +51,17 @@ veta något den inte fått. Citeringskravet är arkitektur, inte instruktion.
 ## Köra lokalt
 
 ```bash
-cp .env.example .env          # fyll i ANTHROPIC_API_KEY
+cp .env.example .env          # fyll i ANTHROPIC_API_KEY och MATNING_NYCKEL
 pip install -e ".[dev]"
 python -m quiet_oppen_data.index.ingest   # engångskörning, ~2 min
 uvicorn quiet_oppen_data.api:app --reload
 ```
 
 Öppna `frontend/test.html` i webbläsaren för att testa widgeten utan en riktig fråga.
+
+`MATNING_NYCKEL` skyddar `GET /matning` — driftdata, till skillnad från `/kallor`
+och `/halsa` som är avsiktligt öppna. Saknas variabeln svarar endpointen 503 i
+stället för att ligga öppen. Skicka nyckeln som headern `x-matning-nyckel`.
 
 ## Nattlig ingest
 

@@ -1046,6 +1046,62 @@ skatteuppgifter i en fritextsökbar bot vore fel även med avtal på plats — o
 
 ---
 
+## Granskning av steg 14–15, 2026-08-14
+
+Frontend följer alla tre reglerna ur granskningen av steg 10–13 korrekt:
+`forbehall` renderas avskilt som "Not:", stycken utan `kallor` renderas inte
+(`widget.js` rad 1080), och härledda poster har badge, avvikande ID-chip och
+visar sina ingångar. `el()` bygger DOM med `createTextNode`, `innerHTML` anropas
+aldrig med modelldata, och `target="_blank"` har `rel="noopener noreferrer"`.
+Mätningen loggar bara aggregat, ingen frågetext lämnar `/matning`.
+
+Fem fynd.
+
+| # | Fynd | Var | Karaktär |
+|---|---|---|---|
+| 1 | Länkar sattes som `href` utan schemakontroll | `modeller.py` | **XSS-vektor** |
+| 2 | Härledd posts formeltext renderades som klickbar länk | `widget.js` | Trasig länk för användaren |
+| 3 | Databasschema skapades vid modulimport | `matning.py` | Sidoeffekt; testerna skrev till riktig DB |
+| 4 | Radering av frågetexter låg efter mätningsloggningen | `nattlig_ingest.py` | Bevarandeplikt beroende av statistik |
+| 5 | `/matning` var publikt läsbar | `api.py` | Driftdata öppen |
+
+**Fynd 1.** Både `lank_manniska` och `lank_maskin` renderas som `href` i
+widgeten, men ingenting kontrollerade schemat. Jag verifierade att
+`registrera(lank_manniska="javascript:alert(document.cookie)")` gick igenom utan
+invändning. Länkarna byggs ur mallar i källregistret men med värden ur
+myndigheternas API-svar; att inget hittills varit skadligt är inte en garanti.
+Kontrollen ligger nu i `Faktaregister.registrera` — där alla fakta passerar —
+inte i renderaren, enligt §1.
+
+**Fynd 2** upptäcktes av fynd 1: kontrollen fällde ett *legitimt* fall. Härledda
+poster har inget API-anrop, så `berakningar.py` sätter
+`lank_maskin="beräkning: (F1 − F2) / F2"`. Widgeten renderade den strängen som
+`<a href>`, alltså en relativ URL som leder ingenstans. Nu: härledda poster
+undantas från schemakontrollen men **måste ha `harledd_av`** — beviset är
+ingångarna — och widgeten renderar ett icke-URL-maskinfält som text.
+
+**Fynd 3.** `_säkerställ_schema()` kördes på modulnivå, så ett blott
+`import quiet_oppen_data.matning` skapade `data/matning.sqlite`. Samma
+felklass som cache-defekten i steg 5, men vid import — vilket är värre. Schemat
+byggs nu vid första anslutningen.
+
+**Fynd 4.** Raderingen kördes efter `logga_ingest`. Ett undantag där hade tyst
+hoppat över den, och frågetexter behållits i månader utan att någon märkte det.
+Raderingen körs nu först, med egen felhantering: bevarandeplikt före statistik.
+
+**Fynd 5.** `/matning` avslöjar trafikvolym, vilka källor som fallerar och hur
+ofta fas C faller stängt. Kräver nu `MATNING_NYCKEL` i miljön, skickad som
+`x-matning-nyckel`. Saknas variabeln är endpointen **stängd (503), inte öppen** —
+en glömd miljövariabel ska inte tyst göra driftdata publik.
+
+Alla fem spärrar är mutationstestade. Sviten: **189 passerade**, och `matning`,
+`cache` och `kvoter` rörs inte längre av testkörningen.
+
+**Att sätta i drift:** `MATNING_NYCKEL` måste läggas till i Coolifys
+miljövariabler, annars svarar `/matning` 503.
+
+---
+
 ## Granskning av steg 10–13, 2026-08-13
 
 Den bäst byggda etappen hittills. `syntes.py`, `validator.py`, `berakningar.py`

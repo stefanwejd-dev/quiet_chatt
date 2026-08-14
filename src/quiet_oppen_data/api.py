@@ -31,6 +31,8 @@ from __future__ import annotations
 
 import json
 import logging
+import os
+import secrets
 from typing import Any
 from collections.abc import AsyncIterator
 
@@ -81,6 +83,28 @@ def _kontrollera_ursprung(request: Request) -> None:
     if ursprung is not None and ursprung not in _tillatna_ursprung():
         logger.warning("Avvisat anrop från otillåtet ursprung: %s", ursprung)
         raise HTTPException(status_code=403, detail="Ursprunget är inte tillåtet.")
+
+
+def _kontrollera_matningsnyckel(request: Request) -> None:
+    """Skyddar /matning med en delad nyckel ur miljön.
+
+    Mätvyn läcker ingen frågetext — bara aggregat — men den avslöjar
+    trafikvolym, vilka källor som fallerar och hur ofta fas C faller stängt.
+    Det är driftdata, inte publikt innehåll, till skillnad från /kallor och
+    /halsa som är avsiktligt öppna.
+
+    Saknas MATNING_NYCKEL i miljön är endpointen helt stängd (503) i stället för
+    öppen. Fail-closed: en glömd variabel ska inte tyst göra driftdata publik.
+    """
+    forvantad = os.environ.get("MATNING_NYCKEL")
+    if not forvantad:
+        logger.warning("MATNING_NYCKEL är inte satt — /matning är stängd.")
+        raise HTTPException(
+            status_code=503,
+            detail="Mätvyn är inte konfigurerad. Sätt MATNING_NYCKEL i miljön.",
+        )
+    if not secrets.compare_digest(request.headers.get("x-matning-nyckel", ""), forvantad):
+        raise HTTPException(status_code=401, detail="Ogiltig eller saknad nyckel.")
 
 
 # ---------------------------------------------------------------------------
@@ -149,7 +173,7 @@ async def halsa() -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 @app.get("/matning")
-async def matning_endpoint() -> dict[str, Any]:
+async def matning_endpoint(request: Request) -> dict[str, Any]:
     """Aggregerade mätpunkter för de senaste 30 dagarna.
 
     Den viktigaste siffran är `niva3_andel` — andelen frågor som besvarades
@@ -157,6 +181,8 @@ async def matning_endpoint() -> dict[str, Any]:
     Det är den siffran som styr vilken adapter som ska byggas härnäst
     (ARKITEKTUR.md §11).
     """
+    _kontrollera_matningsnyckel(request)
+
     try:
         punkter = await run_in_threadpool(matning.las_matpunkter, 30)
         senaste_ingest = await run_in_threadpool(matning.las_senaste_ingest)

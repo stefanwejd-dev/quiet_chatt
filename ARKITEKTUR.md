@@ -329,6 +329,17 @@ Regel 2 är den som skyddar mot den farligaste felmoden. Ett självsäkert felak
 värre än inget tal, och en modell som får multiplicera två hämtade värden har fem sätt
 att göra det fel. Låt den hämta och citera; låt koden räkna.
 
+### Regel 9 — en länk måste vara en länk
+
+Både `lank_manniska` och `lank_maskin` renderas som `href` i widgeten. Bara
+`http://` och `https://` accepteras; `javascript:` och `data:` blir körbar kod i
+besökarens webbläsare. Kontrollen ligger i `Faktaregister.registrera` — där alla
+fakta passerar — inte i renderaren.
+
+Undantaget är härledda poster: de har inget API-anrop, så `lank_maskin` bär
+formeln som text. De måste i gengäld ha `harledd_av` satt, och frontend renderar
+ett icke-URL-maskinfält som text i stället för som länk.
+
 ### Regel 8 — en kopia måste bära sin färskhetsstämpel
 
 Allt utom lagindexet hämtas i realtid. Lagtexten är den enda kopian, och en kopia kan

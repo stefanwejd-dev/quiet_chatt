@@ -30,8 +30,11 @@ def tmp_matning_db(tmp_path, monkeypatch):
 
     import quiet_oppen_data.matning as mat_modul
     monkeypatch.setattr(mat_modul, "_db_sökväg", lambda: db)
-    # Återinitialisera (schematabellerna skapas vid nästa anrop)
-    mat_modul._säkerställ_schema()
+    # Schemat byggs numera vid första anslutningen, inte vid import. Nollställ
+    # initieringscachen och öppna en anslutning så att tabellerna finns — flera
+    # tester skriver direkt mot filen innan någon matning-funktion har körts.
+    monkeypatch.setattr(mat_modul, "_initierade", set())
+    mat_modul._anslut().close()
     return db
 
 
@@ -217,6 +220,9 @@ def api_klient(monkeypatch):
     import quiet_oppen_data.api as api_modul
     import quiet_oppen_data.matning as mat
 
+    # /matning kräver nyckel sedan granskningen 2026-08-14.
+    monkeypatch.setenv("MATNING_NYCKEL", "test")
+
     mock_punkter = {
         "period_dagar": 30,
         "totalt_fragor": 10,
@@ -251,12 +257,12 @@ def api_klient(monkeypatch):
 
 
 def test_matning_endpoint_svarar_200(api_klient):
-    resp = api_klient.get("/matning")
+    resp = api_klient.get("/matning", headers={"x-matning-nyckel": "test"})
     assert resp.status_code == 200
 
 
 def test_matning_endpoint_struktur(api_klient):
-    data = api_klient.get("/matning").json()
+    data = api_klient.get("/matning", headers={"x-matning-nyckel": "test"}).json()
     assert "matpunkter" in data
     assert "senaste_ingest" in data
     assert data["matpunkter"]["totalt_fragor"] == 10
@@ -321,3 +327,70 @@ def test_nattlig_ingest_rapporterar_fel(tmp_path, monkeypatch):
         resultat = kör_nattlig_ingest(db_sökväg=db)
 
     assert resultat["fel"] == 1
+
+
+# ---------------------------------------------------------------------------
+# Tillagt vid granskningen 2026-08-14
+# ---------------------------------------------------------------------------
+
+def test_import_skapar_ingen_databas(tmp_path, monkeypatch):
+    """Import ska inte röra disken.
+
+    Schemat skapades tidigare på modulnivå, så ett blott
+    `import quiet_oppen_data.matning` skapade data/matning.sqlite — även i
+    testsviten, som därmed skrev till den riktiga databasen trots tmp-fixtur.
+    """
+    import importlib
+
+    import quiet_oppen_data.matning as mat
+
+    db = tmp_path / "ny" / "matning.sqlite"
+    monkeypatch.setattr(mat, "_db_sökväg", lambda: db)
+    monkeypatch.setattr(mat, "_initierade", set())
+    importlib.reload  # noqa: B018 — dokumenterar att omladdning inte behövs
+
+    assert not db.exists(), "import/omkonfigurering fick inte skapa filen"
+    mat.rensa_gamla_fragor(dagar=30)
+    assert db.exists(), "första faktiska användningen ska skapa schemat"
+
+
+def test_matning_endpoint_kraver_nyckel(monkeypatch, tmp_path):
+    """Mätvyn är driftdata, inte publikt innehåll."""
+    from fastapi.testclient import TestClient
+
+    import quiet_oppen_data.api as api_modul
+    import quiet_oppen_data.matning as mat
+
+    # Peka om databasen — annars skriver testet till den riktiga data/matning.sqlite
+    # när 200-fallet faktiskt läser mätpunkter.
+    monkeypatch.setattr(mat, "_db_sökväg", lambda: tmp_path / "matning.sqlite")
+    monkeypatch.setattr(mat, "_initierade", set())
+
+    klient = TestClient(api_modul.app)
+
+    # Utan nyckel i miljön: stängd, inte öppen (fail-closed).
+    monkeypatch.delenv("MATNING_NYCKEL", raising=False)
+    assert klient.get("/matning").status_code == 503
+
+    monkeypatch.setenv("MATNING_NYCKEL", "hemlig")
+    assert klient.get("/matning").status_code == 401
+    assert klient.get("/matning", headers={"x-matning-nyckel": "fel"}).status_code == 401
+    assert klient.get("/matning", headers={"x-matning-nyckel": "hemlig"}).status_code == 200
+
+
+def test_rensning_sker_aven_om_ingest_statistiken_kastar(monkeypatch, tmp_path):
+    """Bevarandeplikten får inte hänga på att mätningsloggningen lyckas."""
+    from quiet_oppen_data.index import nattlig_ingest as ni
+
+    rensat = []
+    import quiet_oppen_data.matning as mat
+    monkeypatch.setattr(mat, "rensa_gamla_fragor",
+                        lambda dagar=30: rensat.append(dagar) or 7)
+    monkeypatch.setattr(mat, "logga_ingest",
+                        lambda **kw: (_ for _ in ()).throw(RuntimeError("sabotage")))
+    monkeypatch.setattr(ni, "_räkna_rader", lambda p: (0, 0))
+    monkeypatch.setattr("quiet_oppen_data.index.ingest.main", lambda **kw: None)
+
+    res = ni.kör_nattlig_ingest(db_sökväg=tmp_path / "index.sqlite")
+    assert rensat == [30], "raderingen ska ha körts trots undantaget i loggningen"
+    assert res["datamangder_totalt"] == 0

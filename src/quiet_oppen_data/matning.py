@@ -50,12 +50,24 @@ def _db_sökväg() -> Path:
     return _DB_RELATIV
 
 
+# Sökvägar där schemat redan skapats under processens livstid. Schemat byggs vid
+# första anslutningen, inte vid modulimport: tidigare skapade ett blott
+# `import quiet_oppen_data.matning` filen data/matning.sqlite som sidoeffekt —
+# även i testsviten, som därmed skrev till den riktiga databasen trots tmp-fixtur.
+_initierade: set[str] = set()
+
+
 def _anslut() -> sqlite3.Connection:
     db = _db_sökväg()
     db.parent.mkdir(parents=True, exist_ok=True)
     kon = sqlite3.connect(str(db), timeout=10)
     kon.execute("PRAGMA journal_mode=WAL")
     kon.execute("PRAGMA foreign_keys=ON")
+    # Schemat skapas vid första anslutningen per sökväg, inte vid modulimport.
+    nyckel = str(db)
+    if nyckel not in _initierade:
+        _initiera(kon)
+        _initierade.add(nyckel)
     return kon
 
 
@@ -95,16 +107,6 @@ def _initiera(kon: sqlite3.Connection) -> None:
     kon.commit()
 
 
-def _säkerställ_schema() -> None:
-    """Öppnar, initierar och stänger — anropas en gång vid modulimport."""
-    try:
-        with _anslut() as kon:
-            _initiera(kon)
-    except Exception:
-        logger.warning("Mätning: kunde inte initialisera databasen", exc_info=True)
-
-
-_säkerställ_schema()
 
 
 # ---------------------------------------------------------------------------
