@@ -349,6 +349,96 @@ def logga_ingest(
         logger.warning("Mätning: kunde inte logga ingest", exc_info=True)
 
 
+def logga_lagkontroll(
+    *,
+    kontrollerade: int,
+    andrade: int,
+    omingesterade: int,
+    ingest_fel: int,
+    fel_vid_kontroll: int,
+    status: str,
+    varaktighet_sek: float,
+    extra: dict | None = None,
+) -> None:
+    """Loggar en nattlig lagkorpus-kontroll (steg 19). Skapar tabellen vid behov."""
+    try:
+        with _anslut() as kon:
+            kon.execute("""
+                CREATE TABLE IF NOT EXISTS lagkontroll_logg (
+                    id                INTEGER PRIMARY KEY AUTOINCREMENT,
+                    tidpunkt          TEXT NOT NULL,
+                    kontrollerade     INTEGER NOT NULL,
+                    andrade           INTEGER NOT NULL,
+                    omingesterade     INTEGER NOT NULL,
+                    ingest_fel        INTEGER NOT NULL,
+                    fel_vid_kontroll  INTEGER NOT NULL,
+                    status            TEXT NOT NULL,
+                    varaktighet_sek   REAL NOT NULL,
+                    extra_json        TEXT
+                )
+            """)
+            kon.execute(
+                """INSERT INTO lagkontroll_logg (
+                    tidpunkt, kontrollerade, andrade, omingesterade,
+                    ingest_fel, fel_vid_kontroll, status, varaktighet_sek, extra_json
+                ) VALUES (?,?,?,?,?,?,?,?,?)""",
+                (
+                    datetime.now(UTC).isoformat(),
+                    kontrollerade,
+                    andrade,
+                    omingesterade,
+                    ingest_fel,
+                    fel_vid_kontroll,
+                    status,
+                    round(varaktighet_sek, 1),
+                    json.dumps(extra, ensure_ascii=False) if extra else None,
+                ),
+            )
+            kon.commit()
+    except Exception:
+        logger.warning("Mätning: kunde inte logga lagkontroll", exc_info=True)
+
+
+def las_senaste_lagkontroll() -> dict | None:
+    """Returnerar den senaste lagkontroll-loggraden, eller None om tabellen är tom."""
+    try:
+        with _anslut() as kon:
+            kon.execute("""
+                CREATE TABLE IF NOT EXISTS lagkontroll_logg (
+                    id                INTEGER PRIMARY KEY AUTOINCREMENT,
+                    tidpunkt          TEXT NOT NULL,
+                    kontrollerade     INTEGER NOT NULL,
+                    andrade           INTEGER NOT NULL,
+                    omingesterade     INTEGER NOT NULL,
+                    ingest_fel        INTEGER NOT NULL,
+                    fel_vid_kontroll  INTEGER NOT NULL,
+                    status            TEXT NOT NULL,
+                    varaktighet_sek   REAL NOT NULL,
+                    extra_json        TEXT
+                )
+            """)
+            rad = kon.execute(
+                """SELECT tidpunkt, kontrollerade, andrade, omingesterade,
+                          ingest_fel, fel_vid_kontroll, status, varaktighet_sek
+                   FROM lagkontroll_logg ORDER BY id DESC LIMIT 1"""
+            ).fetchone()
+            if rad is None:
+                return None
+            return {
+                "tidpunkt": rad[0],
+                "kontrollerade": rad[1],
+                "andrade": rad[2],
+                "omingesterade": rad[3],
+                "ingest_fel": rad[4],
+                "fel_vid_kontroll": rad[5],
+                "status": rad[6],
+                "varaktighet_sek": rad[7],
+            }
+    except Exception:
+        logger.warning("Mätning: kunde inte läsa senaste lagkontroll", exc_info=True)
+        return None
+
+
 def las_senaste_ingest() -> dict | None:
     """Returnerar den senaste ingest-loggraden, eller None om tabellen är tom."""
     try:

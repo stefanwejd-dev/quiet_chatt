@@ -180,6 +180,9 @@ async def matning_endpoint(request: Request) -> dict[str, Any]:
     med katalogsvar (dataportal) i stället för ett exekverat adapter-svar.
     Det är den siffran som styr vilken adapter som ska byggas härnäst
     (ARKITEKTUR.md §11).
+
+    `lagkorpus_alder` visar, per författning, dygn sedan senaste lyckade
+    ingest och om den ligger efter (steg 19, §5 regel 8).
     """
     _kontrollera_matningsnyckel(request)
 
@@ -191,7 +194,24 @@ async def matning_endpoint(request: Request) -> dict[str, Any]:
         punkter = {"fel": "Kunde inte läsa mätpunkter."}
         senaste_ingest = None
 
-    return {"matpunkter": punkter, "senaste_ingest": senaste_ingest}
+    # Lagkorpusets ålder (steg 19, ARKITEKTUR.md §5 regel 8). Läses live ur
+    # indexet, inte ur mätningsdatabasen — åldern ska alltid spegla
+    # indexets faktiska tillstånd, inte en tidigare körnings ögonblicksbild.
+    try:
+        from quiet_oppen_data.index.lag_ingest import las_lagkorpus_alder
+        lagkorpus_alder = await run_in_threadpool(las_lagkorpus_alder)
+        senaste_lagkontroll = await run_in_threadpool(matning.las_senaste_lagkontroll)
+    except Exception:
+        logger.warning("Kunde inte läsa lagkorpusets ålder", exc_info=True)
+        lagkorpus_alder = {"fel": "Kunde inte läsa lagkorpusets ålder."}
+        senaste_lagkontroll = None
+
+    return {
+        "matpunkter": punkter,
+        "senaste_ingest": senaste_ingest,
+        "lagkorpus_alder": lagkorpus_alder,
+        "senaste_lagkontroll": senaste_lagkontroll,
+    }
 
 
 @app.get("/kallor")

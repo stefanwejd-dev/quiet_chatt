@@ -250,8 +250,24 @@ def api_klient(monkeypatch):
         "varaktighet_sek": 182.3,
     }
 
+    mock_lagkorpus_alder = [
+        {"sfs": "1999:1229", "kortnamn": "IL", "hamtad": "2026-08-13T03:00:00+00:00",
+         "dygn_sedan_hamtning": 1.0, "ligger_efter": False},
+    ]
+    mock_lagkontroll = {
+        "tidpunkt": "2026-08-14T03:00:00+00:00",
+        "kontrollerade": 62, "andrade": 1, "omingesterade": 1,
+        "ingest_fel": 0, "fel_vid_kontroll": 0, "status": "ok",
+        "varaktighet_sek": 12.3,
+    }
+
     monkeypatch.setattr(mat, "las_matpunkter", lambda dygn=30: mock_punkter)
     monkeypatch.setattr(mat, "las_senaste_ingest", lambda: mock_ingest)
+    monkeypatch.setattr(mat, "las_senaste_lagkontroll", lambda: mock_lagkontroll)
+    monkeypatch.setattr(
+        "quiet_oppen_data.index.lag_ingest.las_lagkorpus_alder",
+        lambda: mock_lagkorpus_alder,
+    )
 
     return TestClient(api_modul.app)
 
@@ -265,9 +281,13 @@ def test_matning_endpoint_struktur(api_klient):
     data = api_klient.get("/matning", headers={"x-matning-nyckel": "test"}).json()
     assert "matpunkter" in data
     assert "senaste_ingest" in data
+    assert "lagkorpus_alder" in data
+    assert "senaste_lagkontroll" in data
     assert data["matpunkter"]["totalt_fragor"] == 10
     assert data["matpunkter"]["niva3_andel"] == 0.25
     assert data["senaste_ingest"]["datamangder_totalt"] == 23289
+    assert data["lagkorpus_alder"][0]["sfs"] == "1999:1229"
+    assert data["senaste_lagkontroll"]["status"] == "ok"
 
 
 # ---------------------------------------------------------------------------
@@ -296,8 +316,10 @@ def test_nattlig_ingest_delta(tmp_path, monkeypatch):
             k.commit()
 
     import quiet_oppen_data.matning as mat
+    from quiet_oppen_data.index import nattlig_ingest as ni
     monkeypatch.setattr(mat, "logga_ingest", lambda **_: None)
     monkeypatch.setattr(mat, "rensa_gamla_fragor", lambda dagar=30: 0)
+    monkeypatch.setattr(ni, "kör_nattlig_lagkontroll", lambda **_: {"status": "ok"})
 
     with patch("quiet_oppen_data.index.ingest.main", side_effect=fake_ingest):
         resultat = kör_nattlig_ingest(db_sökväg=db)
@@ -320,8 +342,10 @@ def test_nattlig_ingest_rapporterar_fel(tmp_path, monkeypatch):
         kon.commit()
 
     import quiet_oppen_data.matning as mat
+    from quiet_oppen_data.index import nattlig_ingest as ni
     monkeypatch.setattr(mat, "logga_ingest", lambda **_: None)
     monkeypatch.setattr(mat, "rensa_gamla_fragor", lambda dagar=30: 0)
+    monkeypatch.setattr(ni, "kör_nattlig_lagkontroll", lambda **_: {"status": "ok"})
 
     with patch("quiet_oppen_data.index.ingest.main", side_effect=RuntimeError("Nätverksfel")):
         resultat = kör_nattlig_ingest(db_sökväg=db)
@@ -390,6 +414,7 @@ def test_rensning_sker_aven_om_ingest_statistiken_kastar(monkeypatch, tmp_path):
                         lambda **kw: (_ for _ in ()).throw(RuntimeError("sabotage")))
     monkeypatch.setattr(ni, "_räkna_rader", lambda p: (0, 0))
     monkeypatch.setattr("quiet_oppen_data.index.ingest.main", lambda **kw: None)
+    monkeypatch.setattr(ni, "kör_nattlig_lagkontroll", lambda **_: {"status": "ok"})
 
     res = ni.kör_nattlig_ingest(db_sökväg=tmp_path / "index.sqlite")
     assert rensat == [30], "raderingen ska ha körts trots undantaget i loggningen"

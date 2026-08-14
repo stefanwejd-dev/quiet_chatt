@@ -1183,11 +1183,12 @@ accept2. Med det andra — och först då — kan källan aktiveras.
 
 ---
 
-## Steg 19 — Nattlig färskhetskontroll av lagkorpuset ⬜ FÖRESLAGET, ej godkänt
+## Steg 19 — Nattlig färskhetskontroll av lagkorpuset ✅ Godkänt 2026-08-14
 
-**Detta steg är inte beställt.** Det ligger här för att en invariant i
-`ARKITEKTUR.md` är skriven men inte sluten, och en sådan lucka ska stå skriven i
-planen i stället för att bara finnas i koden.
+**Detta steg låg ursprungligen oförbeställt.** Det stod i planen för att en
+invariant i `ARKITEKTUR.md` var skriven men inte sluten, och en sådan lucka ska
+stå skriven i planen i stället för att bara finnas i koden. Beställt och utfört
+2026-08-14.
 
 **Bakgrund.** §5 regel 8 säger att lagkopians färskhet *"kontrolleras nattligt genom
 att jämföra `systemdatum`"*. Efter steg 16B stämmer halva meningen:
@@ -1218,6 +1219,45 @@ konsolideringspunkt kopian hade när den togs.
 - Ett simulerat fel mot Riksdagen lämnar indexet orört och körningen avslutas med
   fel-status, inte tyst.
 - `python -m ruff check .` och `python -m pytest -q` är rena.
+
+### Utfall
+
+`index/lag_ingest.py`:
+- `nattlig_lagkontroll()` — kör `kontrollera_andringar()` (fanns redan sedan
+  steg 16A, men anropades aldrig av den nattliga körningen), och ingesterar om
+  ENDAST de författningar vars `fjarr_systemdatum` faktiskt skiljer sig från det
+  lokala (inte bara där kontrollanropet misslyckades). Räknar `kontrollerade`,
+  `andrade`, `omingesterade`, `ingest_fel`, `fel_vid_kontroll` och sätter
+  `status` till `"ok"`, `"delvis"` eller `"fel"`. Status blir `"fel"` om något
+  omingest-försök misslyckas, ELLER om samtliga kontrollanrop misslyckar och
+  inget kunde bekräftas ändrat — annars hade ett totalt Riksdagen-avbrott sett
+  ut precis som "inget har ändrats".
+- `las_lagkorpus_alder()` — dygn sedan `lag_dokument.hamtad` per författning,
+  `ligger_efter` (tröskel 2 dygn, eller om författningen aldrig ingesterats).
+
+`index/nattlig_ingest.py`: `kör_nattlig_lagkontroll()` kör kontrollen, loggar
+till `matning.logga_lagkontroll` och skriver en rad till stdout-rapporten.
+Anropas från `kör_nattlig_ingest()` i eget try/except — ett fel i lagkontrollen
+får aldrig hindra katalogingesten eller frågeraderingen (samma princip som
+granskningsfynd 4 i steg 14–15).
+
+`matning.py`: ny tabell `lagkontroll_logg` (`logga_lagkontroll` /
+`las_senaste_lagkontroll`), samma mönster som `ingest_logg`.
+
+`api.py`: `GET /matning` returnerar nu även `lagkorpus_alder` (läst live ur
+indexet, inte ur mätningsdatabasen — åldern ska spegla indexets faktiska
+tillstånd) och `senaste_lagkontroll`.
+
+Nya tester: `tests/test_steg19_lagkontroll.py` (5 st) — bara ändrade
+författningar ingesteras om, ett totalt Riksdagen-avbrott lämnar indexet orört
+och rapporterar `status="fel"`, ett enskilt misslyckat omingest-försök syns
+som `ingest_fel` utan att krascha körningen, och åldersberäkningen flaggar både
+gamla kopior och aldrig ingesterade författningar. De tre befintliga
+`kör_nattlig_ingest`-testerna i `test_steg15_matning.py` uppdaterade för att
+stubba `kör_nattlig_lagkontroll` (annars hade de gjort 62 riktiga
+nätverksanrop per körning).
+
+`python -m ruff check .` och `python -m pytest -q` båda rena (224 passed).
 
 ---
 

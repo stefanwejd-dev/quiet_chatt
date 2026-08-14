@@ -308,6 +308,160 @@ def kontrollera_andringar(
 
 
 
+# Antal dygn en författning får ligga utan lyckad omkontroll innan den räknas
+# som "ligger efter" i /matning. Nattlig körning ger ~1 dygns ålder i normalfall;
+# tröskeln lämnar en dags marginal innan den räknas som en driftavvikelse.
+_ALDER_TROSKEL_DYGN = 2
+
+
+def las_lagkorpus_alder(
+    db_conn: sqlite3.Connection | None = None,
+    troskel_dygn: int = _ALDER_TROSKEL_DYGN,
+) -> list[dict[str, Any]]:
+    """Lagkorpusets ålder per författning — underlag för `GET /matning` (§11, §5 regel 8).
+
+    Returns:
+        En rad per författning i lag_dokument: sfs, kortnamn, hamtad (ISO),
+        dygn_sedan_hamtning, och ligger_efter (True om äldre än `troskel_dygn`).
+        En författning som saknas i indexet helt (aldrig ingesterad) räknas
+        alltid som ligger_efter.
+    """
+    konfig = las_konfig()
+    conn = db_conn or oppna_db(Path(konfig.index.db))
+    stang_efter = db_conn is None
+
+    try:
+        rader = conn.execute(
+            "SELECT sfs, kortnamn, hamtad FROM lag_dokument ORDER BY sfs"
+        ).fetchall()
+        nu = datetime.now(UTC)
+        resultat = []
+        indexerade_sfs = set()
+        for sfs, kortnamn, hamtad in rader:
+            indexerade_sfs.add(sfs)
+            try:
+                hamtad_dt = datetime.fromisoformat(hamtad)
+                if hamtad_dt.tzinfo is None:
+                    hamtad_dt = hamtad_dt.replace(tzinfo=UTC)
+                dygn = (nu - hamtad_dt).total_seconds() / 86400
+            except (ValueError, TypeError):
+                dygn = None
+            resultat.append({
+                "sfs": sfs,
+                "kortnamn": kortnamn,
+                "hamtad": hamtad,
+                "dygn_sedan_hamtning": round(dygn, 2) if dygn is not None else None,
+                "ligger_efter": dygn is None or dygn > troskel_dygn,
+            })
+
+        # Författningar i registret som helt saknas i indexet — aldrig ingesterade.
+        for lag in lagregister.las():
+            if lag.sfs not in indexerade_sfs:
+                resultat.append({
+                    "sfs": lag.sfs,
+                    "kortnamn": lag.kortnamn,
+                    "hamtad": None,
+                    "dygn_sedan_hamtning": None,
+                    "ligger_efter": True,
+                })
+
+        return resultat
+    finally:
+        if stang_efter:
+            conn.close()
+
+
+def nattlig_lagkontroll(
+    generera_vektorer: bool = True,
+    db_conn: sqlite3.Connection | None = None,
+) -> dict[str, Any]:
+    """Nattlig färskhetskontroll av lagkorpuset (steg 19, ARKITEKTUR.md §5 regel 8).
+
+    Hämtar bara dokumenthuvudet (systemdatum) för varje författning — 62 lätta
+    anrop, ingen omindexering i onödan — och ingesterar om ENDAST de vars
+    systemdatum har ändrats hos Riksdagen. Ett misslyckat huvudanrop lämnar den
+    befintliga kopian orörd; den syns i stället som `fel_vid_kontroll`.
+
+    Om samtliga huvudanrop misslyckas (t.ex. Riksdagen nere) avslutas
+    körningen med `status="fel"` i stället för att tyst rapportera "inget
+    ändrat" — annars vore ett totalt avbrott i praktiken osynligt.
+    """
+    konfig = las_konfig()
+    conn = db_conn or oppna_db(Path(konfig.index.db))
+    stang_efter = db_conn is None
+
+    start = time.perf_counter()
+    try:
+        rapport = kontrollera_andringar(db_conn=conn)
+        kontrollerade = len(rapport)
+
+        fel_vid_kontroll = [r for r in rapport if r["fjarr_systemdatum"] is None]
+        # "Ändrad" räknas bara när vi FAKTISKT kunde bekräfta ett nytt
+        # systemdatum — inte när kontrollen bara misslyckades att svara.
+        andrade = [
+            r for r in rapport
+            if r["andrad"] and r["fjarr_systemdatum"] is not None
+        ]
+
+        alla_lagar = {lag.sfs: lag for lag in lagregister.las()}
+        omingesterade: list[dict[str, Any]] = []
+        ingest_fel: list[dict[str, Any]] = []
+        for r in andrade:
+            lag = alla_lagar.get(r["sfs"])
+            if lag is None:
+                continue
+            try:
+                antal_chunks, tom_sfs, systemdatum = hamta_och_indexera_lag(
+                    lag, db_conn=conn, generera_vektorer=generera_vektorer
+                )
+                omingesterade.append({
+                    "sfs": r["sfs"], "kortnamn": r["kortnamn"],
+                    "chunks": antal_chunks, "tom_sfs": tom_sfs,
+                    "systemdatum": systemdatum,
+                })
+            except Exception as e:
+                logger.error(
+                    "Nattlig lagkontroll: omingest av %s misslyckades: %s",
+                    r["sfs"], e, exc_info=True,
+                )
+                ingest_fel.append({"sfs": r["sfs"], "kortnamn": r["kortnamn"], "fel": str(e)})
+
+        if ingest_fel:
+            status = "fel"
+        elif fel_vid_kontroll and not andrade:
+            # Ingen ändring hittades — men vi kunde inte kontrollera NÅGON.
+            # Det är inte samma sak som "inget har ändrats" och ska inte
+            # rapporteras tyst som det.
+            status = "fel"
+        elif fel_vid_kontroll:
+            status = "delvis"
+        else:
+            status = "ok"
+
+        resultat = {
+            "status": status,
+            "kontrollerade": kontrollerade,
+            "andrade": len(andrade),
+            "omingesterade": len(omingesterade),
+            "ingest_fel": len(ingest_fel),
+            "fel_vid_kontroll": len(fel_vid_kontroll),
+            "sfs_omingesterade": [o["sfs"] for o in omingesterade],
+            "sfs_ingest_fel": [f["sfs"] for f in ingest_fel],
+            "sfs_fel_vid_kontroll": [r["sfs"] for r in fel_vid_kontroll],
+            "varaktighet_sek": round(time.perf_counter() - start, 1),
+        }
+        logger.info(
+            "Nattlig lagkontroll klar: %d kontrollerade, %d ändrade, "
+            "%d omingesterade, %d ingest-fel, %d kontroll-fel, status=%s",
+            kontrollerade, len(andrade), len(omingesterade),
+            len(ingest_fel), len(fel_vid_kontroll), status,
+        )
+        return resultat
+    finally:
+        if stang_efter:
+            conn.close()
+
+
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s", stream=sys.stdout)
     print("=== Startar lag-ingest (Steg 16) ===")

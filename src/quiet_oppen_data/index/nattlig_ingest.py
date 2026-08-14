@@ -11,6 +11,11 @@ Schemaläggs typiskt med cron eller systemd.timer:
 
 Rapporten skrivs till stdout (strukturerad) och loggas via matning.logga_ingest.
 Frågetexter som är äldre än 30 dagar rensas i samma körning (ARKITEKTUR.md §11).
+
+Sedan steg 19 körs även en lagkorpus-färskhetskontroll i samma körning
+(ARKITEKTUR.md §5 regel 8): dokumenthuvudena för alla författningar i
+`lagar/lagregister.yaml` jämförs mot Riksdagens systemdatum, och bara de som
+ändrats ingesteras om. Se `kör_nattlig_lagkontroll` nedan.
 """
 
 from __future__ import annotations
@@ -33,6 +38,51 @@ def _räkna_rader(db_sökväg: Path) -> tuple[int, int]:
             return dm, dist
     except Exception:
         return 0, 0
+
+
+def kör_nattlig_lagkontroll(db_sökväg: Path | None = None) -> dict:
+    """Kör lagkorpus-färskhetskontrollen (steg 19) och loggar resultatet.
+
+    Egen funktion, egen felhantering — ett fel här får aldrig hindra
+    katalogingesten eller frågeradering i `kör_nattlig_ingest` (§11:
+    bevarandeplikten går alltid före statistik).
+    """
+    from quiet_oppen_data import matning
+    from quiet_oppen_data.index import lag_ingest
+    from quiet_oppen_data.index.db import oppna_db
+
+    if db_sökväg is None:
+        try:
+            from quiet_oppen_data.konfig import las as las_konfig
+            db_sökväg = Path(las_konfig().index.db)
+        except Exception:
+            db_sökväg = Path("data/index.sqlite")
+
+    conn = oppna_db(db_sökväg)
+    try:
+        resultat = lag_ingest.nattlig_lagkontroll(db_conn=conn)
+    finally:
+        conn.close()
+
+    try:
+        matning.logga_lagkontroll(
+            kontrollerade=resultat["kontrollerade"],
+            andrade=resultat["andrade"],
+            omingesterade=resultat["omingesterade"],
+            ingest_fel=resultat["ingest_fel"],
+            fel_vid_kontroll=resultat["fel_vid_kontroll"],
+            status=resultat["status"],
+            varaktighet_sek=resultat["varaktighet_sek"],
+        )
+    except Exception:
+        logger.warning("Kunde inte logga lagkontroll-statistik", exc_info=True)
+
+    print(f"  Lagkorpus kontrollerad:{resultat['kontrollerade']:>7}  "
+          f"ändrade {resultat['andrade']}  omingesterade {resultat['omingesterade']}  "
+          f"ingest-fel {resultat['ingest_fel']}  kontroll-fel {resultat['fel_vid_kontroll']}  "
+          f"status={resultat['status']}")
+
+    return resultat
 
 
 def kör_nattlig_ingest(db_sökväg: Path | None = None) -> dict:
@@ -113,6 +163,15 @@ def kör_nattlig_ingest(db_sökväg: Path | None = None) -> dict:
         matning.logga_ingest(**{k: v for k, v in resultat.items() if k != "db"})
     except Exception:
         logger.warning("Kunde inte logga ingest-statistik", exc_info=True)
+
+    # Lagkorpus-färskhetskontroll (steg 19). Eget fel-omfång: ett fel här
+    # loggas och syns i resultatet, men avbryter aldrig den redan slutförda
+    # katalogingesten eller frågeraderingen ovan.
+    try:
+        resultat["lag_kontroll"] = kör_nattlig_lagkontroll(db_sökväg=db_sökväg)
+    except Exception:
+        logger.error("Nattlig lagkontroll misslyckades helt", exc_info=True)
+        resultat["lag_kontroll"] = {"status": "fel"}
 
     # Skriv deltarapport till stdout
     print("=" * 60)

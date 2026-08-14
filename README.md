@@ -28,21 +28,17 @@ varje uppgift med fotnot och klickbar källänk.
 | 16B | Lagkorpus — resterande 57 författningar | ✅ |
 | 17 | Skatteverkets statistik — elva RowStore-datamängder + färskhet i `dimensioner`/`period` | ✅ |
 | 18 | Skatteverkets rättsliga regelfiler | ⛔ avslutat — partner-API, ingen åtkomst |
-| 19 | Nattlig färskhetskontroll av lagkorpuset | ⬜ föreslaget |
+| 19 | Nattlig färskhetskontroll av lagkorpuset | ✅ |
 
-**Hela testsviten: 219 passed**, `ruff check .` rent (2026-08-14).
+**Hela testsviten: 224 passed**, `ruff check .` rent (2026-08-14).
 
 Lagindexet i `data/index.sqlite`: 62 dokument, 9 792 chunkar, 9 792 embeddings.
 Katalogindexet: 23 289 datamängder, 32 518 distributioner.
 
-### Känd lucka
-
-`ARKITEKTUR.md §5 regel 8` kräver att lagkopians färskhet kontrolleras nattligt genom
-att jämföra `systemdatum`. Konsolideringspunkten bärs korrekt ut i svaren, men
-`nattlig_ingest.py` rör inte lagkorpuset — ingesten är manuell, och en ändrad paragraf
-upptäcks först när den körs. Steg 19 finns för att sluta det.
-
-
+`nattlig_ingest.py` kör sedan steg 19 även en lagkorpus-färskhetskontroll varje
+natt: dokumenthuvudena för alla 62 författningar jämförs mot Riksdagens
+`systemdatum`, och bara de som faktiskt ändrats ingesteras om. Lagkorpusets
+ålder per författning syns i `GET /matning` → `lagkorpus_alder`.
 
 ## Dokumenten
 
@@ -87,8 +83,10 @@ stället för att ligga öppen. Skicka nyckeln som headern `x-matning-nyckel`.
 0 3 * * * cd /app && python -m quiet_oppen_data.index.nattlig_ingest >> logs/ingest.log 2>&1
 ```
 
-Den nattliga körningen omfattar **bara katalogindexet**. Lagkorpuset uppdateras genom
-`lag_ingest` för hand tills steg 19 är byggt — se Känd lucka ovan.
+Sedan steg 19 omfattar den nattliga körningen både katalogindexet och en
+lagkorpus-färskhetskontroll: dokumenthuvudena för alla 62 författningar jämförs
+mot Riksdagens `systemdatum`, och bara de som ändrats ingesteras om
+(ARKITEKTUR.md §5 regel 8).
 
 ## Uteslutna källor
 

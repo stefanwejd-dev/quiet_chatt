@@ -7,7 +7,7 @@ klickbar källänk.
 Allt hämtas i realtid, med ett undantag: lagtexten speglas lokalt (§3.2b). Den
 kopian måste bära sin färskhetsstämpel hela vägen ut i svaret — se §5 regel 8.
 
-Version 1.2 · 2026-08-14 · Författare: arkitekturunderlag för implementerande kod-AI
+Version 1.3 · 2026-08-14 · Författare: arkitekturunderlag för implementerande kod-AI
 
 ---
 
@@ -363,11 +363,18 @@ Skälet är proportionerligt: en inaktuell SCB-siffra är pinsam, en inaktuell
 skatteparagraf leder till en felaktig deklaration. Färskheten ska kontrolleras nattligt
 genom att jämföra `systemdatum` — aldrig genom att diffa text.
 
-**Delvis byggt.** Konsolideringspunkten bärs hela vägen ut i svaret sedan steg 16, och
-`lag_ingest` läser `systemdatum` ur dokumenthuvudet vid varje körning. Den nattliga
-jämförelsen finns däremot inte: `nattlig_ingest.py` uppdaterar katalogindexet men rör
-inte lagkorpuset, så en ändrad paragraf upptäcks först när ingesten körs för hand.
-Regeln är alltså skriven men inte sluten. Åtgärdas i steg 19.
+**Sluten sedan steg 19.** Konsolideringspunkten bärs hela vägen ut i svaret sedan
+steg 16, och `lag_ingest` läser `systemdatum` ur dokumenthuvudet vid varje körning.
+Den nattliga jämförelsen finns nu också: `nattlig_ingest.py` anropar
+`lag_ingest.nattlig_lagkontroll()` i samma körning som katalogingesten. Den hämtar
+bara dokumenthuvudet (62 lätta anrop, inte hela texten) för varje författning i
+`lagar/lagregister.yaml` och ingesterar om ENDAST de vars `systemdatum` faktiskt har
+ändrats hos Riksdagen. Ett misslyckat huvudanrop lämnar den befintliga kopian orörd —
+den syns i stället som `fel_vid_kontroll` i loggen och i `GET /matning`. Om samtliga
+huvudanrop misslyckas avslutas körningen med `status="fel"`, aldrig tyst som "inget
+ändrat". Lagkorpusets ålder per författning — dygn sedan senaste lyckade ingest, och
+vilka som ligger efter en tröskel på två dygn — exponeras i `GET /matning` under
+`lagkorpus_alder`.
 
 Regeln gäller varje framtida källa som cachas i stället för att hämtas. Det finns bara
 en i dag, och det är avsiktligt.
@@ -513,8 +520,9 @@ Loggas per fråga, i SQLite, utan att spara frågetexten längre än 30 dagar:
 * antal Faktaposter per svar
 * cache-träffkvot per källa
 * token in/ut per fas
-* lagkorpusets ålder — dygn sedan senaste `lag_ingest`, per författning (planerad,
-  se §5 regel 8)
+* lagkorpusets ålder — dygn sedan senaste lyckade `lag_ingest`, per författning,
+  och vilka som ligger efter (steg 19, `GET /matning` → `lagkorpus_alder`; se
+  §5 regel 8)
 
 Den viktigaste siffran är **andelen frågor som besvaras på nivå 3** (katalogsvar i
 stället för exekverat svar). Den siffran talar om vilken adapter som ska byggas härnäst,
