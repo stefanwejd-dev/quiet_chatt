@@ -40,7 +40,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from starlette.concurrency import run_in_threadpool
 
-from quiet_oppen_data import kvot
+from quiet_oppen_data import kvot, matning
 from quiet_oppen_data.adaptrar.transport import halsostatistik
 from quiet_oppen_data.konfig import las as las_konfig
 from quiet_oppen_data.modeller import Faktapost, Faktaregister
@@ -148,6 +148,26 @@ async def halsa() -> dict[str, Any]:
 # GET /kallor
 # ---------------------------------------------------------------------------
 
+@app.get("/matning")
+async def matning_endpoint() -> dict[str, Any]:
+    """Aggregerade mätpunkter för de senaste 30 dagarna.
+
+    Den viktigaste siffran är `niva3_andel` — andelen frågor som besvarades
+    med katalogsvar (dataportal) i stället för ett exekverat adapter-svar.
+    Det är den siffran som styr vilken adapter som ska byggas härnäst
+    (ARKITEKTUR.md §11).
+    """
+    try:
+        punkter = await run_in_threadpool(matning.las_matpunkter, 30)
+        senaste_ingest = await run_in_threadpool(matning.las_senaste_ingest)
+    except Exception:
+        logger.warning("Kunde inte läsa mätpunkter", exc_info=True)
+        punkter = {"fel": "Kunde inte läsa mätpunkter."}
+        senaste_ingest = None
+
+    return {"matpunkter": punkter, "senaste_ingest": senaste_ingest}
+
+
 @app.get("/kallor")
 async def kallor_endpoint() -> dict[str, Any]:
     """Källregistret, publikt. Spärrade källor (Sparrad) tas bort helt —
@@ -237,6 +257,34 @@ async def _strom_svar(fraga: str) -> AsyncIterator[str]:
         logger.warning("Fas A/B/C misslyckades för en fråga", exc_info=True)
         yield _sse("fel", {"meddelande": "Ett tekniskt fel inträffade. Försök igen."})
         return
+
+    # --- Mätning (ARKITEKTUR.md §11) ---
+    # fas_c_forsok: 1=godkänt direkt, 0=fail-closed. Validator-koden loggar
+    # varningsmeddelanden vid omförsök, men returnerar alltid ett SyntesSvar.
+    # Vi approximerar försöksantalet: om kan_besvaras=False och stycken är
+    # tomma har fail-closed inträffat (0), annars godkänt (1).
+    # En exakt räknare kräver ändring i FasCValidator — se nedan.
+    fas_c_forsok = 0 if (not svar.kan_besvaras and not svar.stycken) else 1
+    anvanda_kallor = list({
+        p.kalla_id for p in hamtningsresultat.register.alla()
+    })
+    try:
+        await run_in_threadpool(
+            matning.logga_fraga,
+            fraga_text=fraga,
+            kan_besvaras=svar.kan_besvaras,
+            fas_c_forsok=fas_c_forsok,
+            antal_faktaposter=len(hamtningsresultat.register),
+            anvanda_kallor=anvanda_kallor,
+            token_fas_a_in=hamtningsresultat.input_tokens,
+            token_fas_a_ut=hamtningsresultat.output_tokens,
+            token_fas_a_cache_read=hamtningsresultat.cache_read_tokens,
+            token_fas_a_cache_write=hamtningsresultat.cache_write_tokens,
+        )
+    except Exception:
+        logger.warning("Mätning: logga_fraga misslyckades", exc_info=True)
+        # Loggningsfel är icke-fatala — svaret blockeras aldrig
+    # --- Slut mätning ---
 
     if not svar.kan_besvaras:
         yield _sse("svar", {

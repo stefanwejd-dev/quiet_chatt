@@ -652,7 +652,7 @@ förbehåll) utan riktig backend.
 
 
 
-## Steg 15 — Drift och mätning   ← NÄSTA STEG
+## Steg 15 — Drift och mätning ✅ Godkänt 2026-08-14
 
 **Gör:** nattlig ingest-körning, loggning enligt `ARKITEKTUR.md` §11, och en enkel
 `GET /matning`-vy.
@@ -663,9 +663,36 @@ förbehåll) utan riktig backend.
   som styr vilken adapter som byggs härnäst.
 - Frågetexter raderas automatiskt efter 30 dagar.
 
+**Utfall 2026-08-14:** Tre filer skapades och en ändrades:
+
+* **`src/quiet_oppen_data/matning.py`** — loggningsmodul med SQLite (`data/matning.sqlite`).
+  Loggar per fråga: vilka källors data som registrerades, fas C-utfall (försök 1/2/fail-closed),
+  antal Faktaposter, token in/ut per fas A. `rensa_gamla_fragor()` sätter `fraga_text = NULL`
+  för rader äldre än 30 dagar. `las_matpunkter()` returnerar aggregat för `GET /matning`,
+  inkl. `niva3_andel` (andelen frågor besvarade via dataportal-katalogen). `logga_ingest()`
+  och `las_senaste_ingest()` stöder ingest-deltarapporteringen.
+
+* **`src/quiet_oppen_data/index/nattlig_ingest.py`** — schemaläggbar wrapper runt
+  `index/ingest.main()`. Räknar rader före och efter, skriver en strukturerad deltarapport
+  till stdout, loggar via `matning.logga_ingest` och anropar `matning.rensa_gamla_fragor`.
+  Schemaläggs med cron: `0 3 * * * cd /app && python -m quiet_oppen_data.index.nattlig_ingest`.
+
+* **`api.py`** — fick `import matning`, en ny `GET /matning`-endpoint och en mätnings-hook
+  i `_strom_svar` som anropar `matning.logga_fraga` efter varje slutförd A→B→C-kedja.
+  Loggningsfel är icke-fatala — svaret blockeras aldrig.
+
+* **`tests/test_steg15_matning.py`** — 12 tester: logga_fraga, niva3-markering,
+  fel-är-icke-fatal, rensa_gamla_fragor (NULL-sätter, bevarar övriga fält),
+  las_matpunkter (tom DB, aggregat, källtopp), GET /matning (200, struktur),
+  nattlig_ingest (delta, felrapportering).
+
+`python -m ruff check .` — rent.
+`python -m pytest tests/test_steg15_matning.py -v` — **12 passed**.
+`python -m pytest -q` — **179 passed**, 6 deselected (livetester), 1 warning.
+
 ---
 
-## Steg 16A — Lagkorpus, de fem huvudlagarna
+## Steg 16A — Lagkorpus, de fem huvudlagarna   ← NÄSTA STEG
 
 **Läs `ARKITEKTUR.md` §3.2b (lagindex) och §5 regel 8 (en kopia måste bära sin
 färskhetsstämpel) innan du börjar.** Steget inför systemets enda lokala kopia, och

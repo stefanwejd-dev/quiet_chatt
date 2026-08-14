@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiet Widget — Testmiljö (Steg 14)</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f0ede8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 16px;
+      gap: 24px;
+      min-height: 100vh;
+      margin: 0;
+    }
+    h1 { font-size: 18px; color: #333; margin: 0; }
+    .info {
+      font-size: 13px;
+      color: #666;
+      max-width: 760px;
+      width: 100%;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 12px 16px;
+    }
+    .info code {
+      background: #f3f0eb;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    #quiet-widget {
+      max-width: 760px;
+      width: 100%;
+    }
+
+    /* Mock-kontroller */
+    .mock-panel {
+      max-width: 760px;
+      width: 100%;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .mock-panel h2 { font-size: 14px; margin: 0 0 12px; color: #444; }
+    .mock-panel label { font-size: 13px; display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+    .mock-panel button {
+      padding: 7px 14px;
+      font-size: 13px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: #f5f5f5;
+      cursor: pointer;
+      margin: 4px 4px 0 0;
+    }
+    .mock-panel button:hover { background: #e8e8e8; }
+  </style>
+</head>
+<body>
+
+<h1>Quiet Widget — Testmiljö</h1>
+
+<div class="info">
+  <strong>Steg 14 — testmiljö utan backend.</strong>
+  Widgeten nedan använder en interceptad <code>fetch</code> som simulerar SSE-svar.
+  Klicka på scenarierna nedan för att byta testfall, eller ange en riktig
+  <code>ANTHROPIC_API_KEY</code>-backend i <code>data-api</code>-attributet på
+  widgetens container-element.
+</div>
+
+<div class="mock-panel">
+  <h2>Testscenarier (interceptar /fraga)</h2>
+  <button onclick="setScenario('referensranta')">Referensränta (2 källor)</button>
+  <button onclick="setScenario('beraknad')">Beräknad post (harledd)</button>
+  <button onclick="setScenario('ccby')">CC-BY-attribution</button>
+  <button onclick="setScenario('inget_svar')">Tomt register (kan ej besvaras)</button>
+  <button onclick="setScenario('fel')">Serverfel</button>
+  <button onclick="setScenario('forbehall')">Svar + förbehåll</button>
+  <label>
+    <input type="checkbox" id="mockEnable" checked onchange="toggleMock(this.checked)" />
+    Använd mock-backend (avmarkera för riktig backend)
+  </label>
+</div>
+
+<!-- Widgetcontainer -->
+<div id="quiet-widget" data-api="http://localhost:8000"></div>
+
+<script>
+// ---------------------------------------------------------------------------
+// Mock-SSE via fetch-interceptering
+// ---------------------------------------------------------------------------
+
+let aktivtScenario = "referensranta";
+let mockAktiv = true;
+
+function setScenario(s) { aktivtScenario = s; }
+function toggleMock(v) { mockAktiv = v; }
+
+const SCENARIER = {
+  referensranta: [
+    { event: "stycke", data: { text: "Riksbankens referensränta är 2,0 procent sedan den 8 maj 2025.", kallor: ["F1", "F2"] } },
+    { event: "stycke", data: { text: "Riksbankens styrränta (reporänta) är en annan serie och uppgår till 1,75 procent.", kallor: ["F2"] } },
+    { event: "kallor", data: { kallor: [
+      {
+        id: "F1",
+        etikett: "Riksbanken: Reference rate (SECBREFEFF)",
+        myndighet: "Riksbanken",
+        dataset: "SECBREFEFF",
+        period: "2025-05-08",
+        dimensioner: {},
+        hamtad: new Date().toISOString(),
+        lank_manniska: "https://www.riksbank.se/sv/statistik/sok-rantor--valutakurser/",
+        lank_maskin: "https://api.riksbank.se/swea/v1/observations/SECBREFEFF/latest",
+        licens: "CC0",
+        attribution: null,
+        harledd: false,
+        harledd_av: [],
+      },
+      {
+        id: "F2",
+        etikett: "Riksbanken: Policy rate (SECBREPOEFF)",
+        myndighet: "Riksbanken",
+        dataset: "SECBREPOEFF",
+        period: "2025-05-08",
+        dimensioner: {},
+        hamtad: new Date().toISOString(),
+        lank_manniska: "https://www.riksbank.se/sv/statistik/sok-rantor--valutakurser/",
+        lank_maskin: "https://api.riksbank.se/swea/v1/observations/SECBREPOEFF/latest",
+        licens: "CC0",
+        attribution: null,
+        harledd: false,
+        harledd_av: [],
+      },
+    ] } },
+    { event: "klart", data: {} },
+  ],
+
+  beraknad: [
+    { event: "stycke", data: { text: "KPI ökade med 0,3 procentenheter från juni till juli 2026.", kallor: ["F1", "F2", "F3"] } },
+    { event: "kallor", data: { kallor: [
+      {
+        id: "F1",
+        etikett: "SCB: KPI fastprisindex, juni 2026",
+        myndighet: "SCB",
+        dataset: "KPI",
+        period: "2026M06",
+        dimensioner: { tabell: "KPI", serie: "KPI fastprisindex" },
+        hamtad: new Date().toISOString(),
+        lank_manniska: "https://www.scb.se/hitta-statistik/statistik-efter-amne/priser-och-konsumtion/konsumentprisindex/",
+        lank_maskin: "https://api.scb.se/OV0104/v1/doris/sv/ssd/START/PR/PR0101/PR0101A/KPIArbTab",
+        licens: "CC0",
+        attribution: null,
+        harledd: false,
+        harledd_av: [],
+      },
+      {
+        id: "F2",
+        etikett: "SCB: KPI fastprisindex, juli 2026",
+        myndighet: "SCB",
+        dataset: "KPI",
+        period: "2026M07",
+        dimensioner: { tabell: "KPI", serie: "KPI fastprisindex" },
+        hamtad: new Date().toISOString(),
+        lank_manniska: "https://www.scb.se/hitta-statistik/statistik-efter-amne/priser-och-konsumtion/konsumentprisindex/",
+        lank_maskin: "https://api.scb.se/OV0104/v1/doris/sv/ssd/START/PR/PR0101/PR0101A/KPIArbTab",
+        licens: "CC0",
+        attribution: null,
+        harledd: false,
+        harledd_av: [],
+      },
+      {
+        id: "F3",
+        etikett: "Differens KPI juni→juli 2026",
+        myndighet: "SCB",
+        dataset: null,
+        period: "2026M06–2026M07",
+        dimensioner: {},
+        hamtad: new Date().toISOString(),
+        lank_manniska: "https://www.scb.se/hitta-statistik/statistik-efter-amne/priser-och-konsumtion/konsumentprisindex/",
+        lank_maskin: "berakningar://differens?F1=F1&F2=F2",
+        licens: "CC0",
+        attribution: null,
+        harledd: true,
+        harledd_av: ["F1", "F2"],
+      },
+    ] } },
+    { event: "klart", data: {} },
+  ],
+
+  ccby: [
+    { event: "stycke", data: { text: "Kolada-indikatorn N00945 visar antal invånare per kommunanställd i Malmö: 14,8.", kallor: ["F1"] } },
+    { event: "kallor", data: { kallor: [
+      {
+        id: "F1",
+        etikett: "Kolada: N00945 — Invånare per kommunanställd, Malmö",
+        myndighet: "Rådet för främjande av kommunala analyser (RKA)",
+        dataset: "N00945",
+        period: "2024",
+        dimensioner: { municipality: "Malmö" },
+        hamtad: new Date().toISOString(),
+        lank_manniska: "https://www.kolada.se/",
+        lank_maskin: "https://api.kolada.se/v2/data/kpi/N00945/municipality/1280/year/2024",
+        licens: "CC-BY",
+        attribution: "Källa: Rådet för främjande av kommunala analyser (RKA), Kolada",
+        harledd: false,
+        harledd_av: [],
+      },
+    ] } },
+    { event: "attribution", data: { attribution: ["Rådet för främjande av kommunala analyser (RKA), Kolada. Licens: CC-BY."] } },
+    { event: "klart", data: {} },
+  ],
+
+  inget_svar: [
+    { event: "svar", data: { kan_besvaras: false, forbehall: "Det hittade jag inte i källorna." } },
+    { event: "klart", data: {} },
+  ],
+
+  fel: [
+    { event: "fel", data: { meddelande: "Ett tekniskt fel inträffade. Försök igen." } },
+    { event: "klart", data: {} },
+  ],
+
+  forbehall: [
+    { event: "stycke", data: { text: "Riksbankens referensränta är 2,0 procent.", kallor: ["F1"] } },
+    { event: "kallor", data: { kallor: [
+      {
+        id: "F1",
+        etikett: "Riksbanken: Reference rate (SECBREFEFF)",
+        myndighet: "Riksbanken",
+        dataset: "SECBREFEFF",
+        period: "2025-05-08",
+        dimensioner: {},
+        hamtad: new Date().toISOString(),
+        lank_manniska: "https://www.riksbank.se/sv/statistik/",
+        lank_maskin: "https://api.riksbank.se/swea/v1/observations/SECBREFEFF/latest",
+        licens: "CC0",
+        attribution: null,
+        harledd: false,
+        harledd_av: [],
+      },
+    ] } },
+    { event: "forbehall", data: { forbehall: "Observera att referensräntan kan ändras efter att denna data hämtades. Kontrollera Riksbankens webbplats för det senaste beslutet." } },
+    { event: "klart", data: {} },
+  ],
+};
+
+// Intercepta fetch
+const origFetch = window.fetch.bind(window);
+window.fetch = async function(url, opts) {
+  if (mockAktiv && typeof url === "string" && url.includes("/fraga")) {
+    const handelser = SCENARIER[aktivtScenario] || SCENARIER.referensranta;
+
+    // Bygg en ReadableStream som skickar SSE-events med fördröjning
+    const stream = new ReadableStream({
+      async start(controller) {
+        const enc = new TextEncoder();
+        await new Promise(r => setTimeout(r, 400)); // simulera nätverksfördröjning
+        for (const h of handelser) {
+          const rad = `event: ${h.event}\ndata: ${JSON.stringify(h.data)}\n\n`;
+          controller.enqueue(enc.encode(rad));
+          await new Promise(r => setTimeout(r, h.event === "stycke" ? 600 : 200));
+        }
+        controller.close();
+      },
+    });
+
+    return new Response(stream, {
+      status: 200,
+      headers: { "Content-Type": "text/event-stream" },
+    });
+  }
+  return origFetch(url, opts);
+};
+</script>
+
+<!-- Widgeten -->
+<script src="widget.js"></script>
+
+</body>
+</html>
