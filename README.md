@@ -26,11 +26,11 @@ varje uppgift med fotnot och klickbar källänk.
 | 15 | Drift och mätning (`matning.py`, `nattlig_ingest.py`, `GET /matning`) | ✅ |
 | 16A | Lagkorpus — de fem huvudlagarna | ✅ |
 | 16B | Lagkorpus — resterande 57 författningar | ✅ |
-| 17 | Skatteverkets statistik — elva RowStore-datamängder + färskhet i `period` | ⬜ |
+| 17 | Skatteverkets statistik — elva RowStore-datamängder + färskhet i `dimensioner`/`period` | ✅ |
 | 18 | Skatteverkets rättsliga regelfiler | ⛔ avslutat — partner-API, ingen åtkomst |
 | 19 | Nattlig färskhetskontroll av lagkorpuset | ⬜ föreslaget |
 
-**Hela testsviten: 213 passed**, `ruff check .` rent (2026-08-14).
+**Hela testsviten: 219 passed**, `ruff check .` rent (2026-08-14).
 
 Lagindexet i `data/index.sqlite`: 62 dokument, 9 792 chunkar, 9 792 embeddings.
 Katalogindexet: 23 289 datamängder, 32 518 distributioner.

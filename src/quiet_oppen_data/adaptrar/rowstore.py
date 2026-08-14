@@ -243,7 +243,18 @@ class RowStoreAdapter:
 
         # Kolumner som fungerar som period. RowStore-datamängderna hos
         # Skatteverket bär årtalet i "år"; andra instanser kan använda andra namn.
-        _PERIODKOLUMNER = ("år", "ar", "period", "inkomstår", "inkomstar", "ankomstår")
+        # De elva statistikdatamängderna från steg 17 bär i stället period/år
+        # i myndighetsspecifika kolumnnamn (redovisningsperiod, besoksar, …).
+        _PERIODKOLUMNER = (
+            "år", "ar", "period", "redovisningsperiod", "inkomstår", "inkomstar",
+            "ankomstår", "ankomstar", "besoksar", "verksamhetsar", "redovisningsar",
+        )
+
+        # Kolumner som bär radens egen uppdateringsuppgift (steg 17). Till
+        # skillnad från de åtta ursprungliga datamängderna bär statistik-
+        # datamängderna en `uppdateringsdatum`-kolumn i varje rad — den är då
+        # AVLÄST, inte påstådd, och ska in i dimensioner precis som period.
+        _UPPDATERINGSKOLUMNER = ("uppdateringsdatum", "uppdaterad")
 
         utkast: list[Faktautkast] = []
         for rad in results:
@@ -254,13 +265,30 @@ class RowStoreAdapter:
                 (str(rad[k]) for k in _PERIODKOLUMNER if rad.get(k) not in (None, "")),
                 None,
             )
-            # Periodkolumnen upprepas inte i värdet — den bärs av period-fältet.
+            uppdaterad_rad = next(
+                (str(rad[k]) for k in _UPPDATERINGSKOLUMNER if rad.get(k) not in (None, "")),
+                None,
+            )
+            # Period- och uppdateringskolumnen upprepas inte i värdet — de bärs
+            # av period- respektive dimensioner-fältet.
             varde = "; ".join(
                 f"{k}: {v}" for k, v in rad.items()
-                if v is not None and not (period and k in _PERIODKOLUMNER)
+                if v is not None
+                and not (period and k in _PERIODKOLUMNER)
+                and not (uppdaterad_rad and k in _UPPDATERINGSKOLUMNER)
             )
             if not varde:
                 continue
+
+            dimensioner = dict(filter_dict)
+            if uppdaterad_rad:
+                dimensioner["uppdateringsdatum"] = uppdaterad_rad
+            elif katalogpost.get("uppdaterad"):
+                # Ingen uppdateringsdatum i den här raden. Datumet nedan är
+                # källregistrets PÅSTÅDDA uppgift (Skatteverkets egen
+                # publiceringsuppgift), inte avläst ur anropet — nyckelnamnet
+                # gör den skillnaden synlig i svaret (ARKITEKTUR.md §5 regel 8).
+                dimensioner["uppdaterad_enligt_kallregister"] = katalogpost["uppdaterad"]
 
             if datasetnamn:
                 etikett = f"{myndighet}: {datasetnamn}"
@@ -277,7 +305,7 @@ class RowStoreAdapter:
                 licens=self._kalla.licens,
                 attribution=self._kalla.attribution,
                 dataset=uuid,
-                dimensioner=filter_dict,
+                dimensioner=dimensioner,
                 lank_manniska=manniska,
                 lank_maskin=url,
             ))

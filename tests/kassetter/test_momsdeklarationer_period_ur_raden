@@ -1,0 +1,74 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - skatteverket.entryscape.net
+      user-agent:
+      - python-httpx/0.28.1
+    method: GET
+    uri: https://skatteverket.entryscape.net/rowstore/dataset/f2f815f5-8d12-4d22-9a95-b6fda1a58e42/json?_limit=1&_offset=0
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA11PS07DQAy9SjULVkmTmTZREwkhxJodO4QqwzglJDMTxk6hqnqbcpJeDLdApbKz
+        38fPb6s8frKq1SvzQHWWUQfMuMbYIU/Rc9zQCww49chZDB/EIWJmgYEEaEyz0EVTpAurTTq3xqQV
+        VEX6XDYWNBQLnJvsjYK/WYamEce1vlr2rWtlUImKSGPPd2H08oEui3lZJupHqOo8USelMIl6HzFu
+        HlqHss2qPyep+nGrBoxtsFLB5HqWH+9CXDrwgtwfvjxYQcZhkJ9F6Fckw+hOcjNLdZ7qSgROWgt2
+        6xn6icWuhwjcBo9RyFUU/8l8loAnPuz73sIx7wgJVRWlKWUnFi9x20miO1tccPT/cus7QRni7/sX
+        YbQ+7KOVyiqfEKvd0+4bsRQPXa4BAAA=
+    headers:
+      accept-ranges:
+      - bytes
+      access-control-allow-origin:
+      - '*'
+      cache-control:
+      - max-age=1800
+      connection:
+      - Keep-Alive
+      content-encoding:
+      - gzip
+      content-length:
+      - '308'
+      content-security-policy:
+      - 'upgrade-insecure-requests; base-uri ''self''; default-src ''self'' https://*.entryscape.com
+        ; connect-src ''self'' https://*.entryscape.com https://admin.dataportal.se
+        https://editera.dataportal.se ; script-src ''self'' ''unsafe-inline'' https://*.entryscape.com
+        ; frame-src ''self'' ; frame-ancestors ''self'' https://*.entryscape.com ;
+        style-src ''self'' ''unsafe-inline'' https://*.entryscape.com ; font-src ''self''
+        data: https://*.entryscape.com ; img-src ''self'' data: https: ; object-src
+        ''self'' ; worker-src blob: ; child-src blob: ; form-action ''self'';'
+      content-type:
+      - application/json;charset=utf-8
+      date:
+      - Fri, 14 Aug 2026 11:57:19 GMT
+      expires:
+      - Fri, 14 Aug 2026 12:27:18 GMT
+      keep-alive:
+      - timeout=2, max=500
+      referrer-policy:
+      - strict-origin-when-cross-origin
+      report-to:
+      - '{"group":"csp-endpoint","max_age":1800,"endpoints":[{"url":"https://security.entryscape.com/csp-report/"}],"include_subdomains":true}'
+      server:
+      - RowStore/1.7.0
+      strict-transport-security:
+      - max-age=31536000
+      vary:
+      - Accept-Charset,Accept-Encoding,Accept-Language,Accept
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-xss-protection:
+      - '0'
+    status:
+      code: 200
+      message: OK
+version: 1

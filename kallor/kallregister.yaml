@@ -346,12 +346,17 @@ kallor:
     # 2026-08-14 och innehåller bara datamängder som INTE kräver partneravtal.
     # Kolumnnamnen är avlästa ur faktiska svar, inte gissade.
     #
-    # FÄLTET `uppdaterad`: RowStore-svaret bär INGET uppdateringsdatum — topp-
-    # nycklarna är bara limit/next/offset/queryTime/resultCount. Färskheten går
-    # alltså inte att läsa ur anropet, vilket §5 regel 8 kräver att den ska
-    # kunna. Datumen nedan är Skatteverkets egen publiceringsuppgift. De är
-    # därmed en påstådd färskhet, inte en avläst — och måste märkas som sådan
-    # när steg 17 för in dem i Faktapost.period.
+    # FÄLTET `uppdaterad`: för de åtta första datamängderna nedan bär RowStore-
+    # svaret INGET uppdateringsdatum — toppnycklarna är bara
+    # limit/next/offset/queryTime/resultCount. Färskheten går alltså inte att
+    # läsa ur anropet för dem, vilket §5 regel 8 kräver att den ska kunna.
+    # Datumen är där Skatteverkets egen publiceringsuppgift — en PÅSTÅDD
+    # färskhet, inte en avläst, och adaptern måste märka den som sådan.
+    #
+    # Steg 17 (2026-08-14): elva statistikdatamängder tillagda nedan. Till
+    # skillnad från de åtta ovan bär VARJE RAD i dessa sin egen
+    # `uppdateringsdatum`-kolumn — verifierat live per datamängd. Adaptern
+    # läser den ur raden och den är därmed avläst, inte påstådd.
     dataset:
       - uuid: c67b320b-ffee-4876-b073-dd9236cd2a99
         namn: Skattesatser per kommun
@@ -429,10 +434,135 @@ kallor:
         rader: 4088
         uppdaterad: "2025-12-12"
 
+      # ------------------------------------------------------------------
+      # Steg 17 — statistikdatamängder, utgivare 2021005448. Alla elva
+      # anropade live 2026-08-14, samtliga 200 OK. `uppdaterad` nedan är den
+      # `uppdateringsdatum` som förekom i det raden vi läste vid kontrollen —
+      # ett exempel, inte ett tak; olika rader i samma datamängd kan bära
+      # olika uppdateringsdatum eftersom statistiken publiceras löpande.
+      # ------------------------------------------------------------------
+      - uuid: f2f815f5-8d12-4d22-9a95-b6fda1a58e42
+        namn: Antal momsdeklarationer
+        beskrivning: >
+          Antal inlämnade momsdeklarationer per period, inkomstår och
+          gruppering (t.ex. antal anställda). Månadsperiod i kolumnen "period"
+          (format ÅÅÅÅMM).
+        kolumner: [period, ar_man, uppdateringsdatum, matt, gruppering, antal,
+                   statistikterm, inkomstar, grupperingsvärde]
+        rader: 165466
+        uppdaterad: "2023-10-19"
+
+      - uuid: 7691bcf3-79be-46fb-a252-8442a8f6415e
+        namn: Antal inkomstdeklarationer
+        beskrivning: >
+          Antal inlämnade inkomstdeklarationer (typ 1) per inkomstår och
+          gruppering.
+        kolumner: [uppdateringsdatum, matt, gruppering, antal, statistikterm,
+                   inkomstar, grupperingsvärde]
+        rader: 56857
+        uppdaterad: "2023-10-06"
+
+      - uuid: 61a28d49-38ca-4686-9a6a-6a9ae4e66d1c
+        namn: Antal anmälan för företagsregistrering
+        beskrivning: >
+          Antal anmälningar för företagsregistrering per period (ÅÅÅÅMM),
+          ankomstår, ärendetyp och gruppering.
+        kolumner: [period, ankomstar, uppdateringsdatum, matt, gruppering,
+                   antal, statistikterm, grupperingsvärde, ar_manad, arendetyp]
+        rader: 170054
+        uppdaterad: "2025-12-05"
+
+      - uuid: a1866379-6bff-4010-b482-37ce112eeebd
+        namn: Antal arbetsgivardeklarationer
+        beskrivning: >
+          Antal inlämnade arbetsgivardeklarationer per period (ÅÅÅÅMM),
+          inkomstår och gruppering.
+        kolumner: [period, uppdateringsdatum, matt, gruppering, antal,
+                   deklaration, statistikterm, inkomstar, grupperingsvärde,
+                   ar_manad]
+        rader: 359594
+        uppdaterad: "2022-11-18"
+
+      - uuid: 56173b69-5c31-4c32-92b1-8560ee5f492d
+        namn: Antal kassaregisterbesök
+        beskrivning: >
+          Antal kontrollbesök avseende kassaregister per besöksår och
+          gruppering.
+        kolumner: [uppdateringsdatum, matt, gruppering, antal, statistikterm,
+                   grupperingsvärde, besoksar]
+        rader: 3096
+        uppdaterad: "2025-01-22"
+
+      - uuid: a57c7163-aef9-4716-91e3-df126db01285
+        namn: Antal personalliggarbesök
+        beskrivning: >
+          Antal kontrollbesök avseende personalliggare per verksamhetsår och
+          gruppering.
+        kolumner: [uppdateringsdatum, matt, gruppering, antal, statistikterm,
+                   grupperingsvärde, verksamhetsar]
+        rader: 3104
+        uppdaterad: "2025-05-08"
+
+      - uuid: f57fb128-34ac-4f7e-b37f-f4e43f31a4b7
+        namn: Antal jämkningar av A-skatt
+        beskrivning: >
+          Antal jämkningsbeslut (preliminär A-skatt) inför ett nytt inkomstår,
+          per inkomstår, jämkningsresultat och gruppering.
+        kolumner: [inlamningsmanad, jamkningsresultat, uppdateringsdatum,
+                   gruppering, antal, statistikterm, inkomstar,
+                   grupperingsvärde, ar_manad]
+        rader: 250860
+        uppdaterad: "2022-05-04"
+
+      - uuid: c2f577e7-f4d7-4e41-a6f0-d3364f32e3b7
+        namn: Antal periodiska sammanställningar
+        beskrivning: >
+          Antal periodiska sammanställningar för moms (EU-handel) per period
+          (ÅÅÅÅMM), inkomstår och gruppering.
+        kolumner: [period, uppdateringsdatum, matt, gruppering, antal,
+                   statistikterm, inkomstar, grupperingsvärde, ar_manad]
+        rader: 156448
+        uppdaterad: "2023-10-19"
+
+      - uuid: 61a59c73-c31f-4c1e-a1d6-23fb018ffcd3
+        namn: Antal kontrolluppgifter
+        beskrivning: >
+          Antal inlämnade kontrolluppgifter (t.ex. KU10 tjänsteinkomst) per
+          inkomstår, lämnare/mottagare och gruppering.
+        kolumner: [uppdateringsdatum, gruppering, antal, statistikterm,
+                   inkomstar, grupperingsvärde, lamnare_mottagare]
+        rader: 292097
+        uppdaterad: "2022-11-18"
+
+      - uuid: 8546f1b7-7024-48ff-80e8-eed278b93eed
+        namn: Antal punktskattedeklarationer
+        beskrivning: >
+          Antal inlämnade punktskattedeklarationer (t.ex. alkoholskatt) per
+          redovisningsår, redovisningsperiod (ÅÅÅÅMM) och gruppering.
+        kolumner: [redovisningsar, uppdateringsdatum, matt, gruppering, antal,
+                   statistikterm, grupperingsvärde, ar_manad,
+                   redovisningsperiod]
+        rader: 452991
+        uppdaterad: "2026-05-12"
+
+      - uuid: 8ef49703-f7c2-4055-8903-a3dab876b2e7
+        namn: Antal bilagor till inkomstdeklarationer
+        beskrivning: >
+          Antal inlämnade bilagor (t.ex. NE — inkomst av näringsverksamhet)
+          till inkomstdeklarationer, per inkomstår och gruppering.
+        kolumner: [uppdateringsdatum, matt, gruppering, antal, statistikterm,
+                   inkomstar, grupperingsvärde]
+        rader: 212852
+        uppdaterad: "2023-10-06"
+
     tacker:
       - skattesatser per kommun och församling
       - skattetabeller (månadslön, dagpenning)
       - traktamenten och kostförmån
+      - >
+        statistik: moms-, inkomst-, arbetsgivar- och punktskattedeklarationer,
+        företagsregistreringar, kassaregister- och personalliggarkontroller,
+        A-skattejämkningar, kontrolluppgifter
     varning: >
       RowStore-filter är SKIFTLÄGESKÄNSLIGA. kommun=MALMÖ ger 78 rader,
       kommun=Malmö ger noll. Ett filter som inte träffar ser ut som

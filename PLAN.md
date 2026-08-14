@@ -956,7 +956,7 @@ parsade, indexerade och vektoriserade utan fel:
 
 ---
 
-## Steg 17 — Utöka Skatteverkets statistik
+## Steg 17 — Utöka Skatteverkets statistik ✅ Godkänt 2026-08-14
 
 **Bakgrund.** `skatteverket_rowstore` finns redan i registret som verifierad och
 aktiverad, men med **ett enda** verifierat UUID. Skatteverket publicerar
@@ -1035,6 +1035,34 @@ osanning §5 regel 8 finns för att förhindra.
 - Frågan *"hur många momsdeklarationer lämnas per år?"* ger en Faktapost med
   källänk, och svaret visar vilket år som avses.
 - `python -m ruff check .` och `python -m pytest -q` är rena.
+
+### Utfall
+
+Alla elva UUID:n verifierade live 2026-08-14, samtliga 200 OK med rader
+(3 096 – 452 991 rader beroende på datamängd). Tillagda i
+`kallor/kallregister.yaml` under `skatteverket_rowstore.dataset`.
+
+**Fyndet som ändrade planen:** till skillnad från de åtta ursprungliga
+datamängderna bär *varje rad* i alla elva statistikdatamängder sin egen
+`uppdateringsdatum`-kolumn. Rättelsen från 2026-08-14 (att RowStore-svaret
+"inte bär något uppdateringsdatum alls") gäller alltså inte dessa elva —
+den gällde bara de åtta som redan fanns i registret.
+
+`adaptrar/rowstore.py` uppdaterad:
+- `_PERIODKOLUMNER` utökad med de nya datamängdernas periodkolumner
+  (`redovisningsperiod`, `besoksar`, `verksamhetsar`, `redovisningsar`,
+  `ankomstar`).
+- Ny `_UPPDATERINGSKOLUMNER` läser `uppdateringsdatum` (eller `uppdaterad`) ur
+  raden och lägger den i `Faktautkast.dimensioner["uppdateringsdatum"]` —
+  avläst, inte påstådd.
+- Om en rad saknar egen uppdateringskolumn faller adaptern tillbaka på
+  registrets `uppdaterad`-fält, men under nyckeln
+  `dimensioner["uppdaterad_enligt_kallregister"]` — namnet gör skillnaden
+  mellan avläst och påstådd synlig i svaret (§5 regel 8).
+
+Nya tester: `tests/test_steg17_skatteverket_statistik.py` (6 test, kassetter
+inspelade mot skarpa API:et). `python -m ruff check .` och
+`python -m pytest -q` båda rena (219 passed).
 
 ---
 
