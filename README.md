@@ -26,8 +26,21 @@ varje uppgift med fotnot och klickbar källänk.
 | 15 | Drift och mätning (`matning.py`, `nattlig_ingest.py`, `GET /matning`) | ✅ |
 | 16A | Lagkorpus — de fem huvudlagarna | ✅ |
 | 16B | Lagkorpus — resterande 57 författningar | ✅ |
+| 17 | Skatteverkets statistik — elva RowStore-datamängder + färskhet i `period` | ⬜ |
+| 18 | Verifieringsgrind: Skatteverkets rättsliga regelfiler (utredning) | ⬜ |
+| 19 | Nattlig färskhetskontroll av lagkorpuset | ⬜ föreslaget |
 
-**Hela testsviten: 213 passed** (2026-08-14).
+**Hela testsviten: 213 passed**, `ruff check .` rent (2026-08-14).
+
+Lagindexet i `data/index.sqlite`: 62 dokument, 9 792 chunkar, 9 792 embeddings.
+Katalogindexet: 23 289 datamängder, 32 518 distributioner.
+
+### Känd lucka
+
+`ARKITEKTUR.md §5 regel 8` kräver att lagkopians färskhet kontrolleras nattligt genom
+att jämföra `systemdatum`. Konsolideringspunkten bärs korrekt ut i svaren, men
+`nattlig_ingest.py` rör inte lagkorpuset — ingesten är manuell, och en ändrad paragraf
+upptäcks först när den körs. Steg 19 finns för att sluta det.
 
 
 
@@ -36,8 +49,9 @@ varje uppgift med fotnot och klickbar källänk.
 | Fil | Vad den är | Läs den om du… |
 |---|---|---|
 | `ARKITEKTUR.md` | Systemets design och de invarianter som gör citeringskravet strukturellt i stället för prompt-baserat | …ska förstå *varför* |
-| `PLAN.md` | 18 steg med acceptanskriterier, avsedda för en implementerande kod-AI | …ska bygga |
+| `PLAN.md` | Stegen med acceptanskriterier, avsedda för en implementerande kod-AI | …ska bygga |
 | `kallor/kallregister.yaml` | Systemets enda sanning om vilka källor som finns, hur de nås, och vilka som är verifierade | …ska röra en källa |
+| `lagar/lagregister.yaml` | De 62 författningar som speglas i lagindexet | …ska lägga till en lag |
 
 ## Kort om designen
 
@@ -55,7 +69,8 @@ veta något den inte fått. Citeringskravet är arkitektur, inte instruktion.
 ```bash
 cp .env.example .env          # fyll i ANTHROPIC_API_KEY och MATNING_NYCKEL
 pip install -e ".[dev]"
-python -m quiet_oppen_data.index.ingest   # engångskörning, ~2 min
+python -m quiet_oppen_data.index.ingest       # katalogindex, ~2 min
+python -m quiet_oppen_data.index.lag_ingest   # lagkorpus, 62 författningar
 uvicorn quiet_oppen_data.api:app --reload
 ```
 
@@ -71,6 +86,9 @@ stället för att ligga öppen. Skicka nyckeln som headern `x-matning-nyckel`.
 # cron: varje dag kl 03:00
 0 3 * * * cd /app && python -m quiet_oppen_data.index.nattlig_ingest >> logs/ingest.log 2>&1
 ```
+
+Den nattliga körningen omfattar **bara katalogindexet**. Lagkorpuset uppdateras genom
+`lag_ingest` för hand tills steg 19 är byggt — se Känd lucka ovan.
 
 ## Uteslutna källor
 

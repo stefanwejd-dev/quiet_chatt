@@ -1083,6 +1083,44 @@ skatteuppgifter i en fritextsökbar bot vore fel även med avtal på plats — o
 
 ---
 
+## Steg 19 — Nattlig färskhetskontroll av lagkorpuset ⬜ FÖRESLAGET, ej godkänt
+
+**Detta steg är inte beställt.** Det ligger här för att en invariant i
+`ARKITEKTUR.md` är skriven men inte sluten, och en sådan lucka ska stå skriven i
+planen i stället för att bara finnas i koden.
+
+**Bakgrund.** §5 regel 8 säger att lagkopians färskhet *"kontrolleras nattligt genom
+att jämföra `systemdatum`"*. Efter steg 16B stämmer halva meningen:
+`lag_ingest` läser `systemdatum` ur dokumenthuvudet och bär konsolideringspunkten hela
+vägen ut i `Faktapost.period`. Men `nattlig_ingest.py` uppdaterar bara katalogindexet
+och rör inte lagkorpuset. Ingen jämförelse sker mellan körningarna, och en ändrad
+paragraf upptäcks först när någon kör ingesten för hand.
+
+Konsekvensen är precis den felmod regel 8 finns för: svaret ser lika trovärdigt ut
+med en inaktuell lydelse som med en aktuell, eftersom `period` troget rapporterar den
+konsolideringspunkt kopian hade när den togs.
+
+**Gör:**
+1. Låt den nattliga körningen hämta *dokumenthuvudet* för varje författning i
+   `lagar/lagregister.yaml` och jämföra `systemdatum` mot det som ligger i indexet.
+   Huvudet, inte hela texten — 62 lätta anrop, ingen omindexering i onödan.
+2. Bara författningar vars `systemdatum` ändrats ingestas om. Diffa aldrig text.
+3. Exponera lagkorpusets ålder i `GET /matning`: dygn sedan senaste lyckade ingest
+   per författning, och en lista över dem som ligger efter.
+4. Ett misslyckat huvudanrop får inte tömma eller ogiltigförklara den befintliga
+   kopian. Gammal text med korrekt redovisad konsolideringspunkt är bättre än ingen
+   text — men åldern ska synas i `/matning`.
+
+**Acceptans:**
+- `nattlig_ingest` uppdaterar bara de författningar vars `systemdatum` ändrats, och
+  loggar hur många som kontrollerades respektive omindexerades.
+- `GET /matning` visar lagkorpusets ålder per författning.
+- Ett simulerat fel mot Riksdagen lämnar indexet orört och körningen avslutas med
+  fel-status, inte tyst.
+- `python -m ruff check .` och `python -m pytest -q` är rena.
+
+---
+
 ## Granskning av steg 14–15, 2026-08-14
 
 Frontend följer alla tre reglerna ur granskningen av steg 10–13 korrekt:
