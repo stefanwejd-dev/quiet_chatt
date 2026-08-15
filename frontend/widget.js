@@ -27,56 +27,53 @@
   // -------------------------------------------------------------------------
 
   const CSS = `
-:root {
-  --qw-font: system-ui, -apple-system, "Segoe UI", sans-serif;
+#quiet-widget {
+  /* Ärver quiet.nu:s egna design-tokens (tokens.css) när widgeten körs på
+     sajten — inklusive ljust/mörkt tema, som redan hanteras där. Reservvärden
+     efter kommatecknet gäller i fristående bruk (t.ex. test.html) och speglar
+     samma paletts ljusa läge. Se motsvarande mörka reservvärden nedan. */
+  --qw-font:        var(--font-brod, ui-sans-serif, system-ui, sans-serif);
+  --qw-font-rubrik: var(--font-rubrik, var(--qw-font));
   --qw-mono: ui-monospace, "SF Mono", "Fira Code", monospace;
 
-  --qw-radius: 10px;
-  --qw-radius-sm: 6px;
-  --qw-gap: 16px;
-  --qw-gap-sm: 10px;
+  --qw-radius:    20px;
+  --qw-radius-sm: 12px;
+  --qw-gap:       20px;
+  --qw-gap-sm:    12px;
 
-  /* Ljust tema */
-  --qw-bg:         #f7f7f5;
-  --qw-surface:    #ffffff;
-  --qw-border:     #e4e2dc;
-  --qw-shadow:     0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.05);
-  --qw-text:       #1a1916;
-  --qw-text-muted: #706e67;
-  --qw-accent:     #1a6c4e;
-  --qw-accent-bg:  #eaf5ef;
-  --qw-fn-bg:      #f0ede8;
-  --qw-input-bg:   #ffffff;
-  --qw-note-bg:    #fdf8ec;
-  --qw-note-border:#e8d9a0;
-  --qw-note-text:  #6b5c20;
-  --qw-error-bg:   #fdf2f2;
-  --qw-error-text: #7a2020;
-  --qw-derived-bg: #f3f0fc;
-  --qw-derived-border: #c9bef0;
-  --qw-derived-text: #4a3880;
+  --qw-bg:         var(--cream, #fcf4eb);
+  --qw-surface:    var(--paper, #fffbf7);
+  --qw-border:     var(--line, #dfd1c7);
+  --qw-shadow:     0 1px 2px rgba(41,28,21,.04), 0 10px 28px rgba(41,28,21,.07);
+  --qw-text:       var(--ink, #291c15);
+  --qw-text-muted: var(--muted, #72665e);
+  --qw-accent:     var(--terra-dark, #913814);
+  --qw-accent-soft:var(--terra, #b95c3a);
+  --qw-on-accent:  var(--cream, #fffaf5);
+  --qw-accent-bg:  color-mix(in srgb, var(--qw-accent-soft) 12%, var(--qw-surface));
+  --qw-fn-bg:      color-mix(in srgb, var(--qw-accent-soft) 10%, var(--qw-surface));
+  --qw-input-bg:   var(--qw-surface);
+  --qw-note-bg:    color-mix(in srgb, #c9962b 14%, var(--qw-surface));
+  --qw-note-border:color-mix(in srgb, #c9962b 40%, var(--qw-border));
+  --qw-note-text:  #8a6417;
+  --qw-error-bg:   color-mix(in srgb, #b3402c 10%, var(--qw-surface));
+  --qw-error-border: color-mix(in srgb, #b3402c 35%, var(--qw-border));
+  --qw-error-text: #8a2f1f;
+  --qw-derived-border: color-mix(in srgb, var(--qw-accent-soft) 55%, var(--qw-border));
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --qw-bg:         #18181b;
-    --qw-surface:    #222226;
-    --qw-border:     #333339;
-    --qw-shadow:     0 1px 3px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.2);
-    --qw-text:       #e8e6e1;
-    --qw-text-muted: #9b9890;
-    --qw-accent:     #4aab7e;
-    --qw-accent-bg:  #1a2e22;
-    --qw-fn-bg:      #2a2a30;
-    --qw-input-bg:   #2a2a30;
-    --qw-note-bg:    #26240f;
-    --qw-note-border:#5c4f18;
-    --qw-note-text:  #c9b05a;
-    --qw-error-bg:   #260f0f;
-    --qw-error-text: #e08080;
-    --qw-derived-bg: #1e1a2e;
-    --qw-derived-border: #4a3880;
-    --qw-derived-text: #b0a0e0;
+  #quiet-widget {
+    --qw-bg:         var(--cream, #1b120d);
+    --qw-surface:    var(--paper, #241811);
+    --qw-border:     var(--line, #3d2e25);
+    --qw-shadow:     0 1px 2px rgba(0,0,0,.3), 0 10px 28px rgba(0,0,0,.25);
+    --qw-text:       var(--ink, #fcf4eb);
+    --qw-text-muted: var(--muted, #b3a49a);
+    --qw-accent:     var(--terra-dark, #d97a52);
+    --qw-on-accent:  #1b120d;
+    --qw-note-text:  #d9b871;
+    --qw-error-text: #e08d7a;
   }
 }
 
@@ -87,36 +84,44 @@
 }
 
 #quiet-widget {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qw-gap);
   font-family: var(--qw-font);
   font-size: 15px;
   line-height: 1.6;
   color: var(--qw-text);
-  background: var(--qw-bg);
-  border: 1px solid var(--qw-border);
-  border-radius: var(--qw-radius);
-  overflow: hidden;
   max-width: 760px;
   width: 100%;
 }
 
-/* ---- Formulär ---- */
+/* ---- Formulär: rundad "pill", i stil med moderna AI-chattar ---- */
 .qw-form {
   display: flex;
-  gap: var(--qw-gap-sm);
-  padding: var(--qw-gap);
-  background: var(--qw-surface);
-  border-bottom: 1px solid var(--qw-border);
   align-items: flex-end;
+  gap: 4px;
+  padding: 8px 8px 8px 20px;
+  background: var(--qw-surface);
+  border: 1px solid var(--qw-border);
+  border-radius: 26px;
+  box-shadow: var(--qw-shadow);
+  transition: border-color .15s, box-shadow .15s;
 }
 
+.qw-form:focus-within {
+  border-color: var(--qw-accent-soft);
+}
+
+/* Synligt för skärmläsare, osynligt visuellt — placeholdern bär den visuella
+   ledtråden, precis som i Claude/ChatGPT/Gemini. */
 .qw-label {
-  display: block;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  color: var(--qw-text-muted);
-  margin-bottom: 6px;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .qw-input-wrap {
@@ -125,88 +130,87 @@
 }
 
 .qw-input {
+  display: block;
   width: 100%;
-  padding: 10px 14px;
+  padding: 11px 4px;
   font-family: var(--qw-font);
   font-size: 15px;
   line-height: 1.4;
-  background: var(--qw-input-bg);
-  border: 1px solid var(--qw-border);
-  border-radius: var(--qw-radius-sm);
+  background: transparent;
+  border: none;
   color: var(--qw-text);
   resize: none;
-  min-height: 44px;
+  min-height: 24px;
   max-height: 140px;
   outline: none;
-  transition: border-color .15s, box-shadow .15s;
   overflow-y: auto;
 }
 
-.qw-input:focus {
-  border-color: var(--qw-accent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--qw-accent) 15%, transparent);
+.qw-input::placeholder {
+  color: var(--qw-text-muted);
 }
 
 .qw-submit {
   flex-shrink: 0;
-  padding: 10px 18px;
-  height: 44px;
-  font-family: var(--qw-font);
-  font-size: 14px;
-  font-weight: 600;
-  background: var(--qw-accent);
-  color: #fff;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: var(--qw-accent-soft);
+  color: var(--qw-on-accent);
   border: none;
-  border-radius: var(--qw-radius-sm);
+  border-radius: 50%;
   cursor: pointer;
-  transition: opacity .15s, transform .1s;
-  white-space: nowrap;
+  transition: background .15s, transform .1s;
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
 }
 
-.qw-submit:hover:not(:disabled) { opacity: .88; }
-.qw-submit:active:not(:disabled) { transform: scale(.97); }
-.qw-submit:disabled { opacity: .45; cursor: not-allowed; }
+.qw-submit svg { width: 18px; height: 18px; }
 
-/* ---- Konversationsflöde ---- */
+.qw-submit:hover:not(:disabled) { background: var(--qw-accent); }
+.qw-submit:active:not(:disabled) { transform: scale(.93); }
+.qw-submit:disabled { opacity: .4; cursor: not-allowed; }
+
+/* ---- Konversationsflöde — inga tabellrader, ett tyst samtalsflöde ---- */
 .qw-konversation {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: var(--qw-gap);
 }
 
 .qw-rad {
-  padding: var(--qw-gap) var(--qw-gap);
-  border-bottom: 1px solid var(--qw-border);
+  display: flex;
 }
 
-.qw-rad:last-child {
-  border-bottom: none;
-}
-
-/* Frågans rad */
+/* Frågan: högerjusterad bubbla, som i Claude/ChatGPT/Gemini */
 .qw-rad--fraga {
-  background: var(--qw-surface);
+  justify-content: flex-end;
 }
 
 .qw-fraga-text {
-  font-weight: 600;
-  color: var(--qw-text);
+  max-width: 85%;
+  padding: 10px 16px;
+  background: var(--qw-accent-soft);
+  color: var(--qw-on-accent);
+  border-radius: 18px;
+  border-bottom-right-radius: 4px;
+  line-height: 1.5;
 }
 
-/* Svarets rad */
+/* Svaret: fri löptext utan bubbla/ram, som ett AI-svar */
 .qw-rad--svar {
-  background: var(--qw-bg);
+  display: block;
+  padding-top: 2px;
 }
 
 /* ---- Stycken med fotnoter ---- */
 .qw-stycken {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   margin-bottom: var(--qw-gap-sm);
+  max-width: 66ch;
 }
 
 .qw-stycke {
@@ -218,21 +222,22 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 3px;
   font-size: 10px;
-  font-weight: 700;
-  font-family: var(--qw-mono);
+  font-weight: 600;
+  font-family: var(--qw-font);
   background: var(--qw-fn-bg);
   color: var(--qw-accent);
   border: 1px solid var(--qw-border);
-  border-radius: 4px;
+  border-radius: 999px;
   cursor: pointer;
   vertical-align: super;
   text-decoration: none;
   transition: background .12s, color .12s, transform .1s;
   line-height: 1;
-  margin-left: 1px;
+  margin-left: 2px;
 }
 
 .qw-fn:hover {
@@ -242,9 +247,9 @@
 }
 
 .qw-fn.qw-fn--aktiv {
-  background: var(--qw-accent);
-  color: #fff;
-  border-color: var(--qw-accent);
+  background: var(--qw-accent-soft);
+  color: var(--qw-on-accent);
+  border-color: var(--qw-accent-soft);
 }
 
 /* ---- Loader / cursor ---- */
@@ -252,7 +257,7 @@
   display: inline-block;
   width: 2px;
   height: 1em;
-  background: var(--qw-accent);
+  background: var(--qw-accent-soft);
   border-radius: 1px;
   vertical-align: text-bottom;
   animation: qw-blink 1s step-end infinite;
@@ -267,6 +272,7 @@
 /* ---- Förbehåll (avskilt, aldrig bland stycken) ---- */
 .qw-forbehall {
   margin-top: var(--qw-gap-sm);
+  max-width: 66ch;
   padding: 10px 14px;
   background: var(--qw-note-bg);
   border: 1px solid var(--qw-note-border);
@@ -289,8 +295,10 @@
 }
 
 .qw-fel {
+  max-width: 66ch;
   padding: 10px 14px;
   background: var(--qw-error-bg);
+  border: 1px solid var(--qw-error-border);
   color: var(--qw-error-text);
   border-radius: var(--qw-radius-sm);
   font-size: 13px;
@@ -299,6 +307,7 @@
 /* ---- Attribution (CC-BY) ---- */
 .qw-attribution {
   margin-top: var(--qw-gap-sm);
+  max-width: 66ch;
   font-size: 12px;
   color: var(--qw-text-muted);
   line-height: 1.5;
@@ -319,26 +328,32 @@
   align-items: center;
   gap: 6px;
   margin-top: var(--qw-gap-sm);
-  padding: 6px 12px;
+  padding: 6px 14px 6px 10px;
   font-family: var(--qw-font);
   font-size: 12px;
   font-weight: 600;
   color: var(--qw-text-muted);
   background: var(--qw-fn-bg);
   border: 1px solid var(--qw-border);
-  border-radius: 20px;
+  border-radius: 999px;
   cursor: pointer;
-  transition: background .12s, color .12s;
+  transition: background .12s, color .12s, border-color .12s;
+}
+
+.qw-kallpanel-toggle svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
 }
 
 .qw-kallpanel-toggle:hover {
   background: var(--qw-accent-bg);
   color: var(--qw-accent);
-  border-color: color-mix(in srgb, var(--qw-accent) 30%, transparent);
+  border-color: color-mix(in srgb, var(--qw-accent-soft) 40%, transparent);
 }
 
 .qw-kallpanel-toggle-ikon {
-  font-style: normal;
+  display: inline-flex;
   transition: transform .2s;
 }
 
@@ -351,6 +366,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  max-width: 66ch;
 }
 
 .qw-kallpanel[hidden] {
@@ -368,13 +384,13 @@
 
 .qw-kallkort:target,
 .qw-kallkort.qw-kallkort--markerad {
-  outline: 2px solid var(--qw-accent);
+  outline: 2px solid var(--qw-accent-soft);
   outline-offset: 1px;
   box-shadow: var(--qw-shadow);
 }
 
 .qw-kallkort--harledd {
-  background: var(--qw-derived-bg);
+  border-style: dashed;
   border-color: var(--qw-derived-border);
 }
 
@@ -390,19 +406,20 @@
   font-family: var(--qw-mono);
   font-size: 11px;
   font-weight: 700;
-  color: #fff;
-  background: var(--qw-accent);
-  border-radius: 4px;
-  padding: 1px 6px;
+  color: var(--qw-on-accent);
+  background: var(--qw-accent-soft);
+  border-radius: 999px;
+  padding: 1px 7px;
   flex-shrink: 0;
 }
 
 .qw-kallkort--harledd .qw-kallkort-id {
-  background: var(--qw-derived-text);
+  background: var(--qw-accent);
 }
 
 .qw-kallkort-etikett {
-  font-weight: 600;
+  font-family: var(--qw-font-rubrik);
+  font-weight: 500;
   font-size: 14px;
   flex: 1 1 0;
   min-width: 0;
@@ -411,9 +428,9 @@
 
 .qw-kallkort-harledd-badge {
   font-size: 11px;
-  color: var(--qw-derived-text);
-  background: var(--qw-derived-bg);
-  border: 1px solid var(--qw-derived-border);
+  font-weight: 600;
+  color: var(--qw-accent);
+  background: var(--qw-accent-bg);
   border-radius: 4px;
   padding: 1px 6px;
   flex-shrink: 0;
@@ -497,7 +514,7 @@
   padding: 2px 8px;
   background: var(--qw-fn-bg);
   border: 1px solid var(--qw-border);
-  border-radius: 20px;
+  border-radius: 999px;
   color: var(--qw-text-muted);
 }
 
@@ -506,8 +523,8 @@
   display: inline-block;
   width: 14px;
   height: 14px;
-  border: 2px solid rgba(255,255,255,.4);
-  border-top-color: #fff;
+  border: 2px solid color-mix(in srgb, var(--qw-on-accent) 40%, transparent);
+  border-top-color: var(--qw-on-accent);
   border-radius: 50%;
   animation: qw-spin .7s linear infinite;
 }
@@ -518,29 +535,24 @@
 
 /* ---- Tom-state ---- */
 .qw-tom {
-  padding: var(--qw-gap);
-  text-align: center;
+  padding: 4px var(--qw-gap-sm);
   color: var(--qw-text-muted);
   font-size: 14px;
   line-height: 1.6;
 }
 
 .qw-tom-ikon {
-  font-size: 32px;
-  margin-bottom: 8px;
+  color: var(--qw-accent-soft);
+  margin-bottom: 10px;
   display: block;
 }
 
+.qw-tom-ikon svg { width: 26px; height: 26px; }
+
 /* ---- Responsivitet ---- */
 @media (max-width: 420px) {
-  .qw-form {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .qw-submit {
-    width: 100%;
-    justify-content: center;
-    height: 44px;
+  .qw-fraga-text {
+    max-width: 92%;
   }
   .qw-kallkort-kropp {
     grid-template-columns: 1fr;
@@ -563,6 +575,12 @@
   // -------------------------------------------------------------------------
   // Hjälpfunktioner
   // -------------------------------------------------------------------------
+
+  /** Pil-upp-ikonen på skicka-knappen, som SVG-markup (inline, ingen ikonfont). */
+  const PIL_UPP_SVG =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg>';
 
   /** Skapar ett DOM-element med valfria attribut och barn. */
   function el(tag, attrs, ...children) {
@@ -784,7 +802,9 @@
         className: "qw-submit",
         id: "qw-submit",
         "aria-label": "Skicka frågan",
-      }, "Fråga");
+        title: "Skicka frågan",
+      });
+      this._knapp.innerHTML = PIL_UPP_SVG;
 
       this._form.appendChild(inputWrap);
       this._form.appendChild(this._knapp);
@@ -798,7 +818,13 @@
 
       // Tom-state
       this._tomDiv = el("div", { className: "qw-tom" });
-      this._tomDiv.appendChild(el("span", { className: "qw-tom-ikon" }, "🏛️"));
+      const tomIkon = el("span", { className: "qw-tom-ikon", "aria-hidden": "true" });
+      tomIkon.innerHTML =
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" ' +
+        'stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16"/>' +
+        '<path d="M4 10h16"/><path d="M6 10V21"/><path d="M18 10V21"/>' +
+        '<path d="M10 10V21"/><path d="M14 10V21"/><path d="M3 10l9-6 9 6"/></svg>';
+      this._tomDiv.appendChild(tomIkon);
       this._tomDiv.appendChild(
         el("p", {}, "Ställ en fråga om offentlig statistik, myndighetsdata eller lagtext.")
       );
@@ -820,12 +846,13 @@
     _lås_ui(las) {
       this._input.disabled = las;
       this._knapp.disabled = las;
+      this._knapp.title = las ? "Hämtar svar…" : "Skicka frågan";
+      this._knapp.setAttribute("aria-label", las ? "Hämtar svar…" : "Skicka frågan");
       if (las) {
         this._knapp.innerHTML = "";
         this._knapp.appendChild(el("span", { className: "qw-spinner" }));
-        this._knapp.appendChild(document.createTextNode(" Hämtar…"));
       } else {
-        this._knapp.textContent = "Fråga";
+        this._knapp.innerHTML = PIL_UPP_SVG;
       }
     }
 
@@ -953,10 +980,20 @@
             kallpanelToggle.setAttribute("aria-expanded", String(nyttTillstand));
           },
         });
+        const kallIkon = el("span", { "aria-hidden": "true" });
+        kallIkon.innerHTML =
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+          'stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6"/>' +
+          '<path d="M9 16h6"/><path d="M9 8h1"/>' +
+          '<path d="M7 3h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/></svg>';
+        kallpanelToggle.appendChild(kallIkon);
         kallpanelToggle.appendChild(
-          el("span", {}, `📋 ${kallor.length} källa${kallor.length !== 1 ? "r" : ""}`)
+          el("span", {}, `${kallor.length} källa${kallor.length !== 1 ? "r" : ""}`)
         );
-        const togglIkon = el("em", { className: "qw-kallpanel-toggle-ikon", "aria-hidden": "true" }, "▾");
+        const togglIkon = el("span", { className: "qw-kallpanel-toggle-ikon", "aria-hidden": "true" });
+        togglIkon.innerHTML =
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+          'stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
         kallpanelToggle.appendChild(togglIkon);
 
         svarRad.appendChild(kallpanelToggle);
