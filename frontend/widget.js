@@ -320,20 +320,43 @@
 }
 
 /* ---- Loader / cursor ---- */
-.qw-cursor {
-  display: inline-block;
-  width: 2px;
-  height: 1em;
-  background: var(--qw-accent-soft);
-  border-radius: 1px;
-  vertical-align: text-bottom;
-  animation: qw-blink 1s step-end infinite;
-  margin-left: 1px;
+/* "Tänker"-indikatorn: Quiet Numbers 2x2-rutmärke som roterar tills det
+   första stycket av svaret anländer. Ersätter den gamla blinkande
+   textmarkören — lätt att missa längst ner i högra hörnet av
+   skicka-knappen, det här syns i själva svarsflödet istället, och
+   blockerar aldrig tidigare svar i samtalet (som fortfarande går att
+   läsa och rulla i medan den snurrar). */
+.qw-tanker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--qw-text-muted);
+  font-size: 14px;
 }
 
-@keyframes qw-blink {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0; }
+.qw-tanker-marke {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  animation: qw-snurra 1.1s linear infinite;
+}
+
+.qw-tanker-marke .qw-marke-dim {
+  fill: var(--qw-border);
+}
+
+.qw-tanker-marke .qw-marke-accent {
+  fill: var(--qw-accent-soft);
+}
+
+@keyframes qw-snurra {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qw-tanker-marke {
+    animation: none;
+  }
 }
 
 /* ---- Förbehåll (avskilt, aldrig bland stycken) ---- */
@@ -1028,10 +1051,22 @@
       fragaRad.appendChild(el("p", { className: "qw-fraga-text" }, fraga));
       this._konvDiv.appendChild(fragaRad);
 
-      // Skapa svar-rad med cursor
+      // Skapa svar-rad med "tänker"-indikator. Den ligger i det vanliga,
+      // rullbara samtalsflödet (inte i en overlay) — tidigare frågor och
+      // svar går alltså att läsa och rulla i som vanligt medan den snurrar.
       const svarRad = el("div", { className: "qw-rad qw-rad--svar" });
       const styckenDiv = el("div", { className: "qw-stycken" });
-      const cursorEl = el("span", { className: "qw-cursor", "aria-hidden": "true" });
+      const cursorEl = el("span", { className: "qw-tanker" });
+      const markeSvg = el("span");
+      markeSvg.innerHTML =
+        '<svg class="qw-tanker-marke" viewBox="0 0 100 100" aria-hidden="true">' +
+        '<rect class="qw-marke-dim" x="6" y="6" width="40" height="40" rx="6"/>' +
+        '<rect class="qw-marke-dim" x="54" y="6" width="40" height="40" rx="6"/>' +
+        '<rect class="qw-marke-dim" x="6" y="54" width="40" height="40" rx="6"/>' +
+        '<rect class="qw-marke-accent" x="54" y="54" width="40" height="40" rx="6"/>' +
+        "</svg>";
+      cursorEl.appendChild(markeSvg);
+      cursorEl.appendChild(el("span", {}, "Tänker …"));
       const aktivtStycke = el("p", { className: "qw-stycke" });
       aktivtStycke.appendChild(cursorEl);
       styckenDiv.appendChild(aktivtStycke);
@@ -1089,7 +1124,7 @@
         _registreraFotnummer(kallIds);
 
         // Ta bort cursor från "aktivt stycke" om det finns
-        const gammalCursor = styckenDiv.querySelector(".qw-cursor");
+        const gammalCursor = styckenDiv.querySelector(".qw-tanker");
         if (gammalCursor) gammalCursor.remove();
 
         const p = el("p", { className: "qw-stycke" });
@@ -1115,7 +1150,7 @@
 
       const _visaKallor = (kallor) => {
         // Ta bort cursor
-        const gammalCursor = styckenDiv.querySelector(".qw-cursor");
+        const gammalCursor = styckenDiv.querySelector(".qw-tanker");
         if (gammalCursor) gammalCursor.remove();
 
         if (!kallor || kallor.length === 0) return;
@@ -1180,13 +1215,13 @@
       };
 
       const _visaFel = (meddelande) => {
-        const gammalCursor = styckenDiv.querySelector(".qw-cursor");
+        const gammalCursor = styckenDiv.querySelector(".qw-tanker");
         if (gammalCursor) gammalCursor.remove();
         svarRad.appendChild(el("div", { className: "qw-fel" }, meddelande || "Ett tekniskt fel inträffade."));
       };
 
       const _visaIngetSvar = (forbehall) => {
-        const gammalCursor = styckenDiv.querySelector(".qw-cursor");
+        const gammalCursor = styckenDiv.querySelector(".qw-tanker");
         if (gammalCursor) gammalCursor.remove();
         svarRad.appendChild(
           el("p", { className: "qw-inget-svar" },
@@ -1263,7 +1298,7 @@
         }
       } finally {
         // Ta bort cursor om den finns kvar
-        const gc = styckenDiv.querySelector(".qw-cursor");
+        const gc = styckenDiv.querySelector(".qw-tanker");
         if (gc) gc.remove();
 
         this._lås_ui(false);
