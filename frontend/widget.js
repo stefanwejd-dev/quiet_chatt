@@ -83,6 +83,14 @@
   padding: 0;
 }
 
+/* Tvingar fram bakgrundsfärger vid utskrift/export till PDF — annars
+   struntar webbläsaren i dem som standard om inte "bakgrundsgrafik" är
+   ibockat i utskriftsdialogen, och fråge-bubblan m.fl. blir konturlösa. */
+#quiet-widget, #quiet-widget * {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
 #quiet-widget {
   display: flex;
   flex-direction: column;
@@ -241,7 +249,7 @@
 
 .qw-fraga-text {
   max-width: 85%;
-  padding: 13px 18px;
+  padding: 15px 20px;
   background: var(--qw-accent-soft);
   color: var(--qw-on-accent);
   border-radius: 18px;
@@ -324,7 +332,7 @@
 .qw-forbehall {
   margin-top: var(--qw-gap-sm);
   max-width: 66ch;
-  padding: 10px 14px;
+  padding: 14px 18px;
   background: var(--qw-note-bg);
   border: 1px solid var(--qw-note-border);
   border-radius: var(--qw-radius-sm);
@@ -347,7 +355,7 @@
 
 .qw-fel {
   max-width: 66ch;
-  padding: 10px 14px;
+  padding: 14px 18px;
   background: var(--qw-error-bg);
   border: 1px solid var(--qw-error-border);
   color: var(--qw-error-text);
@@ -449,7 +457,7 @@
   display: flex;
   align-items: baseline;
   gap: 8px;
-  padding: 10px 14px;
+  padding: 13px 16px;
   flex-wrap: wrap;
 }
 
@@ -488,10 +496,10 @@
 }
 
 .qw-kallkort-kropp {
-  padding: 0 14px 12px;
+  padding: 0 16px 14px;
   display: grid;
   grid-template-columns: max-content 1fr;
-  gap: 3px 14px;
+  gap: 5px 16px;
   font-size: 13px;
 }
 
@@ -511,7 +519,7 @@
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-  padding: 8px 14px;
+  padding: 10px 16px;
   border-top: 1px solid var(--qw-border);
   background: var(--qw-fn-bg);
 }
