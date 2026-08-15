@@ -96,7 +96,7 @@
   flex-direction: column;
   gap: var(--qw-gap-sm);
   font-family: var(--qw-font);
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.6;
   color: var(--qw-text);
   max-width: 760px;
@@ -165,9 +165,9 @@
 .qw-form {
   display: flex;
   align-items: flex-end;
-  gap: 6px;
+  gap: 8px;
   flex-shrink: 0;
-  padding: 10px 10px 10px 22px;
+  padding: 12px 12px 12px 26px;
   background: var(--qw-surface);
   border: 1px solid var(--qw-border);
   border-radius: 26px;
@@ -199,15 +199,15 @@
 .qw-input {
   display: block;
   width: 100%;
-  padding: 12px 8px;
+  padding: 15px 10px;
   font-family: var(--qw-font);
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.5;
   background: transparent;
   border: none;
   color: var(--qw-text);
   resize: none;
-  min-height: 26px;
+  min-height: 30px;
   max-height: 140px;
   outline: none;
   overflow-y: auto;
@@ -219,8 +219,8 @@
 
 .qw-submit {
   flex-shrink: 0;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   background: var(--qw-accent-soft);
   color: var(--qw-on-accent);
@@ -257,12 +257,12 @@
 
 .qw-fraga-text {
   max-width: 85%;
-  padding: 15px 20px;
+  padding: 17px 22px;
   background: var(--qw-accent-soft);
   color: var(--qw-on-accent);
   border-radius: 18px;
   border-bottom-right-radius: 4px;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
 /* Svaret: fri löptext utan bubbla/ram, som ett AI-svar */
@@ -275,13 +275,13 @@
 .qw-stycken {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
   margin-bottom: var(--qw-gap-sm);
   max-width: 66ch;
 }
 
 .qw-stycke {
-  line-height: 1.7;
+  line-height: 1.75;
 }
 
 /* Fotnot-knappar i löptext */
@@ -289,10 +289,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 17px;
-  height: 17px;
-  padding: 0 3px;
-  font-size: 10px;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 4px;
+  font-size: 11px;
   font-weight: 600;
   font-family: var(--qw-font);
   background: var(--qw-fn-bg);
@@ -344,7 +344,7 @@
   background: var(--qw-note-bg);
   border: 1px solid var(--qw-note-border);
   border-radius: var(--qw-radius-sm);
-  font-size: 13px;
+  font-size: 14px;
   color: var(--qw-note-text);
   line-height: 1.55;
 }
@@ -368,14 +368,14 @@
   border: 1px solid var(--qw-error-border);
   color: var(--qw-error-text);
   border-radius: var(--qw-radius-sm);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 /* ---- Attribution (CC-BY) ---- */
 .qw-attribution {
   margin-top: var(--qw-gap-sm);
   max-width: 66ch;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--qw-text-muted);
   line-height: 1.5;
 }
@@ -395,9 +395,9 @@
   align-items: center;
   gap: 6px;
   margin-top: var(--qw-gap-sm);
-  padding: 6px 14px 6px 10px;
+  padding: 8px 16px 8px 12px;
   font-family: var(--qw-font);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--qw-text-muted);
   background: var(--qw-fn-bg);
@@ -487,7 +487,7 @@
 .qw-kallkort-etikett {
   font-family: var(--qw-font-rubrik);
   font-weight: 500;
-  font-size: 14px;
+  font-size: 15px;
   flex: 1 1 0;
   min-width: 0;
   word-break: break-word;
@@ -507,8 +507,8 @@
   padding: 0 16px 14px;
   display: grid;
   grid-template-columns: max-content 1fr;
-  gap: 5px 16px;
-  font-size: 13px;
+  gap: 6px 16px;
+  font-size: 14px;
 }
 
 .qw-kallkort-nyck {
@@ -533,7 +533,7 @@
 }
 
 .qw-lank {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--qw-accent);
   text-decoration: none;
   display: inline-flex;
@@ -577,8 +577,8 @@
 }
 
 .qw-dim-pill {
-  font-size: 11px;
-  padding: 2px 8px;
+  font-size: 12px;
+  padding: 3px 9px;
   background: var(--qw-fn-bg);
   border: 1px solid var(--qw-border);
   border-radius: 999px;
