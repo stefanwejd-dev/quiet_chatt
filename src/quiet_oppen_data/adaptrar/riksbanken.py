@@ -7,6 +7,22 @@ from quiet_oppen_data.register import Kalla, hamta
 
 logger = logging.getLogger(__name__)
 
+# Riksbankens webbplats är redaktionellt uppbyggd, inte API-driven — det finns
+# inget förutsägbart mönster från ett serie-id till dess specifika sida (till
+# skillnad från den generiska /statistik/rantor-och-valutakurser/-sidan som
+# manniskolank_mall pekar på). Fotnotslänken hamnade därför alltid på samma
+# översiktssida oavsett vilken av Riksbankens 117 serier svaret gällde.
+#
+# Den här tabellen kurerar specifika sidor för de vanligast efterfrågade
+# serierna — samma princip som skatteverket_rowstore.dataset (kallregister.yaml):
+# gissa aldrig en URL, verifiera den innan den läggs till. Båda nedan
+# kontrollerade manuellt mot riksbank.se 2026-08-15. Saknas en serie här
+# faller lank_manniska tillbaka på manniskolank_mall.
+_SERIE_TILL_SIDA: dict[str, str] = {
+    "SECBREFEFF": "https://www.riksbank.se/sv/statistik/rantor-och-valutakurser/referensranta/",
+    "SECBREPOEFF": "https://www.riksbank.se/sv/statistik/rantor-och-valutakurser/styrranta-in--och-utlaningsranta/",
+}
+
 
 class RiksbankenAdapter:
     """Adapter för Sveriges Riksbank (räntor och valutakurser)."""
@@ -227,7 +243,11 @@ class RiksbankenAdapter:
                 licens=self._kalla.licens,
                 attribution=self._kalla.attribution,
                 dataset=serie,
-                lank_manniska=self._kalla.manniskolank_mall or self._kalla.bas_url,
+                lank_manniska=(
+                    _SERIE_TILL_SIDA.get(serie)
+                    or self._kalla.manniskolank_mall
+                    or self._kalla.bas_url
+                ),
                 lank_maskin=url,
             )
         ]
