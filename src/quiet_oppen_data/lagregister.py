@@ -6,13 +6,16 @@ Invarianter:
 """
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 import yaml
 
-_PROJEKT_ROT = Path(__file__).parent.parent.parent
+# Se motsvarande kommentar i register.py — samma QUIET_OPPEN_DATA_ROOT-
+# mekanism, av samma skäl (paketet installerat i ett annat projekt).
+_PROJEKT_ROT = Path(os.environ.get("QUIET_OPPEN_DATA_ROOT") or Path(__file__).parent.parent.parent)
 _LAGREGISTER_FIL = _PROJEKT_ROT / "lagar" / "lagregister.yaml"
 
 
