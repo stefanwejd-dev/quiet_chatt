@@ -13,13 +13,20 @@ Invarianter:
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from pathlib import Path
 
 import yaml
 
-# Projekt-roten är tre nivåer upp: src/quiet_oppen_data/register.py → … → rot
-_PROJEKT_ROT = Path(__file__).parent.parent.parent
+# Projekt-roten är tre nivåer upp: src/quiet_oppen_data/register.py → … → rot.
+# Det stämmer när paketet körs ur sitt eget repo (quiet_chatt, Docker-image
+# byggd med WORKDIR=/app), men INTE när paketet installeras som ett vanligt
+# beroende i ett annat projekt (t.ex. sie-mcp, se dess parser/quiet_kalla.py)
+# — då hamnar det tre nivåer upp i site-packages, där ingen kallor/-mapp
+# finns. QUIET_OPPEN_DATA_ROOT låter den inbäddande applikationen peka ut var
+# den kopierat kallor/ (se sie-mcp/README för hur den mappen speglas dit).
+_PROJEKT_ROT = Path(os.environ.get("QUIET_OPPEN_DATA_ROOT") or Path(__file__).parent.parent.parent)
 _REGISTER_FIL = _PROJEKT_ROT / "kallor" / "kallregister.yaml"
 
 # YAML-nycklar som inte mappas till dataklasserna (dokumentation, anteckningar).

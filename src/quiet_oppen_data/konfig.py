@@ -14,8 +14,12 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # Projekt-roten är tre nivåer upp från den här filen:
-# src/quiet_oppen_data/konfig.py → src/quiet_oppen_data → src → rot
-_PROJEKT_ROT = Path(__file__).parent.parent.parent
+# src/quiet_oppen_data/konfig.py → src/quiet_oppen_data → src → rot.
+# Se motsvarande kommentar i register.py — QUIET_OPPEN_DATA_ROOT låter en
+# inbäddande applikation (t.ex. sie-mcp) peka ut sin egen kopia av
+# config.toml/.env i stället för att las() letar inne i paketets
+# installationskatalog.
+_PROJEKT_ROT = Path(os.environ.get("QUIET_OPPEN_DATA_ROOT") or Path(__file__).parent.parent.parent)
 _KONFIG_FIL = _PROJEKT_ROT / "config.toml"
 
 
