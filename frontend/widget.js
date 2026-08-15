@@ -138,6 +138,14 @@
   width: min(94vw, 860px);
   max-width: min(94vw, 860px);
   height: min(88vh, 800px);
+  /* Boxen flyter nu ovanpå obesläktat sidinnehåll (bakdroppen + resten av
+     sidan) — den MÅSTE ha en egen ogenomskinlig bakgrund, annars lyser
+     sidan igenom mellan bubblorna. Det var buggen: den saknades. */
+  background: var(--qw-bg);
+  border: 1px solid var(--qw-border);
+  border-radius: var(--qw-radius);
+  padding: 20px;
+  box-sizing: border-box;
   box-shadow: 0 24px 64px rgba(20, 13, 8, .35);
 }
 
@@ -629,6 +637,9 @@
     width: auto !important;
     max-width: 100% !important;
     box-shadow: none !important;
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
   }
   #quiet-widget {
     height: auto !important;
