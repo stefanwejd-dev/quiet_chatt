@@ -571,6 +571,31 @@ kallor:
       Detta är faktauppgifter och tabellvärden, inte rättslig vägledning.
       Skatteverkets ställningstaganden finns inte som API.
 
+  - id: skatteverket_vagledning
+    myndighet: Skatteverket
+    adapter: skatteverket_vagledning
+    bas_url: https://www4.skatteverket.se/rattsligvagledning/3236.html
+    verifierad: ja
+    aktiverad: true
+    verifierat_anrop: >
+      Ingen levande källa att verifiera mot — adaptern anropar inget API,
+      den formaterar bara en sökterm till en URL enligt ett fast, dokumenterat
+      mönster (https://www4.skatteverket.se/rattsligvagledning/3236.html?q=…).
+      "Verifierad" betyder här att URL-mallen är kontrollerad manuellt, inte
+      att ett svar inspekterats.
+    licens: okänd
+    attribution: "Källa: Skatteverket, Rättslig vägledning"
+    takt: { anrop: 10, per_sekunder: 1 }
+    cache_ttl: 86400
+    notering: >
+      Portering av Juridikchatt::skapa_lank_skatteverket() från quiet.nu:s
+      hostup-sida (app/Juridikchatt.php) — samma avvägning som där: Skatteverket
+      blockerar maskinell läsning av Rättslig vägledning, så den enda ärliga
+      kapaciteten är en klickbar sök-länk, aldrig ett citat ur innehållet.
+      Kompletterar skatteverket_rowstore (fakta/tabellvärden) och lagtext/
+      riksdagen (lagrum/förarbeten) med den enda bit av Juridikchattens
+      kapacitet som saknades i lagkorpuset — se README.md steg 18.
+
   - id: kronofogden_rowstore
     myndighet: Kronofogdemyndigheten
     adapter: rowstore

@@ -9,6 +9,7 @@ from quiet_oppen_data.adaptrar.dataportal import DataportalAdapter
 from quiet_oppen_data.adaptrar.rowstore import RowStoreAdapter
 from quiet_oppen_data.adaptrar.json_rest import JsonRestAdapter
 from quiet_oppen_data.adaptrar.lagtext import LagtextAdapter
+from quiet_oppen_data.adaptrar.skatteverket_vagledning import SkatteverketVagledningAdapter
 
 __all__ = [
     "Adapter",
@@ -22,5 +23,6 @@ __all__ = [
     "RowStoreAdapter",
     "JsonRestAdapter",
     "LagtextAdapter",
+    "SkatteverketVagledningAdapter",
 ]
 

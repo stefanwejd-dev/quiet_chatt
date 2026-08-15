@@ -37,6 +37,7 @@ from quiet_oppen_data.adaptrar import (
     RiksdagenAdapter,
     RiksbankenAdapter,
     RowStoreAdapter,
+    SkatteverketVagledningAdapter,
     TedAdapter,
     ViesAdapter,
 )
@@ -89,6 +90,7 @@ def _bygg_adaptrar() -> dict[str, Any]:
         ("kolada", lambda: KoladaAdapter()),
         ("dataportal", lambda: DataportalAdapter()),
         ("skatteverket_rowstore", lambda: RowStoreAdapter("skatteverket_rowstore")),
+        ("skatteverket_vagledning", lambda: SkatteverketVagledningAdapter()),
         ("kronofogden_rowstore", lambda: RowStoreAdapter("kronofogden_rowstore")),
         ("smhi", lambda: JsonRestAdapter("smhi")),
         ("skolverket", lambda: JsonRestAdapter("skolverket")),
