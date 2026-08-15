@@ -99,6 +99,38 @@
      header/sidopanel/footer omkring sig). */
   height: min(72vh, 640px);
   min-height: 360px;
+  position: relative;
+  transition: width .3s cubic-bezier(.2,.8,.2,1), height .3s cubic-bezier(.2,.8,.2,1),
+              max-width .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s ease,
+              transform .3s cubic-bezier(.2,.8,.2,1);
+}
+
+/* ---- Expanderat läge: chatten "lyfter" över sidan när ett samtal pågår ---- */
+.qw-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 13, 8, .55);
+  z-index: 9998;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease;
+}
+
+.qw-backdrop--synlig {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#quiet-widget.qw-expanderad {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  width: min(94vw, 860px);
+  max-width: min(94vw, 860px);
+  height: min(88vh, 800px);
+  box-shadow: 0 24px 64px rgba(20, 13, 8, .35);
 }
 
 /* Rullbart område: tom-state + konversation. Allt utom formuläret. */
@@ -568,6 +600,13 @@
 
 .qw-tom-ikon svg { width: 26px; height: 26px; }
 
+@media (prefers-reduced-motion: reduce) {
+  #quiet-widget,
+  .qw-backdrop {
+    transition: none;
+  }
+}
+
 /* ---- Responsivitet ---- */
 @media (max-width: 420px) {
   .qw-fraga-text {
@@ -770,9 +809,51 @@
       this._container = container;
       this._apiUrl = apiUrl.replace(/\/$/, "");
       this._aktivtAnrop = null; // AbortController för pågående SSE
+      this._expanderad = false;
 
       this._inject_css();
       this._bygg_ui();
+      this._bygg_expansion();
+    }
+
+    /**
+     * Bygger den mörklagda bakgrunden och kopplar Escape-tangenten. Widgeten
+     * expanderar sig själv (se _expandera) första gången en fråga skickas —
+     * inte redan vid fokus, det skulle kännas påträngande innan besökaren
+     * faktiskt skrivit något.
+     */
+    _bygg_expansion() {
+      this._backdrop = el("div", {
+        className: "qw-backdrop",
+        onclick: () => this._minska(),
+      });
+      document.body.appendChild(this._backdrop);
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && this._expanderad) this._minska();
+      });
+    }
+
+    _expandera() {
+      if (this._expanderad) return;
+      this._expanderad = true;
+      this._container.classList.add("qw-expanderad");
+      this._container.setAttribute("aria-modal", "true");
+      this._backdrop.classList.add("qw-backdrop--synlig");
+      this._backdropScrollLas = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+    }
+
+    _minska() {
+      if (!this._expanderad) return;
+      this._expanderad = false;
+      this._container.classList.remove("qw-expanderad");
+      this._container.removeAttribute("aria-modal");
+      this._backdrop.classList.remove("qw-backdrop--synlig");
+      document.body.style.overflow = this._backdropScrollLas || "";
+      // Fokus tillbaka till frågefältet — det är dit besökaren rimligen vill,
+      // oavsett vad som var fokuserat innan expansionen.
+      this._input?.focus();
     }
 
     _inject_css() {
@@ -884,6 +965,8 @@
     async _skicka() {
       const fraga = this._input.value.trim();
       if (!fraga) return;
+
+      this._expandera();
 
       // Avbryt eventuellt pågående anrop
       if (this._aktivtAnrop) {
