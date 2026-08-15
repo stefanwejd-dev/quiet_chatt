@@ -765,7 +765,7 @@
       this._input = el("textarea", {
         className: "qw-input",
         id: "qw-input",
-        placeholder: "T.ex. "Vad är Riksbankens referensränta?" …",
+        placeholder: "T.ex. ”Vad är Riksbankens referensränta?” …",
         rows: "1",
         "aria-label": "Din fråga",
         onkeydown: (e) => {
