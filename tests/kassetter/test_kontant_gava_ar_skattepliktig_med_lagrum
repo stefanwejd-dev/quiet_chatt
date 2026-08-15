@@ -1,0 +1,91 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - skatteverket.entryscape.net
+      user-agent:
+      - python-httpx/0.28.1
+    method: GET
+    uri: https://skatteverket.entryscape.net/store/9/resource/2637
+  response:
+    body:
+      string: !!binary |
+        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
+        SQAA
+    headers:
+      cache-control:
+      - max-age=0, no-store, no-cache, must-revalidate
+      connection:
+      - Keep-Alive
+      content-disposition:
+      - inline; filename=skattefria_gavor_till_anstallda_1.3.0.json
+      content-encoding:
+      - gzip
+      content-length:
+      - '1428'
+      content-security-policy:
+      - default-src 'none'; connect-src 'self'; object-src 'self'; img-src 'self'
+        data:; style-src 'unsafe-inline';
+      content-type:
+      - application/json
+      date:
+      - Sat, 15 Aug 2026 14:45:34 GMT
+      digest:
+      - sha-256=84ad1cec2d670cca2cdfe69886a1048ccf22fa37f4d88d513310ad8cb9867074
+      keep-alive:
+      - timeout=2, max=500
+      last-modified:
+      - Tue, 23 Dec 2025 23:26:33 GMT
+      pragma:
+      - no-cache
+      referrer-policy:
+      - strict-origin-when-cross-origin
+      report-to:
+      - '{"group":"csp-endpoint","max_age":1800,"endpoints":[{"url":"https://security.entryscape.com/csp-report/"}],"include_subdomains":true}'
+      server:
+      - EntryStore/5.8.0
+      strict-transport-security:
+      - max-age=31536000
+      vary:
+      - Accept-Charset,Accept-Encoding,Accept-Language,Accept,Origin
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-xss-protection:
+      - '0'
+    status:
+      code: 200
+      message: OK
+version: 1

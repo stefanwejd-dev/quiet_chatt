@@ -1,0 +1,84 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - skatteverket.entryscape.net
+      user-agent:
+      - python-httpx/0.28.1
+    method: GET
+    uri: https://skatteverket.entryscape.net/store/9/resource/1920
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA91WwW7cNhC9F+g/DPbsCvYeeykMpAHaBilQo7m0OVArSkuLolSSEmIEvvVTvOgf
+        +AOqH+sbktqVZCWHnIICBrwkhzPz3rwZ6uO33xDtbK+lu7VS7L6nj7yDPVVgsbPSSStqo0x1k11n
+        +9+9FlW1z653V8nOiEay5W9sOT4FUwq2O7Z4vLpEeCetU62ZBfn0ZUKk8amqaB7Lyw+ezV9JYwS5
+        Th5UqWrh4ZS80rjQdMJRaceTofZwpEYWlEsHE8+u3Xiy0tP+er/PaBFzfLIkDR2FKTSvXdtQ33U4
+        9x4eFTnR5DgMHuGNjYVxfnzSuqBBWOWpG0+87e/HJ5xIUCcyuo22800EqzzZvpmiluOz7b3jWCEZ
+        XocgBafERguo2AQiDirOqLWqMlpACgkOiFq4iMYU0qJ4F++5LMbnRhAOhc2ld5WCT9yrhcGhF1pQ
+        7ymwJ78LfIqhUqV3pVWC6tZ5IwpEPGcuAEdraUkZLzP60WwZTajTEbidyIlMBNRnbsUV1p4G4CS4
+        qEQ4Zvw4PzANyoFSMayuTe6RDDuV/DMWj6HCI8Nhz2cql/fdxUFGbzllNq74EC63sbNV3oJjcEmD
+        tBdxzooSxblKlpNhzkKQelDet4nJUtS+R3ZcwtWlcjyhioajHuVUMaCcEjcZvWJ3IjYHyQ+y6aSO
+        aHHBzhuA/bOnSSa4GIrR++B3UtSwBZ0jvRMGGvyUKgIzmvtHoHM9ecwUj94H5CvKlV5aMxu6rdSs
+        AuPfA8L3aSZskFHdtzalvBCzO3NPue1reC8VUnBBC6lj50RkdLfqNT0+4xh2EIUP5atay00DTdYM
+        2HiBP1r1gVnkseqpWI/5COnhJPW858lTt02DqLH5EMPJGgy4JOc1+qgVVz/oQlVHuUVEcF5hWySn
+        YigsxgGTnRKb2cdGZ+bXdLRNidsi9jgwuFpxBixDnrCqqBlu7C6uFq9UGKxSu9AdL30GeTxUVYEW
+        P4VEkcI9ugH55fI4PqOZCMP4eeBZbAo1qKIHZr/RmhWwpppeRkAznlzIlsxDdBQUEehAq6oiBcwf
+        YAWRQ5/GdVAUVCJ1Rr828/ImvhxXkmWEBBEVu7rtOoAx8FYEkQo0R3g9NgAHVK6+58oX3Pk6FQbD
+        vPaqiiOKxxNCghb1ojc36jXdOdeXZwA/lqXSAMb6SU10aa4/zYuXGm7xzv4Rn930WM+e6423GacI
+        alXeezm7u7i/8HEbkllMEcp5MqX8frh4jm//QxfuOc86213OHqef7y+pFKCbPzU+m8mhhZJ8sloc
+        MRitl3c3PCTTUhz8FyBKt9sOH1i+texB/tULvWk1CN0H+D+L3fr4cbnxfr58XJIoMUP8BtqJ3Lug
+        HDzvC7lfZleUfOsdS45Ve5T6jE/6deq7DmbNBr04+oX7NcK+uUaILqMb+vcf+unNFd3crDeSxZ43
+        7l5jZz+zuLt9syJlQclsMafjfyCGt/L+q1IDv0qYY/yBNn1ORLRfvzDOQyT+CGv8xv//ABEkUZwj
+        DQAA
+    headers:
+      cache-control:
+      - max-age=0, no-store, no-cache, must-revalidate
+      connection:
+      - Keep-Alive
+      content-disposition:
+      - inline; filename="reserakning 1.0.2 utlagg 2.0.json"
+      content-encoding:
+      - gzip
+      content-length:
+      - '1143'
+      content-security-policy:
+      - default-src 'none'; connect-src 'self'; object-src 'self'; img-src 'self'
+        data:; style-src 'unsafe-inline';
+      content-type:
+      - application/json
+      date:
+      - Sat, 15 Aug 2026 14:45:35 GMT
+      keep-alive:
+      - timeout=2, max=500
+      last-modified:
+      - Fri, 03 Feb 2023 14:59:55 GMT
+      pragma:
+      - no-cache
+      referrer-policy:
+      - strict-origin-when-cross-origin
+      report-to:
+      - '{"group":"csp-endpoint","max_age":1800,"endpoints":[{"url":"https://security.entryscape.com/csp-report/"}],"include_subdomains":true}'
+      server:
+      - EntryStore/5.8.0
+      strict-transport-security:
+      - max-age=31536000
+      vary:
+      - Accept-Charset,Accept-Encoding,Accept-Language,Accept,Origin
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-xss-protection:
+      - '0'
+    status:
+      code: 200
+      message: OK
+version: 1

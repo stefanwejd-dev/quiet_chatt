@@ -596,6 +596,192 @@ kallor:
       riksdagen (lagrum/förarbeten) med den enda bit av Juridikchattens
       kapacitet som saknades i lagkorpuset — se README.md steg 18.
 
+  - id: skatteverket_rattsligaregler
+    myndighet: Skatteverket
+    adapter: skatteverket_rattsligaregler
+    bas_url: https://skatteverket.entryscape.net/store/9/resource
+    verifierad: ja
+    aktiverad: true
+    verifierat_anrop: >
+      Samtliga tretton regelfiler nedan hämtade 2026-08-15, alla 200 OK med
+      parsat innehåll. Ingen autentisering — filerna ligger som öppna data i
+      Skatteverkets DCAT-katalog (dataset "Rättsliga regelfiler", entry 1603).
+      Versionsnumren nedan är avlästa ur filernas egen metadata, inte ur
+      filnamnen.
+      OBS: partner-API:et Rättsliga regler (api.skatteverket.se) ger SAMMA
+      innehåll men kräver avtal, och dess kompletta testtjänst låg 2026-08-15
+      en version efter öppna data (Gåvor 1.2.0 mot 1.3.0, Traktamenten 2.3.0
+      mot 2.4.0). Öppna data är alltså både friare och färskare — därför den
+      här vägen och inte API:et.
+    licens: okänd
+    attribution: "Källa: Skatteverket, Rättsliga regelfiler (Rules as Code)"
+    takt: { anrop: 5, per_sekunder: 1 }
+    cache_ttl: 86400
+    manniskolank_mall: "https://www7.skatteverket.se/portal/apier-och-oppna-data/utvecklarportalen/oppetdata/R%C3%A4ttsliga%20regelfiler"
+    # LICENS: datasetet bär accessRights=PUBLIC men INGEN dcterms:license —
+    # kontrollerat 2026-08-15 på både dataset 1603 och dess distributioner.
+    # Åtkomst är alltså belagd, användningsvillkor inte. Därför "okänd" och
+    # inte "CC0". Fråga ställd till katalogens kontaktpunkt; ändra först när
+    # svaret finns. Attributionen och de två länkarna per Faktapost gör
+    # hänvisningen så god den kan bli under tiden.
+    #
+    # Kurerad katalog. Ett entryscape-resurs-id går inte att gissa och det
+    # finns ingen sökväg som ger "senaste versionen" — katalogen listar 25
+    # filer per område där de senaste är BPMN (som inte är regler i det här
+    # formatet). Utan listan nedan måste adaptern gissa (ARKITEKTUR.md §5
+    # regel 7). Urvalet är den senaste JSON-regelfilen per område.
+    #
+    # TVÅ SCHEMAN förekommer och båda måste stödjas:
+    #   nytt (2024–):  meta[] / attributes[] / rules[]
+    #                  källor i event.params.results[].sources[] (lista)
+    #   gammalt:       rulesArea / rulesVersion / rulesets[].decisions[]
+    #                  källor i event.params["Källor"] (kommaseparerad sträng)
+    # Fältet `schema` nedan är avläst per fil, inte antaget.
+    dataset:
+      - id: gavor
+        namn: Skattefria gåvor till anställda
+        resurs: "2637"
+        regelversion: "1.3.0"
+        schema: nytt
+        beskrivning: >
+          Julgåva, jubileumsgåva och minnesgåva till anställd — när gåvan är
+          skattefri respektive skattepliktig, och vad som gäller för
+          arbetsgivaravgifter och skatteavdrag. Tillämpas från beskattningsår
+          2026. Beloppsgränserna höjdes i 1.3.0 (julgåva 600 kr, jubileumsgåva
+          1 800 kr) — 1.2.0, som partner-API:ets testtjänst fortfarande bär,
+          har de gamla 550 respektive 1 650 kr.
+
+      - id: traktamenten
+        namn: Traktamenten (reseräkning)
+        resurs: "2640"
+        regelversion: "2.4.0"
+        schema: nytt
+        beskrivning: >
+          Skattefritt traktamente vid tjänsteresa med övernattning — inrikes
+          och utrikes, hel- och halvdag, avdrag för fria måltider. Tillämpas
+          från beskattningsår 2026.
+
+      - id: logikostnader
+        namn: Logikostnader (reseräkning)
+        resurs: "2641"
+        regelversion: "2.4.0"
+        schema: nytt
+        beskrivning: >
+          Ersättning för logi vid tjänsteresa — faktisk kostnad respektive
+          nattschablon. Tillämpas från beskattningsår 2026.
+
+      - id: resekostnader
+        namn: Resekostnader (reseräkning)
+        resurs: "1924"
+        regelversion: "2.1"
+        schema: gammalt
+        beskrivning: >
+          Ersättning för resa i tjänsten — egen bil, förmånsbil, allmänna
+          färdmedel. Tillämpas från beskattningsår 2023. Senare versioner av
+          det här området finns bara som BPMN, inte som regelfil i JSON.
+
+      - id: utlagg
+        namn: Utlägg (reseräkning)
+        resurs: "1920"
+        regelversion: "2.0"
+        schema: gammalt
+        beskrivning: >
+          Utlägg som den anställda gjort för arbetsgivarens räkning.
+          Tillämpas från beskattningsår 2022.
+
+      - id: representation
+        namn: Representation
+        resurs: "1996"
+        regelversion: "2.0.2"
+        schema: gammalt
+        beskrivning: >
+          Avdragsrätt för representation — förtäring, kringkostnader,
+          personalfest, representationsgåvor, jubileum. Bär avdragstak i
+          kronor per utfall. Tillämpas från 2023-07-01.
+
+      - id: uthyrning_privatbostad_intakt
+        namn: Uthyrning av privatbostad — intäkt
+        resurs: "2301"
+        regelversion: "1.0.1"
+        schema: nytt
+        beskrivning: >
+          Om ersättning vid uthyrning av privatbostad ska tas upp som intäkt,
+          och i vilket inkomstslag.
+
+      - id: uthyrning_privatbostad_avdrag
+        namn: Uthyrning av privatbostad — avdrag
+        resurs: "2303"
+        regelversion: "1.0.1"
+        schema: nytt
+        beskrivning: >
+          Schablonavdrag och övriga avdrag vid uthyrning av privatbostad.
+
+      # Versionsvalsfilerna avgör VILKEN regelversion som gäller för ett givet
+      # år. De besvarar inte sakfrågor och exponeras därför inte som egna
+      # regelområden — adaptern använder dem för att varna när användarens år
+      # pekar på en annan version än den katalogen bär.
+      - id: versionsval_traktamenten
+        namn: Versionsval traktamenten
+        resurs: "2213"
+        regelversion: "2.1"
+        schema: gammalt
+        versionsval_for: traktamenten
+        beskrivning: Avgör vilken traktamentesversion som gäller för ett visst år.
+
+      - id: versionsval_logikostnader
+        namn: Versionsval logikostnader
+        resurs: "2212"
+        regelversion: "2.1"
+        schema: gammalt
+        versionsval_for: logikostnader
+        beskrivning: Avgör vilken logikostnadsversion som gäller för ett visst år.
+
+      - id: versionsval_resekostnader
+        namn: Versionsval resekostnader
+        resurs: "1918"
+        regelversion: "2.0"
+        schema: gammalt
+        versionsval_for: resekostnader
+        beskrivning: Avgör vilken resekostnadsversion som gäller för ett visst år.
+
+      - id: versionsval_representation
+        namn: Versionsval representation
+        resurs: "2000"
+        regelversion: "1.0"
+        schema: gammalt
+        versionsval_for: representation
+        beskrivning: Avgör vilken representationsversion som gäller för ett visst år.
+
+      - id: versionsval_gavor
+        namn: Versionsval gåvor
+        resurs: "2209"
+        regelversion: "1.0"
+        schema: gammalt
+        versionsval_for: gavor
+        beskrivning: Avgör vilken gåvoversion som gäller för ett visst år.
+
+    tacker:
+      - Skatteverkets tolkning av gällande rätt i maskinläsbar form (Rules as Code)
+      - representation, traktamente, logi, resekostnader, utlägg
+      - skattefria gåvor till anställda
+      - uthyrning av privatbostad
+    varning: >
+      Regelfilerna är Skatteverkets TOLKNING av gällande rätt, inte lagtext.
+      Varje utfall bär sina lagrum — de ska med i svaret, och lagrummet är
+      det som ska citeras när frågan gäller vad lagen säger. Utfallet i sig
+      är myndighetens tillämpning.
+      Regeluppsättningarna har en giltighetstid (se regelversion ovan). En
+      fråga om ett år som ligger före den versionens ikraftträdande får inte
+      besvaras med den här källan utan att avvikelsen sägs ut.
+    notering: >
+      Kompletterar skatteverket_vagledning (som bara får länka vidare, aldrig
+      citera) med det den saknade: ett citerbart utfall MED lagrum, direkt
+      från myndigheten. Källhänvisningarna i utfallen pekar rakt in i
+      lagtext-/riksdagen-korpuset och kan slås upp där.
+      Adaptern räknar inte och tolkar inte — den exekverar regelfilens egna
+      villkor (bara operatorn "equal" och konjunktionen "all" förekommer,
+      kontrollerat över samtliga 735 villkor i de tretton filerna).
+
   - id: kronofogden_rowstore
     myndighet: Kronofogdemyndigheten
     adapter: rowstore

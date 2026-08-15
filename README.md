@@ -27,8 +27,9 @@ varje uppgift med fotnot och klickbar källänk.
 | 16A | Lagkorpus — de fem huvudlagarna | ✅ |
 | 16B | Lagkorpus — resterande 57 författningar | ✅ |
 | 17 | Skatteverkets statistik — elva RowStore-datamängder + färskhet i `dimensioner`/`period` | ✅ |
-| 18 | Skatteverkets rättsliga regelfiler | ⛔ avslutat — partner-API, ingen åtkomst |
+| 18 | Skatteverkets rättsliga vägledning — sök-länk | ✅ |
 | 19 | Nattlig färskhetskontroll av lagkorpuset | ✅ |
+| 20 | Skatteverkets rättsliga regelfiler (Rules as Code) | ✅ |
 
 **Hela testsviten: 224 passed**, `ruff check .` rent (2026-08-14).
 
@@ -111,3 +112,18 @@ ska förbli det. Accept2 svarar för påhittade företag, och en chatt som lovar
 uppgifter med källänk får inte servera fiktiva bolagsuppgifter. Dessutom är
 svarsformatet fortfarande osett — giltiga testidentitetsbeteckningar kräver
 Bolagsverkets testdokumentation. Se steg 7 (återupptaget) i `PLAN.md`.
+
+**Skatteverkets rättsliga regelfiler** (steg 20, 2026-08-15) upphäver slutsatsen i
+steg 18. Steg 18 stängdes med motiveringen att reglerna bara fanns bakom
+partner-API:et Rättsliga regler, som kräver avtal. Det var halvt fel: samma
+regelfiler publiceras som **öppna data** i Skatteverkets DCAT-katalog, utan
+nycklar och utan avtal — och de öppna filerna låg vid kontrollen en version
+*före* partner-API:ets kompletta testtjänst (Gåvor 1.3.0 mot 1.2.0, med
+höjda beloppsgränser). Partner-API:et gav alltså både mindre frihet och äldre
+data. Samtliga tretton filer är hämtade och parsade 2026-08-15.
+
+Licensen är `okänd` och inte `CC0`: datasetet bär `accessRights: PUBLIC` men
+saknar `dcterms:license` — kontrollerat på både datasetet och dess
+distributioner. Åtkomsten är alltså belagd, användningsvillkoren inte. Frågan
+är ställd till katalogens kontaktpunkt. Under tiden bär varje Faktapost
+attribution och två länkar, så hänvisningen är så god den kan bli.

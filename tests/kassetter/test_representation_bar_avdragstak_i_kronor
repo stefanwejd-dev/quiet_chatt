@@ -1,0 +1,101 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - skatteverket.entryscape.net
+      user-agent:
+      - python-httpx/0.28.1
+    method: GET
+    uri: https://skatteverket.entryscape.net/store/9/resource/1996
+  response:
+    body:
+      string: !!binary |
+        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
+        aX4AAA==
+    headers:
+      cache-control:
+      - max-age=0, no-store, no-cache, must-revalidate
+      connection:
+      - Keep-Alive
+      content-disposition:
+      - inline; filename=representationsregler-2.0.2.json
+      content-encoding:
+      - gzip
+      content-length:
+      - '1999'
+      content-security-policy:
+      - default-src 'none'; connect-src 'self'; object-src 'self'; img-src 'self'
+        data:; style-src 'unsafe-inline';
+      content-type:
+      - application/json
+      date:
+      - Sat, 15 Aug 2026 14:45:36 GMT
+      digest:
+      - sha-256=72ec11b933a4e4ce7db729c53a7f38ed697cd8135c6dd37b6e24a5a5448346b3
+      keep-alive:
+      - timeout=2, max=500
+      last-modified:
+      - Wed, 28 Jun 2023 17:08:52 GMT
+      pragma:
+      - no-cache
+      referrer-policy:
+      - strict-origin-when-cross-origin
+      report-to:
+      - '{"group":"csp-endpoint","max_age":1800,"endpoints":[{"url":"https://security.entryscape.com/csp-report/"}],"include_subdomains":true}'
+      server:
+      - EntryStore/5.8.0
+      strict-transport-security:
+      - max-age=31536000
+      vary:
+      - Accept-Charset,Accept-Encoding,Accept-Language,Accept,Origin
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-xss-protection:
+      - '0'
+    status:
+      code: 200
+      message: OK
+version: 1
