@@ -615,6 +615,30 @@
   }
 }
 
+/* ---- Utskrift/PDF-export: fast positionering (det expanderade läget)
+   saknar en vettig motsvarighet när sidan klipps upp i pappersark — det
+   "läcker" annars in över omgivande sidinnehåll. Faller tillbaka till ett
+   vanligt flödande dokument vid utskrift. ---- */
+@media print {
+  .qw-backdrop {
+    display: none !important;
+  }
+  #quiet-widget.qw-expanderad {
+    position: static !important;
+    transform: none !important;
+    width: auto !important;
+    max-width: 100% !important;
+    box-shadow: none !important;
+  }
+  #quiet-widget {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+  .qw-scroll {
+    overflow: visible !important;
+  }
+}
+
 /* ---- Responsivitet ---- */
 @media (max-width: 420px) {
   .qw-fraga-text {
