@@ -86,21 +86,40 @@
 #quiet-widget {
   display: flex;
   flex-direction: column;
-  gap: var(--qw-gap);
+  gap: var(--qw-gap-sm);
   font-family: var(--qw-font);
   font-size: 15px;
   line-height: 1.6;
   color: var(--qw-text);
   max-width: 760px;
   width: 100%;
+  /* Fast fönsterhöjd, som i Claude/ChatGPT/Gemini: samtalet rullar för sig
+     inuti .qw-scroll, formuläret ligger stilla längst ner i den här boxen
+     (inte i webbläsarfönstret — widgeten sitter mitt i en sida med egen
+     header/sidopanel/footer omkring sig). */
+  height: min(72vh, 640px);
+  min-height: 360px;
+}
+
+/* Rullbart område: tom-state + konversation. Allt utom formuläret. */
+.qw-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--qw-gap);
 }
 
 /* ---- Formulär: rundad "pill", i stil med moderna AI-chattar ---- */
 .qw-form {
   display: flex;
   align-items: flex-end;
-  gap: 4px;
-  padding: 8px 8px 8px 20px;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 10px 10px 10px 22px;
   background: var(--qw-surface);
   border: 1px solid var(--qw-border);
   border-radius: 26px;
@@ -132,15 +151,15 @@
 .qw-input {
   display: block;
   width: 100%;
-  padding: 11px 4px;
+  padding: 12px 8px;
   font-family: var(--qw-font);
   font-size: 15px;
-  line-height: 1.4;
+  line-height: 1.5;
   background: transparent;
   border: none;
   color: var(--qw-text);
   resize: none;
-  min-height: 24px;
+  min-height: 26px;
   max-height: 140px;
   outline: none;
   overflow-y: auto;
@@ -190,7 +209,7 @@
 
 .qw-fraga-text {
   max-width: 85%;
-  padding: 10px 16px;
+  padding: 13px 18px;
   background: var(--qw-accent-soft);
   color: var(--qw-on-accent);
   border-radius: 18px;
@@ -832,9 +851,15 @@
         el("p", { style: "font-size:12px;margin-top:6px;" }, "Alla svar är belagda med källhänvisningar till myndighets-API:er.")
       );
 
+      // Rullbart område: allt utom formuläret. Formuläret ligger kvar längst
+      // ner (som i Claude/ChatGPT/Gemini) medan samtalet växer och rullar
+      // uppåt inuti sin egen box — se #quiet-widget/.qw-scroll i CSS.
+      this._scrollDiv = el("div", { className: "qw-scroll" });
+      this._scrollDiv.appendChild(this._tomDiv);
+      this._scrollDiv.appendChild(this._konvDiv);
+
+      c.appendChild(this._scrollDiv);
       c.appendChild(this._form);
-      c.appendChild(this._tomDiv);
-      c.appendChild(this._konvDiv);
     }
 
     _auto_hojd() {
