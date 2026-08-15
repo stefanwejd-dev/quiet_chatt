@@ -1068,6 +1068,12 @@ inspelade mot skarpa API:et). `python -m ruff check .` och
 
 ## Steg 18 — AVSLUTAT 2026-08-14: partner-API, ingen åtkomst
 
+> **UPPHÄVT 2026-08-15 av steg 20.** Premissen nedan — att regelfilerna bara
+> går att nå genom partner-API:et — visade sig felaktig. Samma filer ligger som
+> öppna data i Skatteverkets DCAT-katalog, utan avtal, och i en NYARE version
+> än partner-API:ets testtjänst. Texten nedan bevaras oförändrad som
+> beslutshistorik; den beskriver inte längre läget. Se steg 20.
+
 **Utfallet är det som §0 kallar giltigt: källan lämnas oaktiverad.**
 
 Beställaren har konstaterat att **Rättsliga regler är ett partner-API** och att
@@ -1258,6 +1264,87 @@ stubba `kör_nattlig_lagkontroll` (annars hade de gjort 62 riktiga
 nätverksanrop per körning).
 
 `python -m ruff check .` och `python -m pytest -q` båda rena (224 passed).
+
+---
+
+## Steg 20 — Skatteverkets rättsliga regelfiler ✅ Godkänt 2026-08-15
+
+**Detta steg upphäver beslutet i steg 18.** Steg 18 stängdes 2026-08-14 med
+motiveringen "partner-API, ingen åtkomst". Premissen höll inte, och ett beslut
+som vilar på en felaktig premiss ska rivas upp när premissen faller — inte
+bevaras för att det en gång fattades.
+
+**Vad som var fel.** Steg 18 utgick från att regelfilerna bara fanns bakom
+partner-API:et *Rättsliga regler*, som kräver påskrivet avtal. Beställaren
+erhöll 2026-08-15 en sandbox till det API:et, och kontrollen av den visade två
+saker:
+
+1. Sandboxen fungerar tekniskt (samtliga operationer anropade, 200 OK), men dess
+   användarvillkor förbjuder produktionsanvändning. Den kunde alltså aldrig bli
+   en källa i chatten.
+2. **Samma regelfiler publiceras som öppna data** i Skatteverkets DCAT-katalog
+   (dataset "Rättsliga regelfiler", entry 1603) — utan nycklar och utan avtal.
+   Och de låg en version FÖRE partner-API:ets kompletta testtjänst:
+
+   | Område | Partner-API (test) | Öppna data |
+   |---|---|---|
+   | Gåvor | 1.2.0 (550/1 650 kr) | 1.3.0 (600/1 800 kr) |
+   | Traktamenten | 2.3.0 | 2.4.0 |
+   | Logikostnader | 2.3.0 | 2.4.0 |
+
+Den avtalsbundna vägen gav alltså både mindre frihet och äldre data. Luckan som
+steg 18 lämnade "utan planerad lösning" — lagens bokstav i steg 16 utan
+tillämpningen — är därmed sluten.
+
+### Utfall
+
+`kallor/kallregister.yaml`: ny källa `skatteverket_rattsligaregler` med kurerad
+katalog över tretton regelfiler (åtta sakområden + fem versionsvalsfiler).
+Resurs-id och versionsnummer är avlästa ur filernas egen metadata, inte ur
+filnamnen — filnamnen och metadatan går isär i flera fall.
+
+`adaptrar/skatteverket_rattsligaregler.py`: tre verktyg —
+`_lista_omraden` (områdes-id går inte att gissa, §5 regel 7), `_fragor`
+(frågorna och de svarsalternativ som faktiskt förekommer i filen), och
+exekveringsverktyget.
+
+**Adaptern exekverar, modellen resonerar inte.** Samma princip som
+beräkningsverktygen (§5 regel 2): om modellen läste regelfilen och själv drog
+slutsatsen vore utfallet modellens, inte Skatteverkets, och inte spårbart.
+Adaptern vägrar hellre än gissar — okänd operator eller villkorstyp ger tomt
+svar, eftersom ett halvt exekverat regelträd är farligare än inget svar alls.
+Idag förekommer bara `equal` och `all` (kontrollerat över samtliga 735 villkor).
+
+**"Reglerna räckte inte till" skiljs från "reglerna säger nej."** Ett
+ofullständigt underlag får aldrig se ut som ett skattebesked; obesvarade frågor
+rapporteras tillbaka utan lagrum.
+
+**Två filscheman stöds**, båda avlästa: det nya (`meta`/`attributes`/`rules`,
+källor i `results[].sources`) och det gamla (`rulesArea`/`rulesets[].decisions`,
+källor i kommasträngen `"Källor"`). Representationsfilen bär dessutom
+avdragstak i kronor per utfall, som följer med i `dimensioner`.
+
+`motor/hamtning.py` och `adaptrar/__init__.py`: adaptern inkopplad. Fas A ser
+27 verktyg.
+
+Nya tester: `tests/test_steg20_rattsligaregler.py` (17 st) med VCR-kassetter.
+
+**Två buggar hittade under bygget**, båda med egna tester: svarsalternativ kan
+själva innehålla snedstreck (`"Affärsförhandling / Personalfest"` är ETT
+alternativ), och några bär radbrytning mitt i sig — utan citering respektive
+normalisering av inre blanktecken matchade det svar modellen fick tillbaka
+aldrig sitt eget villkor.
+
+### Öppen fråga — licensen
+
+`licens: okänd`, inte `CC0`. Datasetet bär `accessRights: PUBLIC` men saknar
+`dcterms:license` — kontrollerat på både datasetet och dess distributioner.
+**Åtkomsten är belagd, användningsvillkoren inte.** Att skriva `CC0` vore att
+smuggla in en gissning i ett fält som resten av bygget förutsätter är sant.
+
+Fråga ställd till katalogens kontaktpunkt (Andreas Bertilsson, Skatteverket).
+Raden ändras när svaret kommer — inte innan. Under tiden bär varje Faktapost
+attribution, lagrum och två länkar.
 
 ---
 
