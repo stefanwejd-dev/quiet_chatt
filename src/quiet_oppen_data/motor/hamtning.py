@@ -29,6 +29,7 @@ from typing import Any
 import anthropic
 
 from quiet_oppen_data.adaptrar import (
+    BolagsverketAdapter,
     DataportalAdapter,
     JsonRestAdapter,
     KoladaAdapter,
@@ -99,6 +100,7 @@ def _bygg_adaptrar() -> dict[str, Any]:
         ("trafa", lambda: JsonRestAdapter("trafa")),
         ("polisen_handelser", lambda: JsonRestAdapter("polisen_handelser")),
         ("jobtech", lambda: JsonRestAdapter("jobtech")),
+        ("bolagsverket_hvd", lambda: BolagsverketAdapter()),
     ]
 
     for kalla_id, fabrik in kandidater:

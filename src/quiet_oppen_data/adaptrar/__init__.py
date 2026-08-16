@@ -13,6 +13,7 @@ from quiet_oppen_data.adaptrar.skatteverket_vagledning import SkatteverketVagled
 from quiet_oppen_data.adaptrar.skatteverket_rattsligaregler import (
     SkatteverketRattsligaReglerAdapter,
 )
+from quiet_oppen_data.adaptrar.bolagsverket import BolagsverketAdapter
 
 __all__ = [
     "Adapter",
@@ -28,5 +29,6 @@ __all__ = [
     "LagtextAdapter",
     "SkatteverketVagledningAdapter",
     "SkatteverketRattsligaReglerAdapter",
+    "BolagsverketAdapter",
 ]
 

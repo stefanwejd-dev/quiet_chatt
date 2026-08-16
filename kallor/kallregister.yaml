@@ -252,16 +252,12 @@ kallor:
       Endast händelselistan. Efterlysta personer är en SEPARAT och SPÄRRAD källa
       (se polisen_efterlysta ovan).
 
-  # ---------------------------------------------------------------------------
-  # NIVÅ 1 — EJ VERIFIERADE. Måste bekräftas innan de aktiveras.
-  # ---------------------------------------------------------------------------
-
   - id: bolagsverket_hvd
     myndighet: Bolagsverket
     adapter: bolagsverket
     bas_url: https://gw.api.bolagsverket.se/vardefulla-datamangder/v1
-    verifierad: nej
-    aktiverad: false
+    verifierad: ja
+    aktiverad: true
     # OMFATTNING: ENBART API för värdefulla datamängder (HVD). Denna chatt ska
     # inte använda något annat Bolagsverket-API. Företagsinformation (det
     # avgiftsbelagda avtals-API:t på /foretagsinformation/) och Verkliga
@@ -269,49 +265,48 @@ kallor:
     # se posten bolagsverket_verkliga_huvudman överst i denna fil.
     kommentar: >
       Kundanmälan inskickad 2026-08-13. Klientuppgifter till VERIFIERINGSMILJÖN
-      mottagna 2026-08-14 och anropade live samma dag. Protokollet nedan är
-      därmed avläst, inte gissat. Produktionsåtkomst saknas fortfarande.
+      mottagna 2026-08-14 och anropade live samma dag (protokollet avläst,
+      inte gissat). PRODUKTIONSUPPGIFTER (applikationen "Värdefulla
+      datamängder") mottogs separat 2026-08-16 och anropades live samma dag —
+      se verifierat_anrop nedan. Källan aktiverades 2026-08-16 på beställarens
+      uttryckliga instruktion, i avsteg från den tidigare spärren
+      (ARBETSORDER.md regel 2). Datamängden innehåller ingen personuppgift om
+      fysiska personer — den är skild från bolagsverket_verkliga_huvudman, som
+      förblir spärrad oavsett detta.
     verifierat_anrop: >
-      Verifieringsmiljön 2026-08-14:
-      POST https://portal-accept2.api.bolagsverket.se/oauth2/token
-      (grant_type=client_credentials, HTTP Basic) -> 200, Bearer, expires_in 3600.
-      Scoperna vardefulla-datamangder:read och :ping beviljas var för sig och
-      tillsammans.
-      GET  https://gw-accept2.api.bolagsverket.se/vardefulla-datamangder/v1/isalive
-      -> 200 "OK" (kräver :ping — med enbart :read ges 403 scope validation failed).
-      POST /v1/organisationer med {"identitetsbeteckning": "<orgnr>"} -> 400 med
-      texten "Ogiltig identitetsbeteckning i begäran. Se testdokumentation för
-      giltiga identitetsbeteckningar." Kroppsschemat är alltså bekräftat; fältet
-      är en sträng, inte ett objekt eller en lista.
-      POST /v1/dokumentlista finns och validerar mot 'dokumentlistaBegaran'.
-      Ingen OpenAPI-spec exponeras på gatewayen (openapi.json, swagger.json,
-      api-docs: alla 404).
-    hinder: >
-      TVÅ hinder kvarstår, båda blockerande för aktivering.
-
-      1. MILJÖN ÄR EN TESTMILJÖ. De mottagna nycklarna gäller accept2, som svarar
-      för PÅHITTADE testföretag. Chatten lovar verkliga uppgifter med källänk;
-      att servera fiktiva bolagsuppgifter under det löftet vore värre än att inte
-      svara alls. Källan får inte aktiveras mot accept2 — verifieringsmiljön
-      duger till att bygga och testa adaptern, inte till att besvara frågor.
-
-      2. SVARSFORMATET ÄR OSETT. Inget anrop har ännu gett 200 med en
-      organisationskropp, eftersom giltiga testidentitetsbeteckningar står i en
-      testdokumentation vi inte har. Enligt §0 skrivs ingen adapter mot ett
-      svarsformat som ingen har sett — felmeddelandet ger fältnamnet i begäran,
-      inte formen på svaret.
-
-      Bas-URL:en ovan pekar på produktionsgatewayen och är fortfarande obekräftad:
-      gw.api.bolagsverket.se/oauth2/token svarar 404 och /v1/isalive ger 900900
-      Unclassified Authentication Failure med en accept2-token, vilket är väntat.
+      Produktionsmiljön 2026-08-16, med de uppgifter som kom via mejl "Anslutnings-
+      uppgifter för Värdefulla datamängder":
+      POST https://portal.api.bolagsverket.se/oauth2/token
+      (grant_type=client_credentials, HTTP Basic, scope=
+      "vardefulla-datamangder:read vardefulla-datamangder:ping" uttryckligen
+      angivet — scope=default ger en token utan åtkomst till gatewayen) -> 200,
+      Bearer, expires_in 3600.
+      GET  https://gw.api.bolagsverket.se/vardefulla-datamangder/v1/isalive
+      -> 200 "OK".
+      POST /v1/organisationer {"identitetsbeteckning":"5560125790"} -> 200 med
+      fullt organisationsobjekt (namn, organisationsform, juridiskForm,
+      registreringsdatum, postadress, SNI-koder, verksamhetsbeskrivning m.fl.,
+      vart och ett med egen dataproducent Bolagsverket/SCB och egen fel-nyckel
+      när uppgiften saknas). Bekräftat mot Aktiebolaget Volvo och Bolagsverket
+      självt (varav den senare gav flera fel: ORGANISATION_FINNS_EJ, väntat för
+      en myndighet som inte är bolagsregistrerad).
+      POST /v1/dokumentlista {"identitetsbeteckning":"5560125790"} -> 200
+      {"dokument":[]}.
+      Adapterns fältmappning (adaptrar/bolagsverket.py) är skriven mot detta
+      observerade schema, inte mot testmiljöns felsvar.
     autentisering: >
-      OAuth2 client_credentials (HTTP Basic mot token-endpointen), inte en enkel
-      API-nyckel som posten tidigare angav. Två scopes: :read för data, :ping för
-      hälsokontroll. Klientuppgifter lagras utanför repot som
+      OAuth2 client_credentials (HTTP Basic mot token-endpointen). Scope MÅSTE
+      begäras explicit i token-anropet — "vardefulla-datamangder:read
+      vardefulla-datamangder:ping" — annars ger portalen en token med
+      scope=default som gatewayen avvisar med 900900 Unclassified
+      Authentication Failure. Klientuppgifter lagras utanför repot som
       BOLAGSVERKET_CLIENT_ID och BOLAGSVERKET_CLIENT_SECRET.
+    token_url: https://portal.api.bolagsverket.se/oauth2/token
+    oauth_scope: "vardefulla-datamangder:read vardefulla-datamangder:ping"
     dokumentation: https://bolagsverket.se/apierochoppnadata/hamtaforetagsinformation/vardefulladatamangder/apiforvardefulladatamangder.5513.html
-    # Verifieringsmiljöns adresser, avlästa 2026-08-14. Står här som dokumentation
-    # av vad som testats — de får ALDRIG bli bas_url för en aktiverad källa.
+    # Verifieringsmiljöns adresser (2026-08-14). Kvar som dokumentation av vad
+    # som testades innan produktionsuppgifterna kom — de får ALDRIG bli
+    # token_url/bas_url för den aktiverade källan.
     test_token_url: https://portal-accept2.api.bolagsverket.se/oauth2/token
     test_bas_url: https://gw-accept2.api.bolagsverket.se/vardefulla-datamangder/v1
     licens: okänd
@@ -319,9 +314,10 @@ kallor:
     takt: { anrop: 2, per_sekunder: 1 }
     cache_ttl: 86400
     tacker:
+      - grunddata om företag (namn, form, registreringsdatum, adress)
       - SNI-koder
+      - reklamspärr, verksamhetsstatus, avregistrering (SCB/Bolagsverket)
       - digitalt inlämnade årsredovisningar (iXBRL)
-      - grunddata om företag
 
   - id: skatteverket_rowstore
     myndighet: Skatteverket

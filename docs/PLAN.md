@@ -1189,6 +1189,69 @@ accept2. Med det andra — och först då — kan källan aktiveras.
 
 ---
 
+## Steg 7 (återupptaget igen) — Bolagsverket HVD: produktionsuppgifter och aktivering 2026-08-16
+
+Beställaren levererade produktionsuppgifter för applikationen "Värdefulla
+datamängder" 2026-08-16 (mejl "Anslutningsuppgifter för Värdefulla
+datamängder", klientuppgifter i separat fil). Till skillnad från
+verifieringsmiljön ovan pekar dessa mot **produktionsgatewayen**:
+`portal.api.bolagsverket.se` (token) och `gw.api.bolagsverket.se`
+(data) — inga `-accept2`-adresser.
+
+Live-anrop samma dag löste båda hindren från föregående avsnitt:
+
+* **Scope måste begäras explicit.** Ett token-anrop utan `scope`-parameter ger
+  `scope=default`, vilket gatewayen avvisar med `900900 Unclassified
+  Authentication Failure` på både `/isalive` och `/organisationer` — exakt
+  samma fel som accept2-token gav mot produktionsgatewayen i steg 7
+  (återupptaget), vilket i efterhand förklarar det felet. Med
+  `scope=vardefulla-datamangder:read vardefulla-datamangder:ping` uttryckligen
+  angivet i token-anropet fungerar båda endpoints.
+* **Svarsformatet är nu sett.** `POST /v1/organisationer` med
+  `{"identitetsbeteckning":"5560125790"}` (Aktiebolaget Volvo) gav 200 med ett
+  fullständigt organisationsobjekt — varje delfält bär sin egen
+  `dataproducent` (Bolagsverket eller SCB) och en egen `fel`-nyckel när
+  uppgiften saknas för den identitetsbeteckningen. Samma anrop mot
+  Bolagsverkets eget organisationsnummer (en myndighet, inte ett
+  bolagsregistrerat subjekt) gav flera `ORGANISATION_FINNS_EJ`-fel på just de
+  Bolagsverket-ägda fälten, vilket bekräftar att `fel`-grenen fungerar som
+  dokumenterat snarare än att request-formatet var fel. `POST
+  /v1/dokumentlista` gav 200 `{"dokument":[]}` för samma orgnr.
+
+**Beställaren instruerade uttryckligen att aktivera källan** 2026-08-16, i
+avsteg från slutsatsen ovan och från `ARBETSORDER.md`s regel om att inte röra
+källspärrarna. Motiveringen: värdefulla datamängder (organisationsnamn, form,
+adress, SNI-koder, verksamhetsstatus, inlämnade årsredovisningar) är inte
+personuppgifter om fysiska personer — till skillnad från **Bolagsverkets
+verkliga huvudmän**, som är en annan, separat spärrad källa och förblir
+spärrad oavsett detta beslut.
+
+Genomfört:
+
+* `adaptrar/bolagsverket.py` — ny adapter, skriven mot det nu observerade
+  svarsschemat. Två verktyg: `bolagsverket_hvd` (organisationsdata) och
+  `bolagsverket_hvd_dokumentlista` (inlämnade årsredovisningar).
+* `register.Kalla` fick två nya fält, `token_url` och `oauth_scope` —
+  OAuth2 client_credentials är den enda källan i registret som behöver dem.
+* `kallregister.yaml`: `bolagsverket_hvd` satt till `verifierad: ja`,
+  `aktiverad: true`, `bas_url`/`token_url` pekar på produktionsgatewayen.
+  Accept2-adresserna står kvar som `test_token_url`/`test_bas_url`,
+  fortsatt ignorerade av `register.py` och fortsatt förbjudna som körbar URL.
+* `motor/hamtning.py` — adaptern registrerad i `_bygg_adaptrar()`.
+* `tests/test_steg5_transport.py::test_ej_aktiverad_kalla_kastar` skrevs om
+  för att mocka en egen inaktiv källa i stället för att peka på
+  `bolagsverket_hvd` — testet verifierade spärrmekanismen, inte just den
+  posten, och skulle annars fallera vid varje sådan aktivering.
+* `.env.example` fick platshållarna `BOLAGSVERKET_CLIENT_ID`/
+  `BOLAGSVERKET_CLIENT_SECRET` (redan skyddade av `test_inga_hemligheter.py`
+  sedan tidigare). De riktiga värdena ligger i `.env` (gitignorerad), inte i
+  repot.
+
+Ingen `git push` eller driftsättning gjord — ARBETSORDER.md regel 1 gäller
+oförändrat.
+
+---
+
 ## Steg 19 — Nattlig färskhetskontroll av lagkorpuset ✅ Godkänt 2026-08-14
 
 **Detta steg låg ursprungligen oförbeställt.** Det stod i planen för att en

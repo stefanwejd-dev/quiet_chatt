@@ -55,9 +55,24 @@ def test_alla_generiska_avvisar_okand_vard(kalla_id):
 def test_ej_aktiverad_kalla_kastar(monkeypatch):
     """En källa med aktiverad: false får inte anropas.
 
-    bolagsverket_hvd har ingen bekräftad sökväg (ARKITEKTUR.md §0). Utan den
-    här spärren skulle ett anrop gå ut mot en gissad endpoint.
+    En overifierad/oaktiverad källa har inte bekräftad sökväg (ARKITEKTUR.md
+    §0). Utan den här spärren skulle ett anrop gå ut mot en gissad endpoint.
+    Testet mockar en egen källa i stället för att peka på en verklig post i
+    registret — annars fallerar det varje gång den posten verifieras och
+    aktiveras (bolagsverket_hvd var tidigare exemplet här, se historiken).
     """
+    import quiet_oppen_data.adaptrar.transport as transport
+    from quiet_oppen_data.register import Kalla
+
+    fejkad = Kalla(
+        id="_test_ej_aktiverad", adapter="json_rest", takt={}, cache_ttl=3600,
+        aktiverad=False, verifierad=False,
+    )
+    monkeypatch.setattr(
+        transport, "hamta",
+        lambda kalla_id: fejkad if kalla_id == "_test_ej_aktiverad" else None,
+    )
+
     anrop = []
 
     def sabotage(*args, **kwargs):
@@ -67,7 +82,7 @@ def test_ej_aktiverad_kalla_kastar(monkeypatch):
     monkeypatch.setattr(httpx.Client, "request", sabotage)
 
     with pytest.raises(EjAktiveradKalla, match="inte aktiverad"):
-        hamta_json("bolagsverket_hvd", "GET", "https://gw.api.bolagsverket.se/x")
+        hamta_json("_test_ej_aktiverad", "GET", "https://exempel.invalid/x")
 
     assert anrop == [], "spärren måste slå till innan nätverkstrafik"
 

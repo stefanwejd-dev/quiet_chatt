@@ -70,6 +70,11 @@ class Kalla:
     manniskolank_mall: str | None = None
     faltval: list | None = None        # kurerat fältunderval (TED)
     maxceller: int | None = None       # celltak (PxWeb)
+    # OAuth2 client_credentials (bara bolagsverket_hvd hittills). token_url är
+    # produktionens token-endpoint — inte accept2-adresserna, som ligger i
+    # _IGNORERADE_NYCKLAR och aldrig får bli körbara.
+    token_url: str | None = None
+    oauth_scope: str | None = None
     # Kurerad datasetkatalog för källor vars data nås via en identifierare som
     # inte går att gissa (RowStore-UUID). Utan den måste modellen gissa —
     # se ARKITEKTUR.md §5 regel 7.
@@ -186,6 +191,8 @@ def las(registersokväg: Path | str | None = None) -> list[KallaPost]:
                     faltval=post.get("faltval"),
                     maxceller=post.get("maxceller"),
                     dataset=post.get("dataset"),
+                    token_url=post.get("token_url"),
+                    oauth_scope=post.get("oauth_scope"),
                 )
             )
 

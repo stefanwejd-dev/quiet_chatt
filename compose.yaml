@@ -13,6 +13,8 @@ services:
     environment:
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
       - MATNING_NYCKEL=${MATNING_NYCKEL:-}
+      - BOLAGSVERKET_CLIENT_ID=${BOLAGSVERKET_CLIENT_ID:-}
+      - BOLAGSVERKET_CLIENT_SECRET=${BOLAGSVERKET_CLIENT_SECRET:-}
     volumes:
       - data:/app/data
     healthcheck:
