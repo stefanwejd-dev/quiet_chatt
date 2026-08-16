@@ -11,21 +11,38 @@ _Skärmbild: Demonstration av svarswidget med klickbara källkort (läggs till e
 
 ## Kom igång på fem minuter
 
-### Snabbstart med lokalt demoindex
+### Alternativ A: Förbyggt demoindex (snabbast)
+Ladda ner den förbyggda releasefilen för direkt provkörning utan att behöva bygga index:
+
 ```bash
-# 1. Klona och installera beroenden
+# 1. Klona och installera
 git clone https://github.com/stefanwejd-dev/quiet_chatt.git
 cd quiet_chatt
 cp .env.example .env          # fyll i ANTHROPIC_API_KEY och MATNING_NYCKEL
 pip install -e ".[dev]"
 
-# 2. Bygg demoindexet (tar ca 2-3 minuter)
-python -m quiet_oppen_data.index.ingest --demo       # kurerade datamängder (~200 st)
-python -m quiet_oppen_data.index.lag_ingest --demo   # de fem centrala lagarna
+# 2. Hämta verifierat demoindex (v0.1.0, 36.1 MB, SHA-256: 2fd55b668f43d8dd4d7d7e75b8cdbfe919d8462937123df84db33730da7c4aec)
+python -m quiet_oppen_data.index.hamta_demo
 
 # 3. Starta servern
 uvicorn quiet_oppen_data.api:app --reload
 ```
+
+### Alternativ B: Bygg demoindexet lokalt (~2-3 minuter)
+```bash
+python -m quiet_oppen_data.index.ingest --demo       # kurerade datamängder (~200 st)
+python -m quiet_oppen_data.index.lag_ingest --demo   # de fem centrala lagarna
+uvicorn quiet_oppen_data.api:app --reload
+```
+
+### Alternativ C: Docker Compose
+```bash
+docker compose up -d
+# För att hämta release-demoindexet i Docker:
+docker compose run --rm hamta-demo
+```
+
+> **Obs om Docker-imagen:** Imagen är ~1.5 GB eftersom den svenska språkmodellen KBLab Sentence-BERT (~500 MB) förladdas direkt under byggsteget i `Dockerfile`. Det gör att första sökningen svarar omedelbart utan nedladdningsfördröjning.
 
 Öppna `frontend/test.html` i webbläsaren för att testa widgeten utan en riktig fråga.
 
