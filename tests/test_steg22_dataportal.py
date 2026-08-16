@@ -215,3 +215,85 @@ def test_bestam_utgivare_faller_tillbaka_pa_koden_om_bolagsverket_fel(monkeypatc
     # Faller tillbaka på sista segmentet av utgivar-URI:n (ingest.py:s
     # befintliga logik) — inte tomt, inte kraschat.
     assert utkast[0].myndighet == "SE2021000696"
+
+
+# ---------------------------------------------------------------------------
+# Utgivare som är en post i dataportalens EGEN databas (foaf:Agent), inte ett
+# organisationsnummer — t.ex. Umeå kommuns källa 2026-08-16.
+# ---------------------------------------------------------------------------
+
+_AGENT_URI = "https://admin.dataportal.se/store/43/resource/7a00bd3796ed09a600646432cb321722"
+
+_SVAR_MED_ENTRYSTORE_UTGIVARE = {
+    "offset": 0,
+    "resource": {
+        "children": [
+            {
+                "entryId": "69395",
+                "contextId": "43",
+                "info": {
+                    _ENTRY_URL: {
+                        "http://entrystore.org/terms/resource": [
+                            {"type": "uri", "value": _RESURS_URI}
+                        ],
+                    }
+                },
+                "metadata": {
+                    _RESURS_URI: {
+                        "http://purl.org/dc/terms/title": [
+                            {"type": "literal", "lang": "sv", "value": "Luftkvalitetsmätningar"}
+                        ],
+                        "http://purl.org/dc/terms/description": [
+                            {"type": "literal", "lang": "sv", "value": "Mätdata från Umeå."}
+                        ],
+                        "http://purl.org/dc/terms/publisher": [
+                            {"type": "uri", "value": _AGENT_URI}
+                        ],
+                    }
+                },
+            }
+        ]
+    },
+}
+
+_AGENT_METADATA_SVAR = {
+    _AGENT_URI: {
+        "http://xmlns.com/foaf/0.1/name": [{"type": "literal", "value": "Umeå kommun"}],
+    }
+}
+
+
+def test_bestam_utgivare_slar_upp_entrystore_agent(monkeypatch, isolerad_cache):
+    """Umeås utgivarkod är ingen extern identifierare — den är en post i
+    dataportalens egen databas, uppslagen via samma värds /metadata/-ändpunkt."""
+    def mock_request(self, method, url, **kwargs):
+        if "/metadata/" in url:
+            return httpx.Response(200, json=_AGENT_METADATA_SVAR, request=httpx.Request(method, url))
+        return httpx.Response(200, json=_SVAR_MED_ENTRYSTORE_UTGIVARE, request=httpx.Request(method, url))
+    monkeypatch.setattr(httpx.Client, "request", mock_request)
+
+    adapter = DataportalAdapter()
+    utkast = adapter.hamta(Fragplan(fraga="", extra={"sok": "luftkvalitet"}))
+
+    assert len(utkast) == 1
+    assert utkast[0].myndighet == "Umeå kommun"
+
+
+def test_bestam_utgivare_entrystore_uppslag_fel_faller_tillbaka(monkeypatch, isolerad_cache):
+    """Samma bäst-ansträngning som Bolagsverket-uppslaget: ett fel här ska
+    aldrig krascha eller tömma sökningen."""
+    def mock_request(self, method, url, **kwargs):
+        if "/metadata/" in url:
+            # Ett icke-transportfel (t.ex. ett oväntat svarsformat) ger inga
+            # omförsök i transportlagret — testet ska inte behöva vänta ut
+            # _anropa_med_omforsoks backoff för att verifiera fallbacken.
+            raise ValueError("simulerat fel")
+        return httpx.Response(200, json=_SVAR_MED_ENTRYSTORE_UTGIVARE, request=httpx.Request(method, url))
+    monkeypatch.setattr(httpx.Client, "request", mock_request)
+
+    adapter = DataportalAdapter()
+    utkast = adapter.hamta(Fragplan(fraga="", extra={"sok": "luftkvalitet"}))
+
+    assert len(utkast) == 1
+    # Faller tillbaka på sista URI-segmentet (den opaka koden) — inte tomt.
+    assert utkast[0].myndighet == "7a00bd3796ed09a600646432cb321722"

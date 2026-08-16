@@ -10,6 +10,7 @@ import pytest
 from quiet_oppen_data.index.db import oppna_db
 from quiet_oppen_data.index.ingest import (
     DC_FORMAT,
+    DC_PUBLISHER,
     DC_TITLE,
     DCAT_ACCESS_URL,
     DCAT_DISTRIBUTION,
@@ -21,6 +22,7 @@ from quiet_oppen_data.index.ingest import (
     bygg_manniskolank,
     hamta_entry_och_resurs,
     hamta_text,
+    hamta_utgivare,
 )
 
 # ---------------------------------------------------------------------------
@@ -135,6 +137,21 @@ def test_bygg_manniskolank_utan_entry_infix():
 
 def test_bygg_manniskolank_ogiltig_ger_none():
     assert bygg_manniskolank("https://example.com") is None
+
+
+# ---------------------------------------------------------------------------
+# hamta_utgivare — URI-fallback tvättar bort formulärkodning
+# ---------------------------------------------------------------------------
+
+def test_hamta_utgivare_fallback_tvattar_plustecken():
+    """Upptäckt 2026-08-16: Umeå kommuns källa har "+" i stället för
+    mellanslag i utgivar-URI:ns sista segment — en kvarleva av
+    URL-formulärkodning i källdatan. unquote_plus tvättar bort det."""
+    meta = {DC_PUBLISHER: [{
+        "type": "uri",
+        "value": "https://resources.stockholm.se/metadata#foaf/Stockholms+stad+-+Miljöförvaltningen/",
+    }]}
+    assert hamta_utgivare(meta, {}) == "Stockholms stad - Miljöförvaltningen"
 
 
 # ---------------------------------------------------------------------------

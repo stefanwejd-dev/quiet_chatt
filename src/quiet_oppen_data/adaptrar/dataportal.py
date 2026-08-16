@@ -8,6 +8,7 @@ from quiet_oppen_data.index.ingest import (
     DC_DESCRIPTION,
     DC_PUBLISHER,
     DC_TITLE,
+    FOAF_NAME,
     bygg_manniskolank,
     hamta_entry_och_resurs,
     hamta_text,
@@ -23,6 +24,13 @@ logger = logging.getLogger(__name__)
 # svenskt organisationsnummer — samma sorts identitetsbeteckning Bolagsverkets
 # HVD-API tar emot. Se _slå_upp_myndighetsnamn.
 _ORGANISATION_URI_MONSTER = re.compile(r"^http://dataportal\.se/organisation/SE(\d{10})$")
+
+# Andra utgivare är i stället interna poster i dataportalens EGEN databas —
+# t.ex. "https://admin.dataportal.se/store/43/resource/<id>" (en foaf:Agent,
+# inget organisationsnummer). Namnet ligger på samma värd, under /metadata/
+# i stället för /resource/ — inget externt uppslag behövs. Se
+# _slå_upp_entrystore_namn.
+_ENTRYSTORE_AGENT_MONSTER = re.compile(r"^(https://admin\.dataportal\.se/store/\d+)/resource/([^/]+)$")
 
 
 def _slå_upp_myndighetsnamn(orgnr: str) -> str | None:
@@ -64,12 +72,37 @@ def _slå_upp_myndighetsnamn(orgnr: str) -> str | None:
     return None
 
 
-def _bestam_utgivare(metadata: dict, alla_metadata: dict) -> str:
+def _slå_upp_entrystore_namn(pub_uri: str, kalla_id: str) -> str | None:
+    """Slår upp namnet på en utgivare som är en post i dataportalens EGEN
+    databas (en foaf:Agent under /store/{ctx}/resource/{id}) — inte ett
+    organisationsnummer. Namnet hämtas från samma värd, /metadata/ i stället
+    för /resource/, så det är inget externt beroende.
+
+    Bäst-ansträngning: se _slå_upp_myndighetsnamn för samma resonemang.
+    """
+    match = _ENTRYSTORE_AGENT_MONSTER.match(pub_uri)
+    if not match:
+        return None
+
+    metadata_url = f"{match.group(1)}/metadata/{match.group(2)}"
+    try:
+        res = hamta_json(kalla_id, "GET", metadata_url)
+    except Exception:
+        logger.info("Kunde inte slå upp utgivarnamn för %s", pub_uri, exc_info=True)
+        return None
+
+    agent_metadata = (res or {}).get(pub_uri) or {}
+    return hamta_text(agent_metadata, FOAF_NAME) or hamta_text(agent_metadata, DC_TITLE)
+
+
+def _bestam_utgivare(metadata: dict, alla_metadata: dict, kalla_id: str) -> str:
     """Utgivarens namn i läsbar form.
 
     Ordning: literalt värde i svaret → uppslag via Bolagsverket om utgivaren
-    är kodad som ett svenskt organisationsnummer → ingest.py:s befintliga,
-    redan testade fallback (label i samma svar, annars sista URI-segmentet).
+    är kodad som ett svenskt organisationsnummer → uppslag mot dataportalens
+    egen databas om utgivaren är en intern agent-post → ingest.py:s
+    befintliga, redan testade fallback (label i samma svar, annars sista
+    URI-segmentet, tvättat för URL-formulärkodning).
     """
     for v in metadata.get(DC_PUBLISHER, []):
         if v.get("type", "literal") != "uri" and v.get("value"):
@@ -77,11 +110,18 @@ def _bestam_utgivare(metadata: dict, alla_metadata: dict) -> str:
 
     for v in metadata.get(DC_PUBLISHER, []):
         pub_uri = (v.get("value") or "").strip()
-        match = _ORGANISATION_URI_MONSTER.match(pub_uri) if pub_uri else None
+        if not pub_uri:
+            continue
+
+        match = _ORGANISATION_URI_MONSTER.match(pub_uri)
         if match:
             namn = _slå_upp_myndighetsnamn(match.group(1))
             if namn:
                 return namn
+
+        namn = _slå_upp_entrystore_namn(pub_uri, kalla_id)
+        if namn:
+            return namn
 
     return hamta_utgivare(metadata, alla_metadata) or ""
 
@@ -186,7 +226,7 @@ class DataportalAdapter:
 
             titel = hamta_text(metadata, DC_TITLE) or ""
             beskrivning = hamta_text(metadata, DC_DESCRIPTION) or ""
-            utgivare = _bestam_utgivare(metadata, alla_metadata)
+            utgivare = _bestam_utgivare(metadata, alla_metadata, self.id)
             manniska = bygg_manniskolank(entry_url) or f"https://www.dataportal.se/datasets/{resurs_uri}"
             maskin = f"{url}?{urlencode({'type': 'solr', 'query': f'id:{resurs_uri}'})}"
 

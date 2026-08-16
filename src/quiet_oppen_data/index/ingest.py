@@ -23,6 +23,7 @@ import sys
 import time
 import tomllib
 from pathlib import Path
+from urllib.parse import unquote_plus
 
 import httpx
 
@@ -115,10 +116,13 @@ def hamta_utgivare(metadata: dict, alla_metadata: dict) -> str | None:
             label = hamta_text(pub_meta, label_prop)
             if label:
                 return label
-        # Fallback: sista segmentet av URI
+        # Fallback: sista segmentet av URI. Vissa utgivare (t.ex. Umeå
+        # kommuns källa) har "+" i stället för mellanslag i segmentet — en
+        # kvarleva av URL-formulärkodning i källdatan, inte i vår kod.
+        # unquote_plus tvättar bort det på samma sätt en webbläsare skulle.
         segment = pub_uri.rstrip("/").rsplit("/", 1)[-1]
         if segment:
-            return segment
+            return unquote_plus(segment)
     return None
 
 
