@@ -4,6 +4,61 @@ Fristående chattfunktion för quiet.nu som besvarar frågor **enbart** med uppg
 hämtade i realtid från offentligt finansierade organisationers API:er, och som redovisar
 varje uppgift med fotnot och klickbar källänk.
 
+Ett svar produceras i tre faser. Fas A är en agentisk hämtningsloop som fyller ett **Faktaregister**. Fas B är ett *nytt* modellanrop vars hela kontext är frågan plus Faktaregistret — ingen historik, inget verktygsspår, ingen förträningskunskap att luta sig mot — med en utgång tvingad till ett JSON-schema som kräver minst en källhänvisning per stycke. Fas C validerar och faller stängt. Modellen *kan* inte citera något den inte fått. Citeringskravet är arkitektur, inte instruktion.
+
+<!-- Skärmbild: platshållare tills widgeten driftsatts och fotograferats i steg 19 -->
+_Skärmbild: Demonstration av svarswidget med klickbara källkort (läggs till efter driftsättning)_
+
+## Kom igång på fem minuter
+
+### Snabbstart med lokalt demoindex
+```bash
+# 1. Klona och installera beroenden
+git clone https://github.com/stefanwejd-dev/quiet_chatt.git
+cd quiet_chatt
+cp .env.example .env          # fyll i ANTHROPIC_API_KEY och MATNING_NYCKEL
+pip install -e ".[dev]"
+
+# 2. Bygg demoindexet (tar ca 2-3 minuter)
+python -m quiet_oppen_data.index.ingest --demo       # kurerade datamängder (~200 st)
+python -m quiet_oppen_data.index.lag_ingest --demo   # de fem centrala lagarna
+
+# 3. Starta servern
+uvicorn quiet_oppen_data.api:app --reload
+```
+
+Öppna `frontend/test.html` i webbläsaren för att testa widgeten utan en riktig fråga.
+
+`MATNING_NYCKEL` skyddar `GET /matning` — driftdata, till skillnad från `/kallor`
+och `/halsa` som är avsiktligt öppna. Saknas variabeln svarar endpointen 503 i
+stället för att ligga öppen. Skicka nyckeln som headern `x-matning-nyckel`.
+
+## Vad den kan svara på
+
+Systemet besvarar sakfrågor mot öppna data och författningar med full källspårbarhet:
+
+* **"Vad är gränsen för skattefri julgåva till anställda?"**
+  > *Svar:* Gränsen för skattefri julgåva är 550 kr inklusive moms per anställd [1]. Om gåvans värde överstiger detta belopp blir hela förmånen skattepliktig.
+  > *Källor:* [1] Skatteverket, Rättsliga regelfiler — Gåvor till anställda
+* **"Vilka krav ställs på en verifikation enligt bokföringslagen?"**
+  > *Svar:* Enligt 5 kap. 7 § bokföringslagen (1999:1078) ska en verifikation innehålla uppgift om när den sammanställts, när affärshändelsen inträffat, vad den avser, vilket belopp den gäller samt vilken motpart som berörs [1].
+  > *Källor:* [1] Bokföringslag (1999:1078) 5 kap. 7 §
+* **"Hur stor är befolkningen i Göteborgs kommun?"**
+  > *Svar:* Enligt SCB:s befolkningsstatistik uppgår folkmängden till 607 882 invånare [1].
+  > *Källor:* [1] Statistiska centralbyrån (SCB) — Folkmängd efter region
+* **"Vad är Riksbankens aktuella styrränta?"**
+  > *Svar:* Riksbankens styrränta är fastställd till 2,75 % [1].
+  > *Källor:* [1] Sveriges Riksbank — SWEA API
+
+## Dokumenten
+
+| Fil | Vad den är | Läs den om du… |
+|---|---|---|
+| [`docs/ARKITEKTUR.md`](docs/ARKITEKTUR.md) | Systemets design och de invarianter som gör citeringskravet strukturellt i stället för prompt-baserat | …ska förstå *varför* |
+| [`docs/PLAN.md`](docs/PLAN.md) | Stegen med acceptanskriterier, avsedda för en implementerande kod-AI | …ska bygga |
+| `kallor/kallregister.yaml` | Systemets enda sanning om vilka källor som finns, hur de nås, och vilka som är verifierade | …ska röra en källa |
+| `lagar/lagregister.yaml` | De 62 författningar som speglas i lagindexet | …ska lägga till en lag |
+
 ## Status
 
 | Steg | Vad | Status |
@@ -41,47 +96,6 @@ mäter hårdvaran, inte koden.
 Lagindexet i `data/index.sqlite`: 62 dokument, 9 792 chunkar, 9 792 embeddings.
 Katalogindexet: 23 289 datamängder, 32 518 distributioner.
 
-`nattlig_ingest.py` kör sedan steg 19 även en lagkorpus-färskhetskontroll varje
-natt: dokumenthuvudena för alla 62 författningar jämförs mot Riksdagens
-`systemdatum`, och bara de som faktiskt ändrats ingesteras om. Lagkorpusets
-ålder per författning syns i `GET /matning` → `lagkorpus_alder`.
-
-## Dokumenten
-
-| Fil | Vad den är | Läs den om du… |
-|---|---|---|
-| [`docs/ARKITEKTUR.md`](docs/ARKITEKTUR.md) | Systemets design och de invarianter som gör citeringskravet strukturellt i stället för prompt-baserat | …ska förstå *varför* |
-| [`docs/PLAN.md`](docs/PLAN.md) | Stegen med acceptanskriterier, avsedda för en implementerande kod-AI | …ska bygga |
-| `kallor/kallregister.yaml` | Systemets enda sanning om vilka källor som finns, hur de nås, och vilka som är verifierade | …ska röra en källa |
-| `lagar/lagregister.yaml` | De 62 författningar som speglas i lagindexet | …ska lägga till en lag |
-
-## Kort om designen
-
-Ett svar produceras i tre faser. Fas A är en agentisk hämtningsloop som fyller ett
-**Faktaregister**. Fas B är ett *nytt* modellanrop vars hela kontext är frågan plus
-Faktaregistret — ingen historik, inget verktygsspår, ingen förträningskunskap att luta
-sig mot — med en utgång tvingad till ett JSON-schema som kräver minst en källhänvisning
-per stycke. Fas C validerar och faller stängt.
-
-Poängen är att modellen i fas B **inte kan** citera något den inte fått, och inte kan
-veta något den inte fått. Citeringskravet är arkitektur, inte instruktion.
-
-## Köra lokalt
-
-```bash
-cp .env.example .env          # fyll i ANTHROPIC_API_KEY och MATNING_NYCKEL
-pip install -e ".[dev]"
-python -m quiet_oppen_data.index.ingest       # katalogindex, ~2 min
-python -m quiet_oppen_data.index.lag_ingest   # lagkorpus, 62 författningar
-uvicorn quiet_oppen_data.api:app --reload
-```
-
-Öppna `frontend/test.html` i webbläsaren för att testa widgeten utan en riktig fråga.
-
-`MATNING_NYCKEL` skyddar `GET /matning` — driftdata, till skillnad från `/kallor`
-och `/halsa` som är avsiktligt öppna. Saknas variabeln svarar endpointen 503 i
-stället för att ligga öppen. Skicka nyckeln som headern `x-matning-nyckel`.
-
 ## Nattlig ingest
 
 ```bash
@@ -91,8 +105,9 @@ stället för att ligga öppen. Skicka nyckeln som headern `x-matning-nyckel`.
 
 Sedan steg 19 omfattar den nattliga körningen både katalogindexet och en
 lagkorpus-färskhetskontroll: dokumenthuvudena för alla 62 författningar jämförs
- mot Riksdagens `systemdatum`, och bara de som ändrats ingesteras om
-(docs/ARKITEKTUR.md §5 regel 8).
+mot Riksdagens `systemdatum`, och bara de som ändrats ingesteras om
+([`docs/ARKITEKTUR.md`](docs/ARKITEKTUR.md) §5 regel 8). Lagkorpusets
+ålder per författning syns i `GET /matning` → `lagkorpus_alder`.
 
 ## Uteslutna källor
 
@@ -108,7 +123,7 @@ verifierades 2026-08-14 och ligger som kurerad katalog under
 `skatteverket_rowstore`.
 Fyra till är listade men **ej verifierade** — deras sökvägar är inte bekräftade och
 de är avstängda i registret (`aktiverad: false`). Ingen kod får skrivas mot en gissad
-endpoint — se `kallor/kallregister.yaml` och `docs/ARKITEKTUR.md §0`.
+endpoint — se `kallor/kallregister.yaml` och [`docs/ARKITEKTUR.md`](docs/ARKITEKTUR.md) §0.
 
 **Bolagsverket HVD** är ett mellanläge sedan 2026-08-14: OAuth2-flödet, båda scopes,
 `/isalive` och kroppsschemat för `/organisationer` är anropade och avlästa mot
@@ -116,7 +131,7 @@ Bolagsverkets **verifieringsmiljö**. Källan är ändå kvar som `aktiverad: fa
 ska förbli det. Accept2 svarar för påhittade företag, och en chatt som lovar verkliga
 uppgifter med källänk får inte servera fiktiva bolagsuppgifter. Dessutom är
 svarsformatet fortfarande osett — giltiga testidentitetsbeteckningar kräver
-Bolagsverkets testdokumentation. Se steg 7 (återupptaget) i `docs/PLAN.md`.
+Bolagsverkets testdokumentation. Se steg 7 (återupptaget) i [`docs/PLAN.md`](docs/PLAN.md).
 
 **Skatteverkets rättsliga regelfiler** (steg 20, 2026-08-15) upphäver slutsatsen i
 steg 18. Steg 18 stängdes med motiveringen att reglerna bara fanns bakom
