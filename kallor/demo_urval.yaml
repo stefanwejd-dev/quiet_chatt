@@ -1,0 +1,52 @@
+# Kurerat urval för katalogingest i demoläge (Steg 8)
+#
+# Definierar deterministiska sökfrågor mot Dataportalens DCAT-katalog för att hämta
+# ~200 relevanta datamängder från myndigheter som stöds av systemets verifierade adaptrar.
+version: "1.0"
+beskrivning: "Kurerat urval för snabbt och reproducerbart demoläge"
+
+sokningar:
+  - id: "skatteverket"
+    beskrivning: "Skatteverkets öppna datamängder och rättsliga regler"
+    query: 'rdfType:http\://www.w3.org/ns/dcat#Dataset AND public:true AND (title:skattesats* OR title:skattetabell* OR title:traktamente* OR title:bilförmån* OR title:gåvor OR title:"rättsliga regler" OR title:förmån*)'
+    limit: 30
+
+  - id: "scb"
+    beskrivning: "SCB:s statistik över befolkning, KPI och ekonomi"
+    query: 'rdfType:http\://www.w3.org/ns/dcat#Dataset AND public:true AND (title:KPI OR title:befolkning* OR title:löner OR title:BNP OR title:konsumentprisindex)'
+    limit: 35
+
+  - id: "riksbanken"
+    beskrivning: "Riksbankens räntor och valutakurser"
+    query: 'rdfType:http\://www.w3.org/ns/dcat#Dataset AND public:true AND (title:ränta OR title:valuta* OR title:styrränta OR title:penningmängd OR title:referensränta)'
+    limit: 20
+
+  - id: "bolagsverket"
+    beskrivning: "Bolagsverkets företagsinformation"
+    query: 'rdfType:http\://www.w3.org/ns/dcat#Dataset AND public:true AND (title:organisation* OR title:företag* OR title:årsredovisning*)'
+    limit: 20
+
+  - id: "kolada"
+    beskrivning: "Koladas kommun- och regionnyckeltal"
+    query: 'rdfType:http\://www.w3.org/ns/dcat#Dataset AND public:true AND (title:kommun* OR title:nyckeltal OR title:äldreomsorg)'
+    limit: 25
+
+  - id: "smhi"
+    beskrivning: "SMHI:s väderobservationer och prognoser"
+    query: 'rdfType:http\://www.w3.org/ns/dcat#Dataset AND public:true AND (title:meteorologi* OR title:prognos* OR title:temperatur OR title:nederbörd)'
+    limit: 20
+
+  - id: "skolverket"
+    beskrivning: "Skolverkets skolenhetsregister och betyg"
+    query: 'rdfType:http\://www.w3.org/ns/dcat#Dataset AND public:true AND (title:betyg OR title:skolenhet* OR title:elever)'
+    limit: 20
+
+  - id: "trafikanalys"
+    beskrivning: "Trafikanalys fordons- och trafikstatistik"
+    query: 'rdfType:http\://www.w3.org/ns/dcat#Dataset AND public:true AND (title:fordon* OR title:trafik* OR title:körkort)'
+    limit: 20
+
+  - id: "polisen"
+    beskrivning: "Polisens händelserapportering"
+    query: 'rdfType:http\://www.w3.org/ns/dcat#Dataset AND public:true AND (title:händelser OR title:polis*)'
+    limit: 15

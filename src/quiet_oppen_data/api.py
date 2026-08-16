@@ -33,6 +33,7 @@ import json
 import logging
 import os
 import secrets
+from pathlib import Path
 from typing import Any
 from collections.abc import AsyncIterator
 
@@ -165,7 +166,19 @@ async def halsa() -> dict[str, Any]:
     except Exception:
         logger.warning("Kunde inte läsa källregistret för /halsa", exc_info=True)
 
-    return {"status": "ok", "kallor": kallor}
+    demo_index = False
+    try:
+        from quiet_oppen_data.index.db import ar_demo_index, oppna_db
+        from quiet_oppen_data.konfig import las as las_konfig
+        konfig = las_konfig()
+        db_path = Path(konfig.index.db)
+        if db_path.exists():
+            with oppna_db(db_path) as db_conn:
+                demo_index = ar_demo_index(db_conn)
+    except Exception:
+        logger.warning("Kunde inte läsa demoindex-status för /halsa", exc_info=True)
+
+    return {"status": "ok", "kallor": kallor, "demo_index": demo_index}
 
 
 # ---------------------------------------------------------------------------

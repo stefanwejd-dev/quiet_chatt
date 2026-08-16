@@ -130,3 +130,23 @@ def oppna_db(sokväg: Path) -> sqlite3.Connection:
     conn.executescript(SCHEMA)
     conn.commit()
     return conn
+
+
+def satt_meta(conn: sqlite3.Connection, nyckel: str, varde: str) -> None:
+    """Sätter ett nyckel-värde-par i _index_meta."""
+    conn.execute("INSERT OR REPLACE INTO _index_meta (nyckel, varde) VALUES (?, ?)", (nyckel, varde))
+    conn.commit()
+
+
+def hamta_meta(conn: sqlite3.Connection, nyckel: str) -> str | None:
+    """Läser ett metadatavärde ur _index_meta."""
+    cur = conn.execute("SELECT varde FROM _index_meta WHERE nyckel = ?", (nyckel,))
+    row = cur.fetchone()
+    return row[0] if row else None
+
+
+def ar_demo_index(conn: sqlite3.Connection) -> bool:
+    """Returnerar True om indexet är märkt som demoindex."""
+    varde = hamta_meta(conn, "demo_index")
+    return varde in ("1", "true", "True", "ja")
+

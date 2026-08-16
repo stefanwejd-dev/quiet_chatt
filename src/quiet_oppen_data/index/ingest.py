@@ -218,6 +218,47 @@ def behandla_dataset(conn, child: dict) -> int:
     return 0
 
 
+def ingest_datasets_demo(conn, client: httpx.Client, urval_fil: Path | None = None) -> int:
+    """Kör kurerad dataset-ingest ur kallor/demo_urval.yaml."""
+    if urval_fil is None:
+        urval_fil = Path(__file__).resolve().parent.parent.parent.parent / "kallor" / "demo_urval.yaml"
+
+    import yaml
+    if not urval_fil.exists():
+        logger.warning("Urvalsfil %s saknas — faller tillbaka på standardurval.", urval_fil)
+        return ingest_datasets(conn, client)
+
+    with open(urval_fil, encoding="utf-8") as f:
+        urval_data = yaml.safe_load(f)
+
+    sokningar = urval_data.get("sokningar", [])
+    totalt_nya = 0
+
+    for s in sokningar:
+        query = s.get("query", DATASET_QUERY)
+        limit = s.get("limit", 25)
+        logger.info("Demo-ingest [%s]: söker med limit=%d...", s.get("id"), limit)
+        resp = client.get(
+            SEARCH_URL,
+            params={
+                "type": "solr",
+                "query": query,
+                "limit": limit,
+                "offset": 0,
+            },
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        children = data.get("resource", {}).get("children", [])
+        for child in children:
+            totalt_nya += behandla_dataset(conn, child)
+        conn.commit()
+        time.sleep(FARD_INTERVAL)
+
+    logger.info("Demo dataset-ingest klar: %d nya datamängder", totalt_nya)
+    return totalt_nya
+
+
 def ingest_datasets(conn, client: httpx.Client) -> int:
     """Paginerar Solr-sökningen för Dataset och fyller datamangd."""
     offset, n_ny, n_total = 0, 0, None
@@ -314,9 +355,15 @@ def behandla_distribution(conn, child: dict) -> int:
     return cur.rowcount
 
 
-def ingest_distributions(conn, client: httpx.Client) -> int:
+def ingest_distributions(conn, client: httpx.Client, demo: bool = False) -> int:
     """Paginerar Solr-sökningen för Distribution och fyller distribution-tabellen."""
     offset, n_ny, n_total = 0, 0, None
+
+    behovda_dist_uris = set()
+    if demo:
+        cur = conn.execute("SELECT dist_uri FROM _dist_dataset_link")
+        behovda_dist_uris = {row[0] for row in cur.fetchall()}
+        logger.info("Demo: %d distributioner länkade i _dist_dataset_link som ska matchas.", len(behovda_dist_uris))
 
     while True:
         resp = client.get(
@@ -347,6 +394,15 @@ def ingest_distributions(conn, client: httpx.Client) -> int:
         conn.commit()
         offset += len(children)
 
+        if demo:
+            redan_inlasta = conn.execute("SELECT COUNT(*) FROM distribution").fetchone()[0]
+            if redan_inlasta >= len(behovda_dist_uris) or offset >= 1000:
+                logger.info(
+                    "Demo: avslutar distributionsingest vid offset %d (%d distributioner sparade)",
+                    offset, redan_inlasta,
+                )
+                break
+
         if offset % 1000 < PAGE_SIZE:
             logger.info("Distribution: %d sidan (%d nya hittills)", offset, n_ny)
 
@@ -368,13 +424,13 @@ def _las_db_sokväg() -> Path:
     return Path(data["index"]["db"])
 
 
-def main(db_sokväg: Path | None = None) -> None:
-    """Kör fullständig katalogingest i två pass."""
+def main(db_sokväg: Path | None = None, demo: bool = False, generera_vektorer: bool = True) -> None:
+    """Kör katalogingest i två pass (full eller demoläge)."""
     if db_sokväg is None:
         db_sokväg = _las_db_sokväg()
 
-    from quiet_oppen_data.index.db import oppna_db
-    logger.info("Databas: %s", db_sokväg)
+    from quiet_oppen_data.index.db import oppna_db, satt_meta
+    logger.info("Databas: %s (demo=%s)", db_sokväg, demo)
     conn = oppna_db(db_sokväg)
 
     headers = {
@@ -384,15 +440,35 @@ def main(db_sokväg: Path | None = None) -> None:
 
     with httpx.Client(headers=headers, timeout=30.0) as client:
         logger.info("=== Pass 1: Dataset ===")
-        n_dataset = ingest_datasets(conn, client)
+        if demo:
+            n_dataset = ingest_datasets_demo(conn, client)
+        else:
+            n_dataset = ingest_datasets(conn, client)
 
         logger.info("=== Pass 2: Distributioner ===")
-        n_dist = ingest_distributions(conn, client)
+        n_dist = ingest_distributions(conn, client, demo=demo)
+
+    if demo:
+        satt_meta(conn, "demo_index", "1")
+        satt_meta(conn, "katalog_demo", "1")
+        logger.info("Databasen märktes som demoindex i _index_meta.")
 
     # Rapportera slutresultat
     totalt_dm   = conn.execute("SELECT COUNT(*) FROM datamangd").fetchone()[0]
     totalt_dist = conn.execute("SELECT COUNT(*) FROM distribution").fetchone()[0]
     conn.close()
+
+    if demo and generera_vektorer:
+        logger.info("Genererar embeddings för demo-datamängder...")
+        try:
+            from quiet_oppen_data.index.embed import generera_embeddings
+            from quiet_oppen_data.konfig import _KONFIG_FIL
+            with open(_KONFIG_FIL, "rb") as f:
+                konfig_data = tomllib.load(f)
+            modell_namn = konfig_data["index"]["embedding_modell"]
+            generera_embeddings(db_sokväg, modell_namn)
+        except Exception:
+            logger.warning("Kunde inte generera embeddings för demoindex", exc_info=True)
 
     logger.info(
         "Ingest klar: datamängder=%d (+%d nya)  distributioner=%d (+%d nya)",
@@ -409,5 +485,8 @@ if __name__ == "__main__":
     )
     parser = argparse.ArgumentParser(description="Dataportal-katalogingest")
     parser.add_argument("--db", type=Path, default=None, help="Sökväg till SQLite-databasen")
+    parser.add_argument("--demo", action="store_true", help="Kör demoläge med kurerat urval (~200 datamängder)")
+    parser.add_argument("--inga-vektorer", action="store_true", help="Hoppa över embedding-generering i demoläge")
     args = parser.parse_args()
-    main(args.db)
+    main(args.db, demo=args.demo, generera_vektorer=not args.inga_vektorer)
+

@@ -207,39 +207,62 @@ def hamta_och_indexera_lag(
             conn.close()
 
 
-def ingest_alla(generera_vektorer: bool = True) -> list[dict[str, Any]]:
-    """Hämtar och indexerar alla författningar i lagregistret."""
-    lagar = lagregister.las()
-    resultat = []
+DEMO_SFS = ["1999:1229", "2023:200", "2011:1244", "1999:1078", "1995:1554"]
 
-    for lag in lagar:
-        start_t = time.perf_counter()
-        try:
-            antal_chunks, tom_sfs, systemdatum = hamta_och_indexera_lag(
-                lag, generera_vektorer=generera_vektorer
-            )
-            tid_ms = (time.perf_counter() - start_t) * 1000
-            resultat.append({
-                "sfs": lag.sfs,
-                "kortnamn": lag.kortnamn,
-                "namn": lag.namn,
-                "chunks": antal_chunks,
-                "tom_sfs": tom_sfs,
-                "systemdatum": systemdatum,
-                "tid_ms": round(tid_ms, 1),
-                "status": "ok",
-            })
-        except Exception as e:
-            logger.error("Misslyckades indexera %s (%s): %s", lag.sfs, lag.namn, e, exc_info=True)
-            resultat.append({
-                "sfs": lag.sfs,
-                "kortnamn": lag.kortnamn,
-                "namn": lag.namn,
-                "status": "fel",
-                "fel": str(e),
-            })
 
-    return resultat
+def ingest_alla(
+    generera_vektorer: bool = True,
+    demo: bool = False,
+    db_conn: sqlite3.Connection | None = None,
+) -> list[dict[str, Any]]:
+    """Hämtar och indexerar alla (eller de 5 centrala vid demo=True) författningar i lagregistret."""
+    konfig = las_konfig()
+    conn = db_conn or oppna_db(Path(konfig.index.db))
+    stang_efter = db_conn is None
+
+    try:
+        alla_lagar = lagregister.las()
+        if demo:
+            alla_lagar = [l for l in alla_lagar if l.sfs in DEMO_SFS]
+
+        resultat = []
+        for lag in alla_lagar:
+            start_t = time.perf_counter()
+            try:
+                antal_chunks, tom_sfs, systemdatum = hamta_och_indexera_lag(
+                    lag, db_conn=conn, generera_vektorer=generera_vektorer
+                )
+                tid_ms = (time.perf_counter() - start_t) * 1000
+                resultat.append({
+                    "sfs": lag.sfs,
+                    "kortnamn": lag.kortnamn,
+                    "namn": lag.namn,
+                    "chunks": antal_chunks,
+                    "tom_sfs": tom_sfs,
+                    "systemdatum": systemdatum,
+                    "tid_ms": round(tid_ms, 1),
+                    "status": "ok",
+                })
+            except Exception as e:
+                logger.error("Misslyckades indexera %s (%s): %s", lag.sfs, lag.namn, e, exc_info=True)
+                resultat.append({
+                    "sfs": lag.sfs,
+                    "kortnamn": lag.kortnamn,
+                    "namn": lag.namn,
+                    "status": "fel",
+                    "fel": str(e),
+                })
+
+        if demo:
+            from quiet_oppen_data.index.db import satt_meta
+            satt_meta(conn, "demo_index", "1")
+            satt_meta(conn, "lag_demo", "1")
+            logger.info("Lagindexet märktes som demoindex i _index_meta.")
+
+        return resultat
+    finally:
+        if stang_efter:
+            conn.close()
 
 
 def kontrollera_andringar(
@@ -463,9 +486,21 @@ def nattlig_lagkontroll(
 
 
 def main() -> None:
+    import argparse
+    parser = argparse.ArgumentParser(description="Lag-ingest för SFS-korpus")
+    parser.add_argument("--demo", action="store_true", help="Ingestera enbart de 5 huvudlagarna (IL, ML, SFL, BFL, ÅRL)")
+    parser.add_argument("--db", type=Path, default=None, help="Sökväg till SQLite-databasen")
+    parser.add_argument("--inga-vektorer", action="store_true", help="Hoppa över embedding-generering")
+    args = parser.parse_args()
+
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s", stream=sys.stdout)
-    print("=== Startar lag-ingest (Steg 16) ===")
-    rapporter = ingest_alla(generera_vektorer=True)
+    print(f"=== Startar lag-ingest (demo={args.demo}) ===")
+
+    db_conn = None
+    if args.db:
+        db_conn = oppna_db(args.db)
+
+    rapporter = ingest_alla(generera_vektorer=not args.inga_vektorer, demo=args.demo, db_conn=db_conn)
     print("\n--- Resultat ---")
     for r in rapporter:
         if r["status"] == "ok":
