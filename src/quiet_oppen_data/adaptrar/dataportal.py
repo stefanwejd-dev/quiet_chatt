@@ -86,7 +86,12 @@ def _slå_upp_entrystore_namn(pub_uri: str, kalla_id: str) -> str | None:
 
     metadata_url = f"{match.group(1)}/metadata/{match.group(2)}"
     try:
-        res = hamta_json(kalla_id, "GET", metadata_url)
+        # EntryStore innehållsförhandlar på Accept-headern och svarar annars
+        # med RDF/XML i stället för JSON — upptäckt 2026-08-16 när uppslaget
+        # fungerade lokalt (curl med explicit header) men inte i drift
+        # (transportlagrets httpx-klient utan header, XML mot en JSON-parser
+        # gav "Expecting value: line 1 column 1").
+        res = hamta_json(kalla_id, "GET", metadata_url, headers={"Accept": "application/json"})
     except Exception:
         logger.info("Kunde inte slå upp utgivarnamn för %s", pub_uri, exc_info=True)
         return None

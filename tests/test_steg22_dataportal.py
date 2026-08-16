@@ -265,9 +265,15 @@ _AGENT_METADATA_SVAR = {
 
 def test_bestam_utgivare_slar_upp_entrystore_agent(monkeypatch, isolerad_cache):
     """Umeås utgivarkod är ingen extern identifierare — den är en post i
-    dataportalens egen databas, uppslagen via samma värds /metadata/-ändpunkt."""
+    dataportalens egen databas, uppslagen via samma värds /metadata/-ändpunkt.
+
+    EntryStore innehållsförhandlar på Accept-headern och svarar annars med
+    RDF/XML i stället för JSON (upptäckt live 2026-08-16 — mocken nedan
+    kontrollerar därför explicit att headern faktiskt skickas, annars hade
+    testet inte fångat regressionen)."""
     def mock_request(self, method, url, **kwargs):
         if "/metadata/" in url:
+            assert kwargs.get("headers", {}).get("Accept") == "application/json"
             return httpx.Response(200, json=_AGENT_METADATA_SVAR, request=httpx.Request(method, url))
         return httpx.Response(200, json=_SVAR_MED_ENTRYSTORE_UTGIVARE, request=httpx.Request(method, url))
     monkeypatch.setattr(httpx.Client, "request", mock_request)
