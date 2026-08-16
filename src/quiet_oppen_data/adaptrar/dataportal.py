@@ -3,6 +3,14 @@ from typing import Any
 from urllib.parse import urlencode
 
 from quiet_oppen_data.adaptrar.transport import hamta_json
+from quiet_oppen_data.index.ingest import (
+    DC_DESCRIPTION,
+    DC_TITLE,
+    bygg_manniskolank,
+    hamta_entry_och_resurs,
+    hamta_text,
+    hamta_utgivare,
+)
 from quiet_oppen_data.modeller import Faktautkast, Fragplan
 from quiet_oppen_data.register import Kalla, hamta
 
@@ -62,13 +70,15 @@ class DataportalAdapter:
 
         limit = min(int(plan.extra.get("limit") or 5), 10)
 
-        # Dataportalen använder Solr-syntax
+        # Dataportalens sök-API (EntryScape, inte ren Solr) tar limit/offset —
+        # inte rows/start. Fel parameternamn tystas till standardsidstorleken
+        # i stället för att ge ett fel, vilket gjorde bugg nr 1 osynlig.
         query = f"rdfType:http\\://www.w3.org/ns/dcat\\#Dataset AND public:true AND (*{sok}*)"
         params: dict[str, Any] = {
             "type": "solr",
             "query": query,
-            "rows": limit,
-            "start": 0,
+            "limit": limit,
+            "offset": 0,
         }
 
         url = self._kalla.bas_url
@@ -79,47 +89,48 @@ class DataportalAdapter:
             logger.warning("%s: sökning misslyckades (sok=%r)", self.id, sok, exc_info=True)
             return []
 
-        # Dataportalen svarar med {"hits": {"hits": [...]}, "aggregations": {...}}
+        # Svaret är en EntryScape-resursgraf: {"resource": {"children": [...]}},
+        # inte Solr-formen {"hits": {"hits": [...]}}. Samma format som
+        # index/ingest.py redan tolkar korrekt — återanvänd den logiken i
+        # stället för att upprepa den (och riskera att den driver isär igen).
         try:
-            hits = res.get("hits", {}).get("hits") or []
+            children = (res or {}).get("resource", {}).get("children") or []
         except AttributeError:
             logger.warning("%s: oväntat svarsformat", self.id)
             return []
 
-        if not hits:
+        if not children:
             logger.info("%s: inga träffar för sok=%r", self.id, sok)
             return []
 
         utkast: list[Faktautkast] = []
-        for hit in hits:
-            src = hit.get("_source") or {}
-            titel = (src.get("title_sv") or src.get("title_en") or "").strip()
-            utgivare = (src.get("publisher_name") or "").strip()
-            beskrivning = (src.get("description_sv") or src.get("description_en") or "").strip()
-            ctx = src.get("context") or ""
-            entry = src.get("id") or ""
+        for child in children:
+            parsad = hamta_entry_och_resurs(child)
+            if not parsad:
+                continue
+            entry_url, resurs_uri = parsad
 
-            if not entry:
+            alla_metadata: dict = child.get("metadata", {})
+            metadata: dict = alla_metadata.get(resurs_uri, {})
+            if not metadata:
                 continue
 
-            manniska = self._kalla.manniskolank_mall or ""
-            if "{ctx}_{entry}" in manniska and ctx:
-                manniska = manniska.format(ctx=ctx, entry=entry)
-            elif "{ctx}_{entry}" in manniska:
-                manniska = manniska.format(ctx="", entry=entry)
-
-            maskin = f"{url}?{urlencode({'type': 'solr', 'query': f'id:{entry}'})}"
+            titel = hamta_text(metadata, DC_TITLE) or ""
+            beskrivning = hamta_text(metadata, DC_DESCRIPTION) or ""
+            utgivare = hamta_utgivare(metadata, alla_metadata) or ""
+            manniska = bygg_manniskolank(entry_url) or f"https://www.dataportal.se/datasets/{resurs_uri}"
+            maskin = f"{url}?{urlencode({'type': 'solr', 'query': f'id:{resurs_uri}'})}"
 
             utkast.append(Faktautkast(
-                etikett=f"Dataportal: {titel or entry}",
+                etikett=f"Dataportal: {titel or resurs_uri}",
                 varde=beskrivning[:300] if beskrivning else "Ingen beskrivning tillgänglig",
                 kalla_id=self.id,
                 myndighet=utgivare or (self._kalla.myndighet or ""),
                 licens=self._kalla.licens,
                 attribution=self._kalla.attribution,
-                dataset=entry,
+                dataset=resurs_uri,
                 dimensioner={"utgivare": utgivare} if utgivare else {},
-                lank_manniska=manniska or f"https://www.dataportal.se/datasets/{entry}",
+                lank_manniska=manniska,
                 lank_maskin=maskin,
             ))
 
