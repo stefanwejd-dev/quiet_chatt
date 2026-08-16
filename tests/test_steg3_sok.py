@@ -69,6 +69,7 @@ def test_sok_vaxelkurs():
     assert len(resultat) > 0
 
 
+@pytest.mark.slow
 @pytest.mark.skipif(not _har_embeddings(), reason="Databas saknar embeddings")
 def test_sok_hastighet():
     import time

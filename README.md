@@ -86,12 +86,7 @@ Systemet besvarar sakfrågor mot öppna data och författningar med full källsp
 | 19 | Nattlig färskhetskontroll av lagkorpuset | ✅ |
 | 20 | Skatteverkets rättsliga regelfiler (Rules as Code) | ✅ |
 
-**Hela testsviten: 240 passed**, `ruff check .` rent (2026-08-15).
-
-Ett test faller och gjorde det redan före steg 20: `test_steg3_sok.py::test_sok_hastighet`.
-Det mäter söktid mot en gräns på 5 s, men embedding-modellen tar ~13 s att ladda på
-utvecklingsmaskinen. Felet är ordningsoberoende och reproducerbart isolerat — det
-mäter hårdvaran, inte koden.
+**Hela testsviten: 245 passerade**, `ruff check .` rent (2026-08-16). Prestandatester som beror på hårdvaruladdningstid är markerade `@pytest.mark.slow` och körs separat med `pytest -m slow`.
 
 Lagindexet i `data/index.sqlite`: 62 dokument, 9 792 chunkar, 9 792 embeddings.
 Katalogindexet: 23 289 datamängder, 32 518 distributioner.

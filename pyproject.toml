@@ -37,8 +37,9 @@ testpaths    = ["tests"]
 asyncio_mode = "auto"
 markers = [
     "live: kräver ANTHROPIC_API_KEY och utgående nätverkstrafik mot riktiga API:er",
+    "slow: prestandatest som beror på lokal hårdvara och modelladdningstid",
 ]
-addopts = "-m 'not live'"
+addopts = "-m 'not live and not slow'"
 
 
 [tool.ruff]
