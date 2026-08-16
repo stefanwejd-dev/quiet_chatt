@@ -12,6 +12,5 @@ __pycache__/
 .venv/
 dist/
 build/
-ARKITEKTUR.md
-PLAN.md
+docs/
 README.md

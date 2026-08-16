@@ -50,8 +50,8 @@ natt: dokumenthuvudena för alla 62 författningar jämförs mot Riksdagens
 
 | Fil | Vad den är | Läs den om du… |
 |---|---|---|
-| `ARKITEKTUR.md` | Systemets design och de invarianter som gör citeringskravet strukturellt i stället för prompt-baserat | …ska förstå *varför* |
-| `PLAN.md` | Stegen med acceptanskriterier, avsedda för en implementerande kod-AI | …ska bygga |
+| [`docs/ARKITEKTUR.md`](docs/ARKITEKTUR.md) | Systemets design och de invarianter som gör citeringskravet strukturellt i stället för prompt-baserat | …ska förstå *varför* |
+| [`docs/PLAN.md`](docs/PLAN.md) | Stegen med acceptanskriterier, avsedda för en implementerande kod-AI | …ska bygga |
 | `kallor/kallregister.yaml` | Systemets enda sanning om vilka källor som finns, hur de nås, och vilka som är verifierade | …ska röra en källa |
 | `lagar/lagregister.yaml` | De 62 författningar som speglas i lagindexet | …ska lägga till en lag |
 
@@ -91,8 +91,8 @@ stället för att ligga öppen. Skicka nyckeln som headern `x-matning-nyckel`.
 
 Sedan steg 19 omfattar den nattliga körningen både katalogindexet och en
 lagkorpus-färskhetskontroll: dokumenthuvudena för alla 62 författningar jämförs
-mot Riksdagens `systemdatum`, och bara de som ändrats ingesteras om
-(ARKITEKTUR.md §5 regel 8).
+ mot Riksdagens `systemdatum`, och bara de som ändrats ingesteras om
+(docs/ARKITEKTUR.md §5 regel 8).
 
 ## Uteslutna källor
 
@@ -108,7 +108,7 @@ verifierades 2026-08-14 och ligger som kurerad katalog under
 `skatteverket_rowstore`.
 Fyra till är listade men **ej verifierade** — deras sökvägar är inte bekräftade och
 de är avstängda i registret (`aktiverad: false`). Ingen kod får skrivas mot en gissad
-endpoint — se `kallor/kallregister.yaml` och `ARKITEKTUR.md §0`.
+endpoint — se `kallor/kallregister.yaml` och `docs/ARKITEKTUR.md §0`.
 
 **Bolagsverket HVD** är ett mellanläge sedan 2026-08-14: OAuth2-flödet, båda scopes,
 `/isalive` och kroppsschemat för `/organisationer` är anropade och avlästa mot
@@ -116,7 +116,7 @@ Bolagsverkets **verifieringsmiljö**. Källan är ändå kvar som `aktiverad: fa
 ska förbli det. Accept2 svarar för påhittade företag, och en chatt som lovar verkliga
 uppgifter med källänk får inte servera fiktiva bolagsuppgifter. Dessutom är
 svarsformatet fortfarande osett — giltiga testidentitetsbeteckningar kräver
-Bolagsverkets testdokumentation. Se steg 7 (återupptaget) i `PLAN.md`.
+Bolagsverkets testdokumentation. Se steg 7 (återupptaget) i `docs/PLAN.md`.
 
 **Skatteverkets rättsliga regelfiler** (steg 20, 2026-08-15) upphäver slutsatsen i
 steg 18. Steg 18 stängdes med motiveringen att reglerna bara fanns bakom
