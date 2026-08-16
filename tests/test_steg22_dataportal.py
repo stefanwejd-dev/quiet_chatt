@@ -18,6 +18,7 @@ svar från https://admin.dataportal.se/store/search 2026-08-16.
 
 import httpx
 
+from quiet_oppen_data.adaptrar import bolagsverket as bv
 from quiet_oppen_data.adaptrar.dataportal import DataportalAdapter
 from quiet_oppen_data.modeller import Faktaregister, Faktautkast, Fragplan
 
@@ -122,3 +123,95 @@ def test_hamta_utan_traffar_ger_tom_lista(monkeypatch, isolerad_cache):
 def test_hamta_utan_sokstrang_ger_tom_lista(isolerad_cache):
     adapter = DataportalAdapter()
     assert adapter.hamta(Fragplan(fraga="", extra={})) == []
+
+
+# ---------------------------------------------------------------------------
+# Myndighetsnamn: dataportalen kodar ibland utgivaren som ett organisations-
+# nummer ("http://dataportal.se/organisation/SE...") i stället för ett namn.
+# _bestam_utgivare slår då upp det riktiga namnet via Bolagsverket.
+# ---------------------------------------------------------------------------
+
+_SVAR_MED_KODAD_UTGIVARE = {
+    "offset": 0,
+    "resource": {
+        "children": [
+            {
+                "entryId": "5441",
+                "contextId": "78",
+                "info": {
+                    "https://admin.dataportal.se/store/78/entry/5441": {
+                        "http://entrystore.org/terms/resource": [
+                            {"type": "uri", "value": _RESURS_URI}
+                        ],
+                    }
+                },
+                "metadata": {
+                    _RESURS_URI: {
+                        "http://purl.org/dc/terms/title": [
+                            {"type": "literal", "lang": "sv", "value": "Luftmiljö - Modelldata"}
+                        ],
+                        "http://purl.org/dc/terms/description": [
+                            {"type": "literal", "lang": "sv", "value": "Årsmedelhalter av luftföroreningar."}
+                        ],
+                        "http://purl.org/dc/terms/publisher": [
+                            {"type": "uri", "value": "http://dataportal.se/organisation/SE2021000696"}
+                        ],
+                    }
+                },
+            }
+        ]
+    },
+}
+
+_ORGSVAR_SMHI = {
+    "organisationer": [{
+        "organisationsnamn": {
+            "dataproducent": "SCB",
+            "fel": None,
+            "organisationsnamnLista": [
+                {"namn": "SVERIGES METEOROLOGISKA OCH HYDROLOGISKA INSTITUT"}
+            ],
+        },
+    }]
+}
+
+
+def _mocka_sok_och_bolagsverket(monkeypatch, orgsvar):
+    monkeypatch.setattr(bv, "hamta_token", lambda kalla: "fejktoken")
+
+    def mock_request(self, method, url, **kwargs):
+        if "bolagsverket" in url or url.endswith("/organisationer"):
+            return httpx.Response(200, json=orgsvar, request=httpx.Request(method, url))
+        return httpx.Response(200, json=_SVAR_MED_KODAD_UTGIVARE, request=httpx.Request(method, url))
+
+    monkeypatch.setattr(httpx.Client, "request", mock_request)
+
+
+def test_bestam_utgivare_slar_upp_myndighetsnamn_via_bolagsverket(monkeypatch, isolerad_cache):
+    _mocka_sok_och_bolagsverket(monkeypatch, _ORGSVAR_SMHI)
+    adapter = DataportalAdapter()
+
+    utkast = adapter.hamta(Fragplan(fraga="", extra={"sok": "luftmiljö"}))
+
+    assert len(utkast) == 1
+    assert utkast[0].myndighet == "SVERIGES METEOROLOGISKA OCH HYDROLOGISKA INSTITUT"
+
+
+def test_bestam_utgivare_faller_tillbaka_pa_koden_om_bolagsverket_fel(monkeypatch, isolerad_cache):
+    """Bolagsverket-uppslaget är bäst-ansträngning — ett fel där ska aldrig
+    tömma eller krascha hela dataportal-sökningen."""
+    def hamta_token_kastar(kalla):
+        raise RuntimeError("simulerat fel")
+    monkeypatch.setattr(bv, "hamta_token", hamta_token_kastar)
+
+    def mock_request(self, method, url, **kwargs):
+        return httpx.Response(200, json=_SVAR_MED_KODAD_UTGIVARE, request=httpx.Request(method, url))
+    monkeypatch.setattr(httpx.Client, "request", mock_request)
+
+    adapter = DataportalAdapter()
+    utkast = adapter.hamta(Fragplan(fraga="", extra={"sok": "luftmiljö"}))
+
+    assert len(utkast) == 1
+    # Faller tillbaka på sista segmentet av utgivar-URI:n (ingest.py:s
+    # befintliga logik) — inte tomt, inte kraschat.
+    assert utkast[0].myndighet == "SE2021000696"

@@ -1,10 +1,12 @@
 import logging
+import re
 from typing import Any
 from urllib.parse import urlencode
 
 from quiet_oppen_data.adaptrar.transport import hamta_json
 from quiet_oppen_data.index.ingest import (
     DC_DESCRIPTION,
+    DC_PUBLISHER,
     DC_TITLE,
     bygg_manniskolank,
     hamta_entry_och_resurs,
@@ -15,6 +17,73 @@ from quiet_oppen_data.modeller import Faktautkast, Fragplan
 from quiet_oppen_data.register import Kalla, hamta
 
 logger = logging.getLogger(__name__)
+
+# dataportal.se namnger utgivare som "http://dataportal.se/organisation/SE<orgnr>"
+# när utgivarens namn inte är utskrivet i sökträffen. Numret är ett vanligt
+# svenskt organisationsnummer — samma sorts identitetsbeteckning Bolagsverkets
+# HVD-API tar emot. Se _slå_upp_myndighetsnamn.
+_ORGANISATION_URI_MONSTER = re.compile(r"^http://dataportal\.se/organisation/SE(\d{10})$")
+
+
+def _slå_upp_myndighetsnamn(orgnr: str) -> str | None:
+    """Slår upp ett läsbart organisationsnamn för en dataportal-utgivarkod.
+
+    Bäst-ansträngning: om Bolagsverket-källan är spärrad, avstängd, eller
+    anropet av någon annan anledning misslyckas, returneras None och
+    anroparen faller tillbaka på den opaka koden i stället för att låta hela
+    dataportal-sökningen krascha eller stanna upp på en enskild utgivare.
+    """
+    k = hamta("bolagsverket_hvd")
+    if not isinstance(k, Kalla) or not k.aktiverad or not k.bas_url:
+        return None
+
+    try:
+        from quiet_oppen_data.adaptrar.bolagsverket import hamta_token
+
+        token = hamta_token(k)
+        res = hamta_json(
+            k.id, "POST", f"{k.bas_url}/organisationer",
+            headers={"Authorization": f"Bearer {token}"},
+            json={"identitetsbeteckning": orgnr},
+        )
+    except Exception:
+        logger.info("Kunde inte slå upp myndighetsnamn för orgnr %s", orgnr, exc_info=True)
+        return None
+
+    organisationer = (res or {}).get("organisationer") or []
+    if not organisationer:
+        return None
+
+    namn_container = organisationer[0].get("organisationsnamn") or {}
+    if namn_container.get("fel"):
+        return None
+
+    lista = namn_container.get("organisationsnamnLista") or []
+    if lista and lista[0].get("namn"):
+        return lista[0]["namn"]
+    return None
+
+
+def _bestam_utgivare(metadata: dict, alla_metadata: dict) -> str:
+    """Utgivarens namn i läsbar form.
+
+    Ordning: literalt värde i svaret → uppslag via Bolagsverket om utgivaren
+    är kodad som ett svenskt organisationsnummer → ingest.py:s befintliga,
+    redan testade fallback (label i samma svar, annars sista URI-segmentet).
+    """
+    for v in metadata.get(DC_PUBLISHER, []):
+        if v.get("type", "literal") != "uri" and v.get("value"):
+            return v["value"]
+
+    for v in metadata.get(DC_PUBLISHER, []):
+        pub_uri = (v.get("value") or "").strip()
+        match = _ORGANISATION_URI_MONSTER.match(pub_uri) if pub_uri else None
+        if match:
+            namn = _slå_upp_myndighetsnamn(match.group(1))
+            if namn:
+                return namn
+
+    return hamta_utgivare(metadata, alla_metadata) or ""
 
 
 class DataportalAdapter:
@@ -117,7 +186,7 @@ class DataportalAdapter:
 
             titel = hamta_text(metadata, DC_TITLE) or ""
             beskrivning = hamta_text(metadata, DC_DESCRIPTION) or ""
-            utgivare = hamta_utgivare(metadata, alla_metadata) or ""
+            utgivare = _bestam_utgivare(metadata, alla_metadata)
             manniska = bygg_manniskolank(entry_url) or f"https://www.dataportal.se/datasets/{resurs_uri}"
             maskin = f"{url}?{urlencode({'type': 'solr', 'query': f'id:{resurs_uri}'})}"
 

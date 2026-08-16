@@ -2,7 +2,7 @@
 
 Enda källan i registret som kräver OAuth2 (client_credentials). Skiljer sig
 därför från övriga adaptrar på en punkt: den hämtar en access-token separat
-från transport.hamta_json och cachar den i minnet (se _hamta_token) i stället
+från transport.hamta_json och cachar den i minnet (se hamta_token) i stället
 för i HTTP-cachen — token-endpointen är inte källans dataändpunkt och ska
 varken räknas i källans cache-träffkvot eller ligga kvar på disk.
 
@@ -46,7 +46,7 @@ _token_lock = threading.Lock()
 _TOKEN_MARGINAL_SEK = 60.0
 
 
-def _hamta_token(kalla: Kalla) -> str:
+def hamta_token(kalla: Kalla) -> str:
     """Hämtar en OAuth2 access-token (client_credentials) och cachar den i minnet."""
     with _token_lock:
         cached = _token_cache.get(kalla.id)
@@ -151,7 +151,7 @@ class BolagsverketAdapter:
             return []
 
         try:
-            token = _hamta_token(self._kalla)
+            token = hamta_token(self._kalla)
         except Exception:
             logger.warning("%s: kunde inte hämta OAuth2-token", self.id, exc_info=True)
             return []

@@ -76,8 +76,8 @@ def test_hamta_token_cachar_i_minnet(monkeypatch, _miljo):
     monkeypatch.setattr(httpx.Client, "post", mock_post)
 
     k = hamta_kalla("bolagsverket_hvd")
-    token1 = bv._hamta_token(k)
-    token2 = bv._hamta_token(k)
+    token1 = bv.hamta_token(k)
+    token2 = bv.hamta_token(k)
 
     assert token1 == token2 == "fejktoken"
     assert anrop == 1, "andra anropet skulle ha använt den cachade token"
@@ -89,7 +89,7 @@ def test_hamta_token_utan_miljovariabler_ger_tydligt_fel(monkeypatch):
 
     k = hamta_kalla("bolagsverket_hvd")
     with pytest.raises(RuntimeError, match="BOLAGSVERKET_CLIENT_ID"):
-        bv._hamta_token(k)
+        bv.hamta_token(k)
 
 
 # ---------------------------------------------------------------------------
@@ -135,7 +135,7 @@ _ORGSVAR = {
 
 
 def _mocka_hamtning(monkeypatch, svar):
-    monkeypatch.setattr(bv, "_hamta_token", lambda kalla: "fejktoken")
+    monkeypatch.setattr(bv, "hamta_token", lambda kalla: "fejktoken")
 
     def mock_request(self, method, url, **kwargs):
         assert kwargs["headers"]["Authorization"] == "Bearer fejktoken"
