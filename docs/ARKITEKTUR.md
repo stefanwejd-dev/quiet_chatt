@@ -258,11 +258,37 @@ verktygsspår, ingen katalog. Utgången tvingas till JSON-schema:
 {
   "kan_besvaras": true,
   "stycken": [
-    { "text": "Riksbankens referensränta är 3,5 procent.", "kallor": ["F1"] }
+    { "text": "Riksbankens referensränta är 3,5 procent.", "kallor": ["F1"] },
+    {
+      "text": "Registret ger följande grunduppgifter.",
+      "kallor": ["F2", "F3"],
+      "form": "tabell",
+      "rader": [
+        { "etikett": "Organisationsform", "varde": "Aktiebolag", "ton": "neutral" },
+        { "etikett": "Verksam", "varde": "Ja", "ton": "bekraftad" },
+        { "etikett": "Avregistrerad", "varde": "Nej", "ton": "nekad" }
+      ]
+    }
   ],
   "forbehall": "…"
 }
 ```
+
+**Presentationsform (tillagt 2026-08-29).** `form` är `brodtext` (standard),
+`punktlista` eller `tabell`. `ton` på en rad är **semantisk, inte dekorativ**:
+modellen säger vad raden betyder — `neutral`, `bekraftad`, `nekad`, `varning` —
+och gränssnittet väljer färgen. En modell som får välja färg direkt börjar måla
+efter tycke; en som får säga «det här är ett nekande» säger något sant som olika
+gränssnitt kan rendera olika. `text` är alltid ifylld och bär styckets innebörd
+även utan raderna, eftersom SSE-strömmen har konsumenter utanför webbwidgeten.
+
+Raderna räknas som styckets sakinnehåll i fas C. Utan det vore presentationsformen
+en väg förbi citeringskravet: ett stycke med tom text och femton tabellrader hade
+sluppit kontrollen.
+
+Widgeten bygger tabellen med DOM-noder, aldrig `innerHTML`. Innehållet kommer från
+en modell, och en textnod kan inte bära märkspråk in i sidan hur den än formuleras.
+Färgen ligger på en vänsterkant plus textfärg — aldrig som enda signal.
 
 Schemat kräver `minItems: 1` på `kallor` för varje stycke och `additionalProperties: false`
 överallt, inklusive toppnivån. Modellen kan inte producera ett ociterat stycke eller ett

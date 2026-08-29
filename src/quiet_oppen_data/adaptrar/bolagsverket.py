@@ -123,6 +123,28 @@ class BolagsverketAdapter:
                 },
             },
             {
+                "name": f"{self.id}_dokument",
+                "description": (
+                    "Hämtar INNEHÅLLET i en digitalt inlämnad årsredovisning från "
+                    "Bolagsverket och läser ut de taggade XBRL-posterna: "
+                    "nettoomsättning, rörelseresultat, årets resultat, eget kapital, "
+                    "summa tillgångar, medelantalet anställda med mera. Kräver ett "
+                    "dokumentId från dokumentlistan. Använd detta när frågan gäller "
+                    "ett bolags siffror — dokumentlistan säger bara att handlingen "
+                    "finns, inte vad som står i den."
+                ),
+                "input_schema": {
+                    "type": "object",
+                    "properties": {
+                        "dokumentid": {
+                            "type": "string",
+                            "description": "dokumentId ur dokumentlistan.",
+                        }
+                    },
+                    "required": ["dokumentid"],
+                },
+            },
+            {
                 "name": f"{self.id}_dokumentlista",
                 "description": (
                     "Listar digitalt inlämnade årsredovisningar (iXBRL) för en svensk "
@@ -141,6 +163,21 @@ class BolagsverketAdapter:
     # ------------------------------------------------------------------
 
     def hamta(self, plan: Fragplan) -> list[Faktautkast]:
+        verktyg_tidigt = str(plan.extra.get("verktyg") or self.id)
+        if verktyg_tidigt.endswith("_dokument"):
+            # Dokumenthämtningen tar ett dokumentId, inte ett organisations-
+            # nummer — identitetskontrollen nedan gäller alltså inte den.
+            dokumentid = str(plan.extra.get("dokumentid") or "").strip()
+            if not dokumentid:
+                logger.info("%s: dokumentanrop utan dokumentid", self.id)
+                return []
+            try:
+                token_d = hamta_token(self._kalla)
+            except Exception:
+                logger.warning("%s: kunde inte hämta OAuth2-token", self.id, exc_info=True)
+                return []
+            return self._hamta_dokument(dokumentid, {"Authorization": f"Bearer {token_d}"})
+
         rå_identitet = plan.extra.get("identitetsbeteckning")
         if not rå_identitet:
             logger.info("%s: anrop utan identitetsbeteckning", self.id)
@@ -309,6 +346,200 @@ class BolagsverketAdapter:
                 verksamhet.get("dataproducent"),
             ))
 
+        land = falt(org.get("registreringsland"))
+        if land and land.get("klartext"):
+            resultat.append(utkast(
+                f"Registreringsland för {identitet}", land["klartext"], land.get("dataproducent"),
+            ))
+
+        if datum and datum.get("infortHosScb"):
+            resultat.append(utkast(
+                f"Infört hos SCB för {identitet}", datum["infortHosScb"], "SCB",
+            ))
+
+        if namn:
+            lista_namn = namn.get("organisationsnamnLista") or []
+            if lista_namn and lista_namn[0].get("registreringsdatum"):
+                resultat.append(utkast(
+                    f"Företagsnamnet registrerades för {identitet}",
+                    lista_namn[0]["registreringsdatum"], namn.get("dataproducent"),
+                ))
+
+        # ------------------------------------------------------------------
+        # NEKANDEN — uppgifter som är frånvarande i svaret.
+        #
+        # Tidigare emitterades ingenting alls när ett fält var `null`, och
+        # eftersom syntesen bara får skriva det som finns som Faktapost blev
+        # nekandena osynliga: en läsare kunde inte se skillnad på «bolaget är
+        # inte avregistrerat» och «vi vet inte om det är avregistrerat».
+        #
+        # För den som kontrollerar en motpart är nekandet ofta hela svaret.
+        # Därför emitteras det som en egen uppgift, med Bolagsverket som
+        # producent — det är registrets besked, inte vår slutsats.
+        # ------------------------------------------------------------------
+        def nekande(
+            nycklar: tuple[str, ...], etikett: str, varde: str, myndighet: str = "Bolagsverket"
+        ) -> None:
+            """Emitterar ett uttryckligt nej när fältet finns i svaret men är tomt.
+
+            Flera nycklar accepteras eftersom leveransen förekommer med två
+            stavningar av avregistreringsfältet — samma dubbelkoll som den
+            jakande vägen ovan redan gör. Ett prov fångade att nekandet bara
+            kollade den ena (2026-08-29).
+
+            Saknas nyckeln HELT emitteras ingenting: «vi vet att det inte är
+            så» och «uppgiften ingick inte i svaret» är olika saker, och den
+            skillnaden ska överleva hit.
+            """
+            if not any(n in org for n in nycklar):
+                return
+            if any(org.get(n) for n in nycklar):
+                return  # bejakandet är redan emitterat ovan
+            resultat.append(utkast(etikett, varde, myndighet))
+
+        nekande(
+            ("avregistreradOrganisation", "avregistradOrganisation"),
+            f"Avregistrerad för {identitet}",
+            "Nej — organisationen är inte avregistrerad",
+        )
+        nekande(
+            ("pagaendeAvvecklingsEllerOmstruktureringsforfarande",),
+            f"Pågående avvecklings- eller omstruktureringsförfarande för {identitet}",
+            "Nej — inget pågående förfarande är registrerat",
+        )
+        nekande(
+            ("reklamsparr",),
+            f"Reklamspärr för {identitet}",
+            "Nej — ingen reklamspärr är registrerad",
+            "SCB",
+        )
+        nekande(
+            ("avregistreringsorsak",),
+            f"Avregistreringsorsak för {identitet}",
+            "Ingen — organisationen är inte avregistrerad",
+        )
+
+        return resultat
+
+    # De poster som är värda att lyfta ur en årsredovisning. XBRL-dokumentet
+    # bär ofta 150–200 taggade fakta; att skicka alla till syntesen vore att
+    # dränka frågan. Urvalet är resultat- och balansräkningens huvudposter
+    # plus antalet anställda — det som en läsare faktiskt frågar efter.
+    #
+    # OBS enheterna: flerårsöversikten i förvaltningsberättelsen står i
+    # TUSENTAL kronor medan resultat- och balansräkningen står i kronor.
+    # Adaptern räknar inte om — den märker posten med sin period och lämnar
+    # talet som det står, precis som övriga adaptrar gör.
+    _INTRESSANTA_POSTER = {
+        "Nettoomsattning": "Nettoomsättning",
+        "Rorelseresultat": "Rörelseresultat",
+        "ResultatEfterFinansiellaPoster": "Resultat efter finansiella poster",
+        "ResultatForeSkatt": "Resultat före skatt",
+        "AretsResultat": "Årets resultat",
+        "ResultatAndelarKoncernforetag": "Resultat från andelar i koncernföretag",
+        "EgetKapital": "Eget kapital",
+        "BundetEgetKapital": "Bundet eget kapital",
+        "FrittEgetKapital": "Fritt eget kapital",
+        "Tillgangar": "Summa tillgångar",
+        "Anlaggningstillgangar": "Anläggningstillgångar",
+        "Omsattningstillgangar": "Omsättningstillgångar",
+        "KassaBank": "Kassa och bank",
+        "KortfristigaSkulder": "Kortfristiga skulder",
+        "LangfristigaSkulder": "Långfristiga skulder",
+        "Aktiekapital": "Aktiekapital",
+        "MedelantaletAnstallda": "Medelantalet anställda",
+        "ForetagetsNamn": "Företagets namn enligt årsredovisningen",
+    }
+
+    def _hamta_dokument(self, dokumentid: str, headers: dict[str, str]) -> list[Faktautkast]:
+        """Hämtar en årsredovisning och läser ut dess taggade XBRL-poster.
+
+        Går förbi den delade transporten av samma skäl som `hamta_token` gör
+        det: svaret är en binär zip, inte JSON eller text, och den delade
+        cachen är byggd för textsvar. Att tvinga in en zip där hade gett en
+        korrupt cachepost i stället för ett fel.
+
+        Läser av — räknar inte. Ingen summering, ingen omräkning, ingen
+        bedömning. Det som står i dokumentet är det som blir en Faktapost.
+        """
+        import io
+        import re
+        import zipfile
+        from html import unescape
+
+        url = f"{self._kalla.bas_url}/dokument/{dokumentid}"
+        try:
+            with httpx.Client(timeout=_TOKEN_TIMEOUT) as klient:
+                res = klient.get(url, headers={**headers, "Accept": "*/*"})
+            res.raise_for_status()
+            rådata = res.content
+        except Exception:
+            logger.warning("%s: dokument %s misslyckades", self.id, dokumentid, exc_info=True)
+            return []
+
+        try:
+            with zipfile.ZipFile(io.BytesIO(rådata)) as arkiv:
+                filer = [n for n in arkiv.namelist() if n.lower().endswith((".xhtml", ".html"))]
+                if not filer:
+                    logger.info("%s: dokument %s saknade XHTML", self.id, dokumentid)
+                    return []
+                text = arkiv.read(filer[0]).decode("utf-8", "replace")
+        except Exception:
+            logger.warning("%s: kunde inte packa upp %s", self.id, dokumentid, exc_info=True)
+            return []
+
+        perioder: dict[str, str] = {}
+        for traff in re.finditer(r'<xbrli:context id="([^"]+)".*?</xbrli:context>', text, re.S):
+            cid, block = traff.group(1), traff.group(0)
+            ogonblick = re.search(r"<xbrli:instant>([^<]+)", block)
+            start = re.search(r"<xbrli:startDate>([^<]+)", block)
+            slut = re.search(r"<xbrli:endDate>([^<]+)", block)
+            if ogonblick:
+                perioder[cid] = ogonblick.group(1)
+            elif start and slut:
+                perioder[cid] = f"{start.group(1)}–{slut.group(1)}"
+
+        manniska = self._kalla.manniskolank_mall or self._kalla.bas_url
+        resultat: list[Faktautkast] = []
+        sedda: set[tuple[str, str]] = set()
+
+        monster = r"<ix:non(?:Fraction|Numeric)([^>]*)>(.*?)</ix:non(?:Fraction|Numeric)>"
+        for traff in re.finditer(monster, text, re.S):
+            attribut = traff.group(1)
+            namnmatch = re.search(r'name="([^"]+)"', attribut)
+            if not namnmatch:
+                continue
+            kort = namnmatch.group(1).split(":")[-1]
+            etikett_mall = self._INTRESSANTA_POSTER.get(kort)
+            if not etikett_mall:
+                continue
+            kontext = re.search(r'contextRef="([^"]+)"', attribut)
+            period = perioder.get(kontext.group(1), "") if kontext else ""
+            varde = unescape(re.sub(r"<[^>]+>", "", traff.group(2))).strip().replace(" ", " ")
+            if not varde:
+                continue
+            if re.search(r'sign="-"', attribut):
+                varde = f"-{varde}"
+            if (kort, period) in sedda:
+                continue
+            sedda.add((kort, period))
+            resultat.append(
+                Faktautkast(
+                    etikett=etikett_mall,
+                    varde=varde,
+                    period=period or None,
+                    kalla_id=self.id,
+                    myndighet=self._kalla.myndighet or "Bolagsverket",
+                    licens=self._kalla.licens,
+                    attribution=self._kalla.attribution,
+                    dataset=dokumentid,
+                    lank_manniska=manniska,
+                    lank_maskin=url,
+                )
+            )
+
+        if not resultat:
+            logger.info("%s: inga kända poster i dokument %s", self.id, dokumentid)
         return resultat
 
     def _hamta_dokumentlista(self, identitet: str, headers: dict[str, str]) -> list[Faktautkast]:

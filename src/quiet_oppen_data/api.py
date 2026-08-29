@@ -356,7 +356,18 @@ async def _strom_svar(fraga: str) -> AsyncIterator[str]:
     citerade: set[str] = set()
     for stycke in svar.stycken:
         citerade.update(stycke.kallor)
-        yield _sse("stycke", {"text": stycke.text, "kallor": list(stycke.kallor)})
+        yield _sse(
+            "stycke",
+            {
+                "text": stycke.text,
+                "kallor": list(stycke.kallor),
+                "form": stycke.form,
+                "rader": [
+                    {"etikett": r.etikett, "varde": r.varde, "ton": r.ton}
+                    for r in stycke.rader
+                ],
+            },
+        )
 
     yield _sse("kallor", {"kallor": _kallpanel(hamtningsresultat.register, citerade)})
 

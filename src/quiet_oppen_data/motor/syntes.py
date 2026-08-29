@@ -66,6 +66,24 @@ fältet "kallor", inte i "text".
 5. Räkna aldrig själv (ingen procent, differens eller summering som inte \
 redan står i en Faktapost). Om en beräkning saknas, säg det i "forbehall" \
 i stället för att uppskatta.
+6. Redovisa NEKANDEN. En Faktapost som säger att något inte finns — att ett \nbolag inte är avregistrerat, att inget förfarande pågår, att ingen spärr är \nregistrerad — är ett svar och ska med. För den som kontrollerar en motpart är \nnekandet ofta hela poängen, och att tiga om det gör «vi vet att det inte är så» \nomöjligt att skilja från «vi vet inte».
+
+FORM — du väljer själv hur svaret presenteras:
+
+Målet är att läsaren ska förstå så snabbt och säkert som möjligt. Välj den \nform frågan förtjänar, och blanda gärna: en inledande mening i brödtext följd \nav en tabell är ofta bäst.
+
+* "brodtext" (standard) — resonemang, sammanhang, en enda uppgift, allt som \nläses som text. Lämna "rader" tom.
+* "punktlista" — flera jämbördiga uppgifter utan gemensam struktur. Fyll \n"rader" med bara "varde".
+* "tabell" — flera uppgifter som delar form: fält och värde, post och belopp, \når och tal. Fyll "rader" med "etikett" och "varde".
+
+För varje rad sätter du "ton", som säger vad raden BETYDER. Gränssnittet \nväljer färgen; du väljer innebörden:
+
+* "neutral" — en vanlig uppgift.
+* "bekraftad" — något finns eller gäller: verksam, registrerad, giltig.
+* "nekad" — något finns inte: inte avregistrerad, ingen spärr, inget \npågående förfarande.
+* "varning" — något läsaren bör stanna upp vid: avregistrerad, pågående \navveckling, en uppgift som motsäger en annan.
+
+"text" ska ALLTID vara ifylld och bära styckets innebörd även utan raderna — \nen mottagare som inte kan rita tabeller ska ändå få ett läsbart svar. Skriv \nden som en ledande mening, inte som en upprepning av tabellen.
 """
 
 
@@ -100,6 +118,26 @@ SVARSSCHEMA: dict = {
                         "items": {"type": "string"},
                         "minItems": 1,
                     },
+                    "form": {
+                        "type": "string",
+                        "enum": ["brodtext", "punktlista", "tabell"],
+                    },
+                    "rader": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "etikett": {"type": "string"},
+                                "varde": {"type": "string"},
+                                "ton": {
+                                    "type": "string",
+                                    "enum": ["neutral", "bekraftad", "nekad", "varning"],
+                                },
+                            },
+                            "required": ["varde"],
+                            "additionalProperties": False,
+                        },
+                    },
                 },
                 "required": ["text", "kallor"],
                 "additionalProperties": False,
@@ -117,10 +155,32 @@ SVARSSCHEMA: dict = {
 # ---------------------------------------------------------------------------
 
 @dataclass(frozen=True)
+class Rad:
+    """En rad i en punktlista eller tabell.
+
+    `ton` är **semantisk**, inte dekorativ: den säger vad raden betyder, och
+    gränssnittet väljer färg. En modell som får välja färg direkt börjar måla
+    efter tycke; en modell som får säga «det här är ett nekande» säger något
+    sant som går att rendera olika i olika gränssnitt.
+    """
+    etikett: str = ""
+    varde: str = ""
+    ton: str = "neutral"
+
+
+@dataclass(frozen=True)
 class Stycke:
-    """Ett stycke i syntessvaret — text plus de F-id det bygger på."""
+    """Ett stycke i syntessvaret — text plus de F-id det bygger på.
+
+    `form` och `rader` är presentationsval. `text` är alltid ifylld och bär
+    styckets innebörd även utan raderna: en klient som inte kan rendera
+    tabeller ska få ett läsbart svar ändå, och SSE-strömmen har konsumenter
+    utanför webbwidgeten.
+    """
     text: str
     kallor: tuple[str, ...] = ()
+    form: str = "brodtext"
+    rader: tuple[Rad, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -146,8 +206,23 @@ def _fail_closed(forbehall: str = INGET_HITTAT) -> SyntesSvar:
 
 def _tolka_svar(rå_text: str) -> SyntesSvar:
     data = json.loads(rå_text)
+    def _rader(s: dict) -> tuple[Rad, ...]:
+        return tuple(
+            Rad(
+                etikett=str(r.get("etikett") or ""),
+                varde=str(r.get("varde") or ""),
+                ton=str(r.get("ton") or "neutral"),
+            )
+            for r in (s.get("rader") or [])
+        )
+
     stycken = tuple(
-        Stycke(text=s["text"], kallor=tuple(s["kallor"]))
+        Stycke(
+            text=s["text"],
+            kallor=tuple(s["kallor"]),
+            form=str(s.get("form") or "brodtext"),
+            rader=_rader(s),
+        )
         for s in data.get("stycken", [])
     )
     return SyntesSvar(

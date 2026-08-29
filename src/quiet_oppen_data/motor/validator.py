@@ -93,7 +93,11 @@ def _kontrollera_stycken_har_tackning(svar: SyntesSvar) -> list[Valideringsfel]:
     JSON-schemat i fas B kräver redan minItems: 1 på kallor för giltig utdata."""
     fel: list[Valideringsfel] = []
     for stycke in svar.stycken:
-        if not stycke.kallor and _har_troligen_sakuppgift(stycke.text):
+        # Raderna i en punktlista eller tabell är sakinnehåll precis som texten.
+        # Utan dem här vore presentationsformen en väg förbi citeringskravet:
+        # ett stycke med tom text och femton tabellrader hade sluppit kontrollen.
+        radtext = " ".join(f"{r.etikett} {r.varde}" for r in stycke.rader)
+        if not stycke.kallor and _har_troligen_sakuppgift(f"{stycke.text} {radtext}"):
             fel.append(Valideringsfel(
                 kontroll="ociterat_stycke",
                 meddelande=f"Stycket \"{stycke.text}\" innehåller en sakuppgift men har ingen källa.",

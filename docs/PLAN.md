@@ -1610,3 +1610,82 @@ lint har aldrig körts. Lägg till det i dev-beroendena innan steg 9.
    FastAPI-app som svarar `{"ok": true}` på `/halsa` ska deployas **NU**, parallellt
    med steg 3–6, inte vid steg 13. Syftet är att felsöka DNS, brandvägg och
    Coolify-pipelinen innan applikationslogiken finns, inte samtidigt med den.
+
+---
+
+## Steg 22 — Bolagsverkets dokumentinnehåll, nekanden och fri svarsform ✅ 2026-08-29
+
+Tre ändringar som hänger ihop: chatten kunde säga att en årsredovisning fanns
+men inte vad som stod i den, den kunde inte säga att något *inte* fanns, och
+den kunde bara svara i löptext.
+
+### 22.1 `/dokument/{id}` — innehållet, inte bara att det finns
+
+Adaptern implementerade `/organisationer` och `/dokumentlista`, men inte
+`/dokument/{id}`. Chatten kunde alltså räkna upp ett dokument-id åt läsaren och
+sedan lämna hen vid dörren — trots att samma nyckel, samma prenumeration och
+samma scope räcker hela vägen.
+
+Nytt verktyg `bolagsverket_hvd_dokument` (tar `dokumentid`). Hämtar zip:en,
+packar upp iXBRL-XHTML:en och läser ut de taggade posterna med sin period.
+Verifierat live 2026-08-29 mot AE Capital AB (556861-2351): **37 fakta** ur
+årsredovisningen för 2020.
+
+Går förbi den delade transporten av samma skäl som `hamta_token` gör det:
+svaret är en binär zip, och den delade cachen är byggd för textsvar.
+
+**Läser av — räknar inte.** Urvalet i `_INTRESSANTA_POSTER` är resultat- och
+balansräkningens huvudposter plus antalet anställda; dokumentet bär 150–200
+taggade fakta och att skicka alla vore att dränka frågan. Enhetsfällan står i
+koden: flerårsöversikten är i tusental kronor, resultat- och balansräkningen i
+kronor.
+
+### 22.2 Nekanden emitteras
+
+Varje fält låg bakom ett `if <värde>:`. När Bolagsverket svarade `null` skapades
+ingen Faktapost alls — och eftersom syntesen bara får skriva det som finns som
+Faktapost blev nekandet **osynligt**: «bolaget är inte avregistrerat» gick inte
+att skilja från «vi vet inte om det är avregistrerat». För den som kontrollerar
+en motpart är nekandet ofta hela svaret.
+
+Fyra nekanden emitteras nu uttryckligen (avregistrerad, pågående förfarande,
+reklamspärr, avregistreringsorsak), plus tre fält som aldrig emitterades alls:
+registreringsland, infört hos SCB, och datumet då företagsnamnet registrerades.
+För AE Capital gick svaret från **9 till 15 fakta**.
+
+Skillnaden mot «vi vet inte» är bevarad: saknas nyckeln *helt* i svaret
+emitteras ingenting.
+
+Systemprompten fick regel 6 — redovisa nekanden — med skälet skrivet.
+
+**Ett befintligt prov påstod motsatsen.** `assert not any("Reklamspärr" ...)`
+kodifierade det gamla beteendet som avsikt. Kontraktet ändrades medvetet, så
+provet ändrades med ett skrivet skäl. Provsviten hittade dessutom en riktig bugg
+i det nya nekandet: leveransen förekommer med två stavningar av
+avregistreringsfältet (`avregistradOrganisation` utan «e»), vilket den jakande
+vägen redan hanterade men nekandet inte gjorde.
+
+### 22.3 Fri svarsform
+
+Beställaren ville att modellen skulle få välja utformning — löptext, tabell,
+eller en blandning, gärna med färg. **Kontroll av widgeten först visade att det
+inte gick som det stod:** `widget.js` renderade svarstext med
+`document.createTextNode()` i ett `<p>`. En markdown-tabell hade skrivits ut som
+råa pipetecken, och färg var omöjligt.
+
+Vägen byggdes i stället. Se ARKITEKTUR §4 för schemat. Kort:
+
+* `form`: `brodtext` | `punktlista` | `tabell`, per stycke.
+* `ton` per rad: `neutral` | `bekraftad` | `nekad` | `varning` — semantisk,
+  inte dekorativ.
+* `text` alltid ifylld, så att en klient utan tabellstöd får ett läsbart svar.
+* Fas C räknar raderna som sakinnehåll, annars vore formen en väg förbi
+  citeringskravet.
+* Widgeten bygger DOM-noder, aldrig `innerHTML`. Färg som tillägg till en
+  vänsterkant, aldrig som enda signal.
+
+### Utfall
+
+263 prov gröna. Live-verifierat mot produktionsgatewayen samma dag: 15 fakta ur
+`/organisationer` (varav fyra nekanden), 1 ur `/dokumentlista`, 37 ur
+`/dokument/{id}`.

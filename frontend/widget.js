@@ -284,6 +284,58 @@
   line-height: 1.75;
 }
 
+/* Strukturerade stycken — punktlista och tabell.
+   Tonerna är semantiska: modellen säger vad raden betyder, widgeten väljer
+   färgen. En modell som får välja färg direkt börjar måla efter tycke. */
+.qw-punkter {
+  margin: .5em 0 .9em;
+  padding-left: 1.25em;
+  line-height: 1.7;
+}
+.qw-punkter li { margin-bottom: .25em; }
+
+.qw-tabellhylsa {
+  margin: .6em 0 .9em;
+  overflow-x: auto;
+  border: 1px solid var(--qw-linje, rgba(0,0,0,.12));
+  border-radius: 6px;
+}
+.qw-tabell {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: .95em;
+}
+.qw-tabell td {
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--qw-linje, rgba(0,0,0,.08));
+  vertical-align: top;
+  line-height: 1.5;
+}
+.qw-tabell tr:last-child td { border-bottom: none; }
+.qw-tabell .qw-etikett {
+  color: var(--qw-text-muted, #667);
+  white-space: nowrap;
+  width: 1%;
+}
+.qw-tabell .qw-varde { font-variant-numeric: tabular-nums; }
+
+/* Vänsterkant bär tonen — färg som tillägg, aldrig som enda signal.
+   Den som inte skiljer färger ska kunna läsa svaret lika bra. */
+.qw-tabell tr[data-ton] td:first-child { border-left: 3px solid transparent; }
+.qw-tabell tr[data-ton="bekraftad"] td:first-child { border-left-color: #2e8b57; }
+.qw-tabell tr[data-ton="nekad"] td:first-child { border-left-color: #8a8f98; }
+.qw-tabell tr[data-ton="varning"] td:first-child { border-left-color: #c2410c; }
+.qw-tabell tr[data-ton="bekraftad"] .qw-varde { color: #1f6b45; }
+.qw-tabell tr[data-ton="varning"] .qw-varde { color: #9a3412; font-weight: 600; }
+.qw-tabell tr[data-ton="nekad"] .qw-varde { color: var(--qw-text-muted, #667); }
+
+@media (prefers-color-scheme: dark) {
+  .qw-tabell tr[data-ton="bekraftad"] td:first-child { border-left-color: #4ea87a; }
+  .qw-tabell tr[data-ton="varning"] td:first-child { border-left-color: #e08a70; }
+  .qw-tabell tr[data-ton="bekraftad"] .qw-varde { color: #63bb8c; }
+  .qw-tabell tr[data-ton="varning"] .qw-varde { color: #e08a70; }
+}
+
 /* Fotnot-knappar i löptext */
 .qw-fn {
   display: inline-flex;
@@ -1120,7 +1172,39 @@
       // Map från källid → array av knappar (kan nämnas i flera stycken)
       const fnMappaKnappar = new Map();
 
-      const _laggTillStycke = (text, kallIds) => {
+      /** Bygger punktlistan eller tabellen. Alltid via DOM-noder, aldrig
+       *  innerHTML: innehållet kommer från en modell, och en textnod kan inte
+       *  bära märkspråk in i sidan hur den än formuleras. */
+      const _byggRader = (form, rader) => {
+        if (!Array.isArray(rader) || rader.length === 0) return null;
+        const tillaten = t =>
+          ["neutral", "bekraftad", "nekad", "varning"].includes(t) ? t : "neutral";
+
+        if (form === "punktlista") {
+          const ul = el("ul", { className: "qw-punkter" });
+          for (const r of rader) {
+            const txt = r.etikett ? `${r.etikett}: ${r.varde}` : String(r.varde || "");
+            ul.appendChild(el("li", { textContent: txt }));
+          }
+          return ul;
+        }
+
+        const hylsa = el("div", { className: "qw-tabellhylsa" });
+        const tabell = el("table", { className: "qw-tabell" });
+        const tbody = el("tbody");
+        for (const r of rader) {
+          const tr = el("tr");
+          tr.dataset.ton = tillaten(r.ton);
+          tr.appendChild(el("td", { className: "qw-etikett", textContent: r.etikett || "" }));
+          tr.appendChild(el("td", { className: "qw-varde", textContent: String(r.varde || "") }));
+          tbody.appendChild(tr);
+        }
+        tabell.appendChild(tbody);
+        hylsa.appendChild(tabell);
+        return hylsa;
+      };
+
+      const _laggTillStycke = (text, kallIds, form, rader) => {
         _registreraFotnummer(kallIds);
 
         // Ta bort cursor från "aktivt stycke" om det finns
@@ -1145,6 +1229,10 @@
         });
 
         styckenDiv.appendChild(p);
+
+        const struktur = _byggRader(form, rader);
+        if (struktur) styckenDiv.appendChild(struktur);
+
         svarRad.scrollIntoView({ behavior: "smooth", block: "nearest" });
       };
 
@@ -1323,7 +1411,7 @@
         case "stycke":
           // Arkitekturkrav: rendera inte ett stycke utan källhänvisningar
           if (!data.kallor || data.kallor.length === 0) break;
-          _laggTillStycke(data.text || "", data.kallor);
+          _laggTillStycke(data.text || "", data.kallor, data.form, data.rader);
           break;
 
         case "kallor":

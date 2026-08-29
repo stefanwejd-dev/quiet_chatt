@@ -166,8 +166,23 @@ def test_organisation_hamtning_mappar_falt(monkeypatch, isolerad_cache):
     sni_etikett = next(e for e in etiketter if "SNI-koder" in e)
     assert "70100" in etiketter[sni_etikett]
 
-    # reklamsparr var None i svaret ovan — ingen post ska ha hittats på den.
-    assert not any("Reklamspärr" in e for e in etiketter)
+    # reklamsparr var None i svaret ovan. Tidigare emitterades då INGENTING,
+    # och nekandet blev osynligt: syntesen får bara skriva det som finns som
+    # Faktapost, så «ingen spärr är registrerad» gick inte att skilja från «vi
+    # vet inte». Sedan 2026-08-29 emitteras nekandet uttryckligen.
+    reklam_etikett = next(e for e in etiketter if "Reklamspärr" in e)
+    assert etiketter[reklam_etikett].startswith("Nej")
+
+    # Samma sak för de tre andra frånvarande uppgifterna.
+    avreg_etikett = next(e for e in etiketter if e.startswith("Avregistrerad"))
+    assert etiketter[avreg_etikett].startswith("Nej")
+    avveckling_etikett = next(e for e in etiketter if e.startswith("Pågående avveckling"))
+    assert etiketter[avveckling_etikett].startswith("Nej")
+
+    # Ett fält som INTE ingick i svaret alls ger fortfarande ingen post —
+    # skillnaden mellan «vi vet att det inte är så» och «vi vet inte» ska
+    # finnas kvar åt andra hållet också.
+    assert not any(e.startswith("Registreringsland") for e in etiketter)
 
     # Utkasten ska passera Faktaregistrets validering precis som andra adaptrar.
     reg = Faktaregister()
@@ -209,7 +224,11 @@ def test_dokumentlista_hamtning(monkeypatch, isolerad_cache):
 def test_beskriv_exponerar_bade_organisationer_och_dokumentlista(isolerad_cache):
     adapter = BolagsverketAdapter()
     namn = {spec["name"] for spec in adapter.beskriv()}
-    assert namn == {"bolagsverket_hvd", "bolagsverket_hvd_dokumentlista"}
+    assert namn == {
+        "bolagsverket_hvd",
+        "bolagsverket_hvd_dokumentlista",
+        "bolagsverket_hvd_dokument",
+    }
 
 
 def test_transport_avvisar_om_kallan_stangs_av(monkeypatch, isolerad_cache):
