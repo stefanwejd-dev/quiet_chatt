@@ -309,3 +309,37 @@ class LagSokresultat:
     relevans: float
     full_text: str
 
+
+
+@dataclass(frozen=True)
+class KorpusSokresultat:
+    """Ett sökresultat ur textkorpusen — BFN eller EUR-Lex (steg 23–24).
+
+    Delar form med LagSokresultat men bär källans egna begrepp i stället för
+    SFS-begreppen: `blocktyp` skiljer ett bindande allmänt råd från BFN:s
+    kommentar till det, och `lydelse` är källans egen versionsuppgift
+    (BFN: "Uppdaterad 2025-12-15", EU: konsolideringsdatum).
+    """
+
+    chunk_id: str
+    korpus: str                      # "bfn" | "eu"
+    dokument_id: str
+    dok_id: str
+    titel: str
+    kortnamn: str | None             # "BFNAR 2012:1" | "Momsdirektivet"
+    utgivare: str
+    blocktyp: str
+    beteckning: str | None           # "12.7" | "Artikel 168"
+    kapitel_nr: str | None
+    kapitel_rubrik: str | None
+    avsnitt: str | None
+    text: str
+    sida: int | None
+    lydelse: str
+    hamtad: str
+    lank_manniska: str
+    lank_maskin: str
+    licens: str
+    attribution: str | None
+    relevans: float
+    full_text: str

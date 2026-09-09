@@ -19,6 +19,12 @@ dependencies = [
     # beroende av ett paket ingen deklarerat.
     "pyyaml>=6.0",
     "numpy>=1.26",
+    # BFN-korpuset (steg 23). Bokföringsnämnden publicerar pdf, inte data.
+    # pypdf är förstahandsvalet — mätt snabbare och textrikare på BFN:s
+    # mallar — och pdfplumber är reserven för de filer pypdf läser i fel
+    # ordning. Båda behövs: de går bet på olika filer.
+    "pypdf>=5.0",
+    "pdfplumber>=0.11",
 ]
 
 [project.optional-dependencies]

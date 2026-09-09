@@ -1,0 +1,148 @@
+# EU-register för Quiet Öppen Data (CELEX-korpus)
+# ===============================================
+#
+# Steg 24. De EU-rättsakter som svensk skatte- och redovisningsrätt genomför,
+# i gällande konsoliderad lydelse på svenska.
+#
+# Varje post hämtas från publications.europa.eu med innehållsförhandling.
+# `celex` är den stabila identifieraren och den enda uppgift koden behöver —
+# människolänken och maskinlänken härleds ur den (se euregister.py).
+#
+# Samtliga aktiva poster nedan är anropade live 2026-09-09 och svaret
+# inspekterat. Byte-antalet står i `verifierat` som en grov kontrollsumma:
+# ett svar som plötsligt är en bråkdel så stort är inte samma dokument.
+#
+# ARKITEKTUR §10 skrev ut EU-rätten som en känd lucka i version 1 med
+# motiveringen att den kräver en egen källa och adapter. Det här registret
+# och kallregister.yaml -> eurlex är den källan.
+
+version: 1
+uppdaterad: "2026-09-09"
+
+rattsakter:
+
+  # ===========================================================================
+  # Mervärdesskatt
+  # ===========================================================================
+
+  - celex: "32006L0112"
+    kortnamn: "Momsdirektivet"
+    namn: "Rådets direktiv 2006/112/EG om ett gemensamt system för mervärdesskatt"
+    beskrivning: >
+      Grunden för hela den svenska mervärdesskattelagen. Behövs när ML:s
+      lydelse är oklar eller när en fråga gäller gränsöverskridande omsättning,
+      omvänd betalningsskyldighet eller undantag från skatteplikt.
+    verifierat: "2026-09-09, 200, 1 752 583 byte"
+
+  - celex: "32011R0282"
+    kortnamn: "Genomförandeförordningen"
+    namn: >
+      Rådets genomförandeförordning (EU) nr 282/2011 om fastställande av
+      tillämpningsföreskrifter för direktiv 2006/112/EG
+    beskrivning: >
+      Direkt tillämplig i Sverige — den behöver ingen svensk motsvarighet för
+      att gälla. Avgör bland annat var en tjänst anses omsatt.
+    verifierat: "2026-09-09, 200, 930 001 byte"
+
+  # ===========================================================================
+  # Redovisning och fakturering
+  # ===========================================================================
+
+  - celex: "32013L0034"
+    kortnamn: "Redovisningsdirektivet"
+    namn: >
+      Europaparlamentets och rådets direktiv 2013/34/EU om årsbokslut,
+      koncernredovisning och rapporter i vissa typer av företag
+    beskrivning: >
+      Det direktiv årsredovisningslagen genomför. Bär gränsvärdena för
+      företagskategorier och uppställningsformerna för balans- och
+      resultaträkning.
+    verifierat: "2026-09-09, 200, 737 730 byte"
+
+  - celex: "32014L0055"
+    kortnamn: "E-fakturadirektivet"
+    namn: >
+      Europaparlamentets och rådets direktiv 2014/55/EU om elektronisk
+      fakturering vid offentlig upphandling
+    beskrivning: >
+      Grunden för kravet på e-faktura till offentlig sektor och därmed för
+      den svenska lagen (2018:1277).
+    verifierat: "2026-09-09, 200, 102 625 byte"
+
+  # ===========================================================================
+  # Direkt skatt — de direktiv PLAN.md listade som utanför räckvidden
+  # ===========================================================================
+
+  - celex: "32011L0096"
+    kortnamn: "Moder/dotterbolagsdirektivet"
+    namn: >
+      Rådets direktiv 2011/96/EU om ett gemensamt beskattningssystem för
+      moderbolag och dotterbolag hemmahörande i olika medlemsstater
+    beskrivning: Undanröjer kedjebeskattning av utdelning inom koncerner över gränserna.
+    verifierat: "2026-09-09, 200, 95 845 byte"
+
+  - celex: "32009L0133"
+    kortnamn: "Fusionsdirektivet"
+    namn: >
+      Rådets direktiv 2009/133/EG om ett gemensamt beskattningssystem för
+      fusion, fission, överföring av tillgångar och utbyte av aktier eller andelar
+    beskrivning: Grunden för reglerna om uppskjuten beskattning vid omstruktureringar.
+    verifierat: "2026-09-09, 200, 124 284 byte"
+
+  - celex: "32003L0049"
+    kortnamn: "Ränte- och royaltydirektivet"
+    namn: >
+      Rådets direktiv 2003/49/EG om ett gemensamt system för beskattning av
+      räntor och royalties som betalas mellan närstående bolag
+    beskrivning: Begränsar källskatt på räntor och royalties inom EU-koncerner.
+    verifierat: "2026-09-09, 200, 59 692 byte"
+
+  - celex: "32016L1164"
+    kortnamn: "Skatteflyktsdirektivet (ATAD)"
+    namn: >
+      Rådets direktiv (EU) 2016/1164 om fastställande av regler mot
+      skatteflyktsmetoder som direkt inverkar på den inre marknadens funktion
+    beskrivning: >
+      Grunden för ränteavdragsbegränsningarna, CFC-reglerna och
+      exitbeskattningen i inkomstskattelagen.
+    verifierat: "2026-09-09, 200, 119 400 byte"
+
+  # ===========================================================================
+  # Dataskydd
+  # ===========================================================================
+
+  - celex: "32016R0679"
+    kortnamn: "GDPR"
+    namn: >
+      Europaparlamentets och rådets förordning (EU) 2016/679 om skydd för
+      fysiska personer med avseende på behandling av personuppgifter
+    beskrivning: >
+      Direkt tillämplig. Relevant för varje fråga om vad ett företag får
+      lagra om kunder och anställda, och hur länge.
+    verifierat: "2026-09-09, 200, 828 689 byte"
+
+# ---------------------------------------------------------------------------
+# Kända luckor — dokumenteras för att slippa utreda igen
+# ---------------------------------------------------------------------------
+#
+# Poster här hämtas INTE. De ligger kvar med sitt skäl, så att en framtida
+# körning inte gissar om samma sak. En redovisad lucka är ett giltigt utfall
+# (PLAN.md, steg 16B).
+
+luckor:
+  - identitet: "EU-fördraget (FEU) och EUF-fördraget (FEUF)"
+    skal: >
+      Fördragen serveras inte av publications.europa.eu/resource/celex. Prövade
+      former 2026-09-09, samtliga 404 med 36 byte kropp: 12016M/TXT,
+      12016E/TXT, 12016ME/TXT, 12012M/TXT, 12012E/TXT, 12008E/TXT,
+      11992M/TXT, 02016ME/TXT.
+    atgard: >
+      Fördragstexten finns hos EUR-Lex webbgränssnitt men behöver en annan
+      resursväg än rättsakterna. Utred separat enligt ARKITEKTUR §0 — anropa,
+      inspektera, dokumentera — innan någon post läggs in här.
+
+  - identitet: "OECD:s modellavtal"
+    skal: >
+      Ligger hos OECD, inte hos EUR-Lex, och är inte öppna data. Kräver en
+      egen källa med egen licensutredning.
+    atgard: Ingen. Redovisas som lucka.

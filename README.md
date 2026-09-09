@@ -56,6 +56,18 @@ stället för att ligga öppen. Skicka nyckeln som headern `x-matning-nyckel`.
 
 Systemet besvarar sakfrågor mot öppna data och författningar med full källspårbarhet:
 
+* **"Vad ska en verifikation innehålla enligt god redovisningssed?"**
+
+  > *Svar:* De uppgifter som en verifikation ska innehålla enligt 5 kap. 7 §
+  > bokföringslagen ska vara varaktiga och läsbara [1].
+  > *Källor:* [1] Bokföringsnämnden (BFN), BFNAR 2013:2 punkt 5.4, uppdaterad 2024-09-16
+
+* **"Vad säger momsdirektivet om avdragsrätt?"**
+
+  > *Svar:* I den mån varorna används för beskattade transaktioner har den
+  > beskattningsbara personen rätt att dra av mervärdesskatten [1].
+  > *Källor:* [1] EUR-Lex, Momsdirektivet Artikel 168 (konsoliderad lydelse 2025-04-14)
+
 * **"Vad är gränsen för skattefri julgåva till anställda?"**
 
   > *Svar:* Gränsen för skattefri julgåva är 550 kr inklusive moms per anställd [1]. Om gåvans värde överstiger detta belopp blir hela förmånen skattepliktig.
@@ -89,6 +101,8 @@ Systemet besvarar sakfrågor mot öppna data och författningar med full källsp
 |[`docs/PLAN.md`](docs/PLAN.md)|Stegen med acceptanskriterier, avsedda för en implementerande kod-AI|…ska bygga|
 |`kallor/kallregister.yaml`|Systemets enda sanning om vilka källor som finns, hur de nås, och vilka som är verifierade|…ska röra en källa|
 |`lagar/lagregister.yaml`|De 62 författningar som speglas i lagindexet|…ska lägga till en lag|
+|`kallor/bfnregister.yaml`|Hur bfn.se genomsöks, hur varje pdf kategoriseras, och vilka nivåer som får indexeras|…ska röra BFN-skörden|
+|`eu/euregister.yaml`|De EU-rättsakter som hämtas, och de som medvetet inte hämtas|…ska lägga till en rättsakt|
 
 ## Status
 
@@ -117,11 +131,33 @@ Systemet besvarar sakfrågor mot öppna data och författningar med full källsp
 |19|Nattlig färskhetskontroll av lagkorpuset|✅|
 |20|Skatteverkets rättsliga regelfiler (Rules as Code)|✅|
 |21|Bolagsverket HVD — produktionsaktivering (OAuth2, organisationer, dokumentlista)|✅|
+|22|Bolagsverkets dokumentinnehåll (iXBRL), nekanden och fri svarsform|✅|
+|23|BFN-korpus — Bokföringsnämndens allmänna råd och vägledningar|✅|
+|24|EU-rättsakter ur EUR-Lex i gällande konsoliderad lydelse|✅|
 
-**Hela testsviten: 254 passerade**, `ruff check .` rent (2026-08-16). Prestandatester som beror på hårdvaruladdningstid är markerade `@pytest.mark.slow` och körs separat med `pytest -m slow`; livetester mot Anthropic och externa API:er är markerade `@pytest.mark.live` och körs separat med `pytest -m live`.
+**Hela testsviten: 310 passerade**, `ruff check .` rent (2026-09-09). Prestandatester som beror på hårdvaruladdningstid är markerade `@pytest.mark.slow` och körs separat med `pytest -m slow`; livetester mot Anthropic och externa API:er är markerade `@pytest.mark.live` och körs separat med `pytest -m live`.
 
 Lagindexet i `data/index.sqlite`: 62 dokument, 9 792 chunkar, 9 792 embeddings.
 Katalogindexet: 23 289 datamängder, 32 518 distributioner.
+BFN-korpuset: 132 dokument, 8 062 stycken. EU-korpuset: 9 rättsakter, 868 stycken.
+Tre ersatta konsolideringar (K2, K3, Årsbokslut) ligger kvar i registret med
+sin anmärkning men är uteslutna ur sökningen — se `docs/PLAN.md` R1.
+
+### Korpusen byggs i två steg
+
+```bash
+# BFN: skörda bfn.se först (tar tid — bfn.se svarar 429 vid snabbare takt),
+# därefter parsa och indexera.
+python -m quiet_oppen_data.index.bfn_skord
+python -m quiet_oppen_data.index.bfn_ingest
+
+# EU: hämtar gällande konsoliderad lydelse, väljs mot källans egen förteckning.
+python -m quiet_oppen_data.index.eu_ingest
+```
+
+Båda är valfria: saknas de svarar chatten som förut, utan BFN och EU-rätt.
+`GET /matning` → `korpus` visar dokumentantal, ålder och de dokument som
+hämtats men inte kunnat läsas.
 
 ## Nattlig ingest
 

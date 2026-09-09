@@ -196,6 +196,11 @@ async def matning_endpoint(request: Request) -> dict[str, Any]:
 
     `lagkorpus_alder` visar, per författning, dygn sedan senaste lyckade
     ingest och om den ligger efter (steg 19, §5 regel 8).
+
+    `korpus` visar samma sak för textkorpusen (steg 23-24): BFN och EUR-Lex.
+    `dokument_med_anmarkning` räknar de dokument som hämtats men inte kunnat
+    läsas — inskannade pdf:er utan textlager hos BFN. De är en känd lucka och
+    ska synas som en sådan, inte försvinna ur statistiken.
     """
     _kontrollera_matningsnyckel(request)
 
@@ -219,11 +224,32 @@ async def matning_endpoint(request: Request) -> dict[str, Any]:
         lagkorpus_alder = {"fel": "Kunde inte läsa lagkorpusets ålder."}
         senaste_lagkontroll = None
 
+    # Textkorpusen (steg 23-24). Läses live ur indexet av samma skäl som
+    # lagkorpusets ålder ovan.
+    try:
+        from quiet_oppen_data.index.korpus import las_alder, statistik
+        korpus_statistik = await run_in_threadpool(statistik)
+        korpus_alder = await run_in_threadpool(las_alder)
+        korpus_efter = [k for k in korpus_alder if k["ligger_efter"]]
+        korpus = {
+            "statistik": korpus_statistik,
+            "dokument_som_ligger_efter": len(korpus_efter),
+            "ligger_efter": korpus_efter,
+            "anmarkningar": [
+                {"korpus": k["korpus"], "dok_id": k["dok_id"], "anmarkning": k["anmarkning"]}
+                for k in korpus_alder if k["anmarkning"]
+            ],
+        }
+    except Exception:
+        logger.warning("Kunde inte läsa textkorpusens tillstånd", exc_info=True)
+        korpus = {"fel": "Kunde inte läsa textkorpusens tillstånd."}
+
     return {
         "matpunkter": punkter,
         "senaste_ingest": senaste_ingest,
         "lagkorpus_alder": lagkorpus_alder,
         "senaste_lagkontroll": senaste_lagkontroll,
+        "korpus": korpus,
     }
 
 

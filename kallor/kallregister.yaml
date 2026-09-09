@@ -808,6 +808,120 @@ kallor:
       - platsannonser, arbetsmarknadstaxonomi
 
   # ---------------------------------------------------------------------------
+  # Bokföringsnämnden (steg 23) — god redovisningssed
+  #
+  # BFN har inget API. Sakinnehållet är pdf:er på en WordPress-webbplats.
+  # Skörden (index/bfn_skord.py) räknar upp sidor och bilagor via WP-REST och
+  # hämtar sidorna som HTML; kategoriseringsreglerna ligger i
+  # kallor/bfnregister.yaml. Adaptern läser sedan ur det lokala korpusindexet,
+  # aldrig från bfn.se vid frågetillfället — samma upplägg som lagtext.
+  # ---------------------------------------------------------------------------
+
+  - id: bokforingsnamnden
+    myndighet: Bokföringsnämnden (BFN)
+    adapter: bfn
+    bas_url: https://www.bfn.se
+    verifierad: ja
+    aktiverad: true
+    verifierat_anrop: >
+      Avläst live 2026-09-09 av detta system (en verifiering ärvs inte, se
+      ARBETSORDER princip 1):
+      GET /wp-json/wp/v2/pages?per_page=1 -> 200, X-WP-Total: 131.
+      GET /wp-json/wp/v2/media?per_page=1 -> 200, X-WP-Total: 950.
+      Full uppräkning av media med per_page=100 -> 942 poster på 10 sidor,
+      varav 905 pdf.
+      GET /redovisningsregler/vagledningar/k-regelverk/ -> 200, 55 409 byte,
+      11 pdf-länkar (K1, K2, K3, årsbokslut).
+      Fältet content.rendered är TOMT (0 tecken) på samtliga stickprov —
+      sidorna måste hämtas som HTML.
+    autentisering: ingen
+    licens: >
+      PSI. BFN:s egen sida om vidareutnyttjande: handlingarna är fritt
+      tillgängliga utan avgift och får vidareutnyttjas utan att något särskilt
+      medgivande eller avtal krävs. Ange alltid källa, BFN och datum. Avser
+      allmänna råd, vägledningar och uttalanden.
+    attribution: "Källa: Bokföringsnämnden (BFN), {datum}"
+    # Sänkt till ett anrop varannan sekund. Vid provkörning 2026-09-09 gav
+    # bfn.se 429 Too Many Requests efter ett knappt tiotal snabba anrop.
+    # BFN publicerar ingen gräns, så vi ligger konservativt — en full skörd
+    # tar tid, och det är avsikten.
+    takt: { anrop: 1, per_sekunder: 2 }
+    cache_ttl: 86400
+    manniskolank_mall: "https://www.bfn.se/redovisningsregler/"
+    tacker:
+      - K1, K2, K3 och K2/K3 Årsbokslut (allmänna råd och vägledningar)
+      - vägledningen Bokföring (BFNAR 2013:2) — löpande bokföring, verifikationer,
+        arkivering, systemdokumentation
+      - gränsvärden, byte mellan K-regelverk, bokföringsskyldighetens upphörande
+      - BFN:s uttalanden och frågor och svar
+    varning: >
+      BFN länkar vidare till ANDRA utgivares pdf:er (SOU:er hos
+      Regeringskansliet, utkast från IFRS Foundation). De hämtas inte här:
+      de omfattas inte av BFN:s PSI-villkor, och en fil hämtad via den här
+      källan skulle bära attributionen "Källa: Bokföringsnämnden" — vilket
+      vore fel. Länkarna sparas i skörderegistret; den som vill ha dokumenten
+      får registrera utgivaren som egen källa först.
+    hinder: >
+      Cirka en åttondel av bfn.se:s pdf:er saknar textlager (inskannade). De
+      laddas ner men ger noll block, och skrivs in i indexet med sin
+      anmärkning i stället för att försvinna. De syns i GET /matning ->
+      korpus.bfn.dokument_med_anmarkning. Systemet gör INTE OCR.
+
+  # ---------------------------------------------------------------------------
+  # EUR-Lex / CELEX (steg 24) — EU-rättsakter i konsoliderad svensk lydelse
+  #
+  # Fyller den lucka ARKITEKTUR §10 skrev ut: EU-rätten låg utanför version 1,
+  # och de rättsakter som svensk skatte- och redovisningsrätt genomför fanns
+  # därför bara som hänvisningar utan text.
+  # ---------------------------------------------------------------------------
+
+  - id: eurlex
+    myndighet: Europeiska unionens publikationsbyrå (EUR-Lex)
+    adapter: eurlex
+    bas_url: http://publications.europa.eu/resource/celex
+    verifierad: ja
+    aktiverad: true
+    verifierat_anrop: >
+      Avläst live 2026-09-09. Nio CELEX-nummer hämtade med
+      Accept: application/xhtml+xml och Accept-Language: swe, samtliga 200 med
+      svensk XHTML: 32006L0112 (1 752 583 byte), 32013L0034 (737 730),
+      32014L0055 (102 625), 32016R0679 (828 689), 32003L0049 (59 692),
+      32009L0133 (124 284), 32011L0096 (95 845), 32016L1164 (119 400),
+      32011R0282 (930 001).
+    autentisering: ingen
+    licens: >
+      © Europeiska unionen, 1998-. Återanvändning tillåten med källangivelse
+      (kommissionens beslut 2011/833/EU).
+    attribution: "Källa: EUR-Lex, Europeiska unionen"
+    takt: { anrop: 1, per_sekunder: 2 }
+    cache_ttl: 86400
+    manniskolank_mall: "https://eur-lex.europa.eu/legal-content/SV/TXT/?uri=CELEX:{celex}"
+    tacker:
+      - momsdirektivet och dess genomförandeförordning
+      - redovisningsdirektivet, e-fakturadirektivet
+      - moder/dotterbolags-, fusions-, ränte/royalty- och skatteflyktsdirektiven
+      - dataskyddsförordningen
+    varning: >
+      Använd publications.europa.eu med innehållsförhandling — INTE
+      eur-lex.europa.eu, som svarar 202 med tom kropp på maskinella anrop.
+      Accept: text/html ger 404; application/xhtml+xml fungerar.
+      Accept-Language MÅSTE sättas: utan huvudet, och med en okänd språkkod,
+      svarar tjänsten 400. Det är ett bra felläge — den kan alltså inte tyst
+      lämna ut engelska när svenska begärts. Kontrollerat 2026-09-09.
+      AVVIKELSE mot systerprojektets anteckning: där står att språkkoden måste
+      vara ISO 639-2 ("swe") och att "sv" ger fel. Vid kontrollen 2026-09-09
+      gav BÅDA 200 med identisk svensk text (737 730 byte för 32013L0034).
+      Vi skickar "swe" ändå — det är den kod som är verifierad över tid — men
+      påståendet att "sv" fallerar går inte att belägga i dag och står därför
+      inte som ett krav.
+    hinder: >
+      Tjänsten lämnar den GÄLLANDE konsoliderade lydelsen. Den bär inget
+      systemdatum motsvarande Riksdagens, så färskhetskontrollen jämför
+      innehållets sha256, inte en versionsstämpel. Konsolideringsdatumet
+      läses ur dokumentets eget huvud när det står där, och lämnas tomt när
+      det inte gör det — det gissas aldrig fram.
+
+  # ---------------------------------------------------------------------------
   # NIVÅ 2 — generiska protokolladaptrar
   #
   # Dessa har ingen egen bas_url. De instansieras vid körning från katalogindexets

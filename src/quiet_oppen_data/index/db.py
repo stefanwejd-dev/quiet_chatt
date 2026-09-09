@@ -117,6 +117,82 @@ CREATE TABLE IF NOT EXISTS lag_embedding (
     vektor   BLOB,
     FOREIGN KEY (chunk_id) REFERENCES lag_chunk(id) ON DELETE CASCADE
 );
+
+-- ===========================================================================
+-- Textkorpus (steg 23–24): BFN och EUR-Lex
+-- ===========================================================================
+--
+-- Lagindexet ovan har egna tabeller därför att SFS har egna begrepp — kapitel,
+-- paragraf, ändringsnotis, konsolideringspunkt. BFN:s allmänna råd och EU:s
+-- rättsakter delar däremot form: ett dokument med källuppgifter, och under det
+-- numrerade textstycken med rubrik. Två nästan identiska tabellpar hade blivit
+-- två nästan identiska sökfunktioner, och en rättelse i den ena hade tyst
+-- lämnat den andra kvar. Kolumnen `korpus` skiljer dem åt i stället.
+
+CREATE TABLE IF NOT EXISTS korpus_dokument (
+    id            TEXT PRIMARY KEY,   -- "bfn:vl12-1-k3-kons20251215", "eu:32006L0112"
+    korpus        TEXT NOT NULL,      -- "bfn" | "eu"
+    dok_id        TEXT NOT NULL,      -- dokumentets id inom sin korpus
+    titel         TEXT NOT NULL,
+    kortnamn      TEXT,               -- "BFNAR 2012:1" | "Momsdirektivet"
+    utgivare      TEXT NOT NULL,      -- "Bokföringsnämnden (BFN)"
+    -- Vilken lydelse kopian avser. BFN: titelsidans "Uppdaterad ÅÅÅÅ-MM-DD".
+    -- EU: konsolideringsdatum. Tom sträng när källan inte anger någon — den
+    -- gissas aldrig fram (jfr regelverk/KONTRAKT.md §4).
+    lydelse       TEXT,
+    -- Färskhetsnyckel för den nattliga kontrollen: BFN sha256 över pdf:en,
+    -- EU rättsaktens ETag/Last-Modified om den ges, annars tom.
+    version       TEXT,
+    hamtad        TEXT NOT NULL,      -- när kopian togs, inte när frågan ställdes
+    lank_manniska TEXT NOT NULL,
+    lank_maskin   TEXT NOT NULL,
+    licens        TEXT,
+    attribution   TEXT,
+    -- Icke-tomt när dokumentet hämtades men inte kunde läsas (t.ex. pdf utan
+    -- textlager). Posten finns kvar med sin anmärkning i stället för att
+    -- försvinna tyst — se ARKITEKTUR §5 regel 8 och /matning.
+    anmarkning    TEXT
+);
+
+CREATE TABLE IF NOT EXISTS korpus_chunk (
+    id             TEXT PRIMARY KEY,  -- "bfn:vl12-1-k3-kons20251215#12.7"
+    korpus         TEXT NOT NULL,
+    dokument_id    TEXT NOT NULL,     -- FK → korpus_dokument.id
+    -- BFN: allmant_rad | kommentar | lagtext | exempel | brodtext
+    -- EU:  artikel | skalen | bilaga
+    -- Att hålla dem isär är hela poängen: ett allmänt råd är bindande,
+    -- BFN:s kommentar till det är inte det.
+    blocktyp       TEXT NOT NULL,
+    beteckning     TEXT,              -- "12.7" | "Artikel 168"
+    kapitel_nr     TEXT,
+    kapitel_rubrik TEXT,
+    avsnitt        TEXT,
+    text           TEXT NOT NULL,
+    sida           INTEGER,           -- pdf-sida (BFN), NULL för EU
+    full_text      TEXT NOT NULL,     -- sammansatt sökyta
+    FOREIGN KEY (dokument_id) REFERENCES korpus_dokument(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_korpus_chunk_dok ON korpus_chunk(dokument_id);
+CREATE INDEX IF NOT EXISTS idx_korpus_chunk_korpus ON korpus_chunk(korpus);
+
+CREATE VIRTUAL TABLE IF NOT EXISTS korpus_chunk_fts USING fts5(
+    id UNINDEXED,
+    korpus UNINDEXED,
+    beteckning,
+    kapitel_rubrik,
+    avsnitt,
+    text,
+    full_text,
+    tokenize = "unicode61 remove_diacritics 1",
+    prefix = '2 3'
+);
+
+CREATE TABLE IF NOT EXISTS korpus_embedding (
+    chunk_id TEXT PRIMARY KEY,
+    vektor   BLOB,
+    FOREIGN KEY (chunk_id) REFERENCES korpus_chunk(id) ON DELETE CASCADE
+);
 """
 
 

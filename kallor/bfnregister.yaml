@@ -1,0 +1,442 @@
+# BFN-register — Quiet Öppen Data
+# ===============================
+#
+# Bokföringsnämnden har inget API. Det här registret är den enda sanningen om
+# HUR bfn.se ska genomsökas, HUR varje nedladdad pdf ska kategoriseras, och
+# VILKA nivåer som får hamna i chattens index.
+#
+# Skördaren (index/bfn_skord.py) gör fyra saker:
+#   1. Räknar upp alla sidor via WordPress REST (/wp-json/wp/v2/pages).
+#   2. Räknar upp alla bilagor via /wp-json/wp/v2/media, så att en pdf som
+#      ingen sida länkar till inte faller bort tyst.
+#   3. Hämtar varje sida som HTML och plockar ut pdf-länkar med ankartext.
+#      REST-svarets content.rendered är TOMT — sidorna MÅSTE hämtas som HTML.
+#   4. Laddar ner pdf:erna för de nivåer som `skord.ladda_ner_nivaer` anger.
+#
+# Kategorin sätts av den FÖRSTA matchande regeln i `kategorier` nedan, mätt på
+# sidans sökväg. En pdf som hittas på flera sidor får den bäst rankade
+# kategorin (lägst `rang`) — vl13-2-bokforing.pdf ligger till exempel både
+# under vägledningar och under beslutade redovisningsregler, och ska
+# kategoriseras som vägledning.
+#
+# Härkomst: reglerna nedan är portade från systerprojektets regelverksmodul,
+# men uppgifterna om bfn.se är omkontrollerade här enligt ARBETSORDER princip
+# 1 — en verifiering ärvs inte, den görs om av det system som ska lita på den.
+#
+# Kontrollerat live 2026-09-09 mot bfn.se:
+#   /wp-json/wp/v2/pages  -> 200, X-WP-Total: 131, 2 sidor à 100
+#   /wp-json/wp/v2/media  -> 200, X-WP-Total: 950, 10 sidor, 905 pdf
+#   content.rendered      -> tom sträng (0 tecken) på samtliga stickprov
+#   HTML-sidan k-regelverk -> 200, 55 409 byte, 11 pdf-länkar
+#
+# TVÅ AVVIKELSER som måste stå kvar tills de är åtgärdade eller förstådda:
+#
+#   a) Mediabiblioteket uppger X-WP-Total: 950 men lämnar ut 942 poster vid
+#      full uppräkning (per_page=100 ger 93 poster på första sidan, inte 100).
+#      WordPress filtrerar poster EFTER att sidan skurits ut. Därför räknas
+#      sidantalet ur X-WP-TotalPages och aldrig ur "färre än per_page = sista
+#      sidan" — den regeln gav 95 av 949 vid regelverksmodulens första
+#      provkörning. Skillnaden 950-942 loggas som varning vid varje skörd.
+#
+#   b) bfn.se svarar 429 efter ett knappt tiotal snabba anrop. Takten nedan
+#      ligger därför på ett anrop varannan sekund. En full skörd tar tid;
+#      det är avsikten.
+
+version: 1
+uppdaterad: "2026-09-09"
+
+kategorier:
+  - prefix: redovisningsregler/vagledningar/k-regelverk
+    kategori: k_regelverk
+    typ: vagledning
+    niva: karna
+    rang: 10
+    beskrivning: >
+      K1, K2, K3 och K2/K3 Årsbokslut. Ett K-regelverk innehåller samtliga
+      regler som behövs för att upprätta en årsredovisning respektive ett
+      årsbokslut och ska tillämpas i sin helhet.
+
+  - prefix: redovisningsregler/vagledningar/ovriga-vagledningar
+    kategori: vagledning_ovrig
+    typ: vagledning
+    niva: karna
+    rang: 11
+    beskrivning: >
+      Vägledningen Bokföring (till BFNAR 2013:2), Redovisning av fusion och
+      Gränsvärden. Vägledningen Bokföring är den enskilt viktigaste källan
+      för den löpande bokföringen i programmet.
+
+  - prefix: redovisningsregler/vagledningar
+    kategori: vagledning_ovrig
+    typ: vagledning
+    niva: karna
+    rang: 12
+
+  - prefix: redovisningsregler/allmanna-rad-utan-vagledning-eller-uttalande
+    kategori: allmant_rad
+    typ: allmant_rad
+    niva: stod
+    rang: 20
+
+  - prefix: redovisningsregler/allmanna-rad
+    kategori: allmant_rad
+    typ: allmant_rad
+    niva: karna
+    rang: 21
+    beskrivning: >
+      Grundförfattningar (BFNAR ...-grund.pdf), ändringsförfattningar och
+      konsoliderade versioner (...-kons*.pdf). Ändringshistoriken ligger här
+      och ingenstans annanstans — den behövs för att kunna svara på vilken
+      lydelse som gällde ett visst räkenskapsår.
+
+  - prefix: redovisningsregler/uttalanden
+    kategori: uttalande
+    typ: uttalande
+    niva: stod
+    rang: 30
+
+  - prefix: redovisningsregler/beslutade-redovisningsregler
+    kategori: beslutade_regler
+    typ: blandat
+    niva: stod
+    rang: 40
+    beskrivning: >
+      BFN:s egen kronologiska förteckning över beslutade regler. Innehåller
+      samma filer som kategorierna ovan men i beslutsordning — nyttig som
+      ändringshistorik, därför sämre rang men inte bortsorterad.
+
+  - prefix: redovisningsregler/hallbarhetsrapportering
+    kategori: hallbarhetsrapportering
+    typ: vagledning
+    niva: stod
+    rang: 45
+
+  - prefix: redovisningsregler/vad-galler-for
+    kategori: foretagsform
+    typ: vagledning
+    niva: stod
+    rang: 46
+    beskrivning: >
+      BFN:s egen mappning företagsform -> tillämpligt regelverk. Motsvarar
+      det val programmet måste göra när ett nytt företag läggs upp.
+
+  - prefix: redovisningsregler
+    kategori: redovisningsregler_ovrigt
+    typ: blandat
+    niva: stod
+    rang: 49
+
+  - prefix: informationsmaterial/vagledningar
+    kategori: vagledning_ovrig
+    typ: vagledning
+    niva: karna
+    rang: 13
+
+  - prefix: informationsmaterial/informationsskrifter
+    kategori: informationsskrift
+    typ: informationsmaterial
+    niva: stod
+    rang: 50
+
+  - prefix: informationsmaterial/bfn-rapporter
+    kategori: rapport
+    typ: rapport
+    niva: bakgrund
+    rang: 60
+
+  - prefix: informationsmaterial/blanketter-m-m
+    kategori: blankett
+    typ: blankett
+    niva: stod
+    rang: 61
+
+  - prefix: informationsmaterial
+    kategori: informationsmaterial
+    typ: informationsmaterial
+    niva: stod
+    rang: 62
+
+  - prefix: fragor-och-svar
+    kategori: fragor_och_svar
+    typ: fraga_svar
+    niva: stod
+    rang: 65
+    beskrivning: >
+      BFN:s frågor och svar. Inte bindande normgivning, men den mest konkreta
+      vägledningen som finns om till exempel Swishbetalningar, kontanthantering
+      och vad ett bokföringsprogram får och inte får göra. Sidorna innehåller
+      sällan pdf — värdet ligger i sidtexten, som skördas som HTML.
+    skorda_sidtext: true
+
+  - prefix: skrivelser/brevsvar
+    kategori: brevsvar
+    typ: brevsvar
+    niva: stod
+    rang: 70
+    beskrivning: >
+      BFN:s svar på enskilda frågor. Inte normgivning, men myndighetens egen
+      tillämpning i konkreta fall.
+
+  - prefix: skrivelser/hemstallan-om-lagandring
+    kategori: hemstallan
+    typ: skrivelse
+    niva: bakgrund
+    rang: 71
+
+  - prefix: skrivelser/yttranden-till-domstol
+    kategori: yttrande
+    typ: skrivelse
+    niva: bakgrund
+    rang: 72
+
+  - prefix: skrivelser/remissvar
+    kategori: remissvar
+    typ: skrivelse
+    niva: bakgrund
+    rang: 80
+
+  - prefix: skrivelser
+    kategori: skrivelse_ovrig
+    typ: skrivelse
+    niva: bakgrund
+    rang: 81
+
+  - prefix: om-bokforingsnamnden/vara-remisser
+    kategori: remiss
+    typ: remiss
+    niva: bakgrund
+    rang: 85
+
+  - prefix: om-bokforingsnamnden/k-projektet
+    kategori: k_projektet
+    typ: bakgrund
+    niva: bakgrund
+    rang: 86
+    beskrivning: >
+      Bakgrunden till K-regelverkens indelning i kategori 1–3. Förklarar
+      VARFÖR ett företag hamnar i K1, K2 eller K3 — den logik programmets
+      företagsuppläggning måste följa.
+
+  - prefix: om-bokforingsnamnden/vara-arsredovisningar-och-budgetunderlag
+    kategori: myndighetsadmin
+    typ: admin
+    niva: admin
+    rang: 95
+    hamta: false
+
+  - prefix: om-bokforingsnamnden
+    kategori: om_bfn
+    typ: admin
+    niva: admin
+    rang: 96
+
+  - prefix: lattlast
+    kategori: lattlast
+    typ: informationsmaterial
+    niva: bakgrund
+    rang: 90
+
+  - prefix: english
+    kategori: engelska
+    typ: informationsmaterial
+    niva: bakgrund
+    rang: 91
+
+  # Fångstnät. Allt som inte matchar ovan hamnar här och laddas ner ändå —
+  # hellre en okategoriserad fil än en tappad.
+  - prefix: ""
+    kategori: ovrigt
+    typ: okant
+    niva: bakgrund
+    rang: 999
+
+# ---------------------------------------------------------------------------
+# Filnamnsheuristik — kompletterar sidkategorin
+# ---------------------------------------------------------------------------
+#
+# En pdf som bara nås via mediabiblioteket (ingen sida länkar till den) har
+# ingen sidsökväg att kategorisera på. Då gäller mönstren nedan. De används
+# ALDRIG för att skriva över en kategori som en sida har gett.
+
+filmonster:
+  - monster: "^vl[-0-9]"
+    typ: vagledning
+    kategori: vagledning_ovrig
+    niva: karna
+  - monster: "^bfnar"
+    typ: allmant_rad
+    kategori: allmant_rad
+    niva: karna
+  - monster: "^utt[-0-9]"
+    typ: uttalande
+    kategori: uttalande
+    niva: stod
+  - monster: "remissvar|remiss-"
+    typ: skrivelse
+    kategori: remissvar
+    niva: bakgrund
+  - monster: "brevsvar"
+    typ: brevsvar
+    kategori: brevsvar
+    niva: stod
+  - monster: "upphandling|arsredovisning-20|budgetunderlag"
+    typ: admin
+    kategori: myndighetsadmin
+    niva: admin
+
+# ---------------------------------------------------------------------------
+# Nyckeldokument
+# ---------------------------------------------------------------------------
+#
+# De dokument som beställarens minimikrav (regelverk.docx) uttryckligen pekar
+# ut. En körning som inte fått hem allihop är INTE fullständig, och
+# paketeringen ska säga det rakt ut i MANIFEST.json i stället för att
+# rapportera "klart".
+#
+# `fil` är filnamnet hos BFN. Konsoliderade versioner byter filnamn när de
+# uppdateras (vl12-1-k3-kons2024.pdf -> vl12-1-k3-kons20251215.pdf), så
+# `monster` anger den stabila delen och skördaren väljer den senaste.
+
+nyckeldokument:
+  - id: bfnar_2013_2_grund
+    bfnar: "BFNAR 2013:2"
+    namn: "Bokföring — allmänt råd, grundförfattning"
+    fil: bfnar13-2-grund.pdf
+    krav: >
+      Beställarens punkt 3. Behandlar löpande bokföring, verifikationer,
+      arkivering, systemdokumentation och behandlingshistorik.
+
+  - id: vl_bokforing
+    bfnar: "BFNAR 2013:2"
+    namn: "Vägledningen Bokföring"
+    fil: vl13-2-bokforing.pdf
+    krav: >
+      Beställarens punkt 4 och 16. Den senaste versionen bär BFN:s uppdatering
+      efter ändringarna i bokföringslagens arkiveringsregler den 1 juli 2024
+      (SFS 2024:250). Kontrollera uppdateringsdatumet på titelsidan vid varje
+      körning — det är den enda platsen där versionen står.
+
+  - id: bfnar_2012_1_grund
+    bfnar: "BFNAR 2012:1"
+    namn: "K3 — Årsredovisning och koncernredovisning, allmänt råd"
+    fil: bfnar12-1-grund.pdf
+    krav: Beställarens punkt 8.
+
+  - id: vl_k3
+    bfnar: "BFNAR 2012:1"
+    namn: "K3 — vägledning, konsoliderad"
+    monster: "^vl12-1-k3-kons"
+    krav: Beställarens punkt 8. Välj senaste konsolidering.
+
+  - id: bfnar_2016_10_grund
+    bfnar: "BFNAR 2016:10"
+    namn: "K2 — Årsredovisning i mindre företag, allmänt råd"
+    fil: bfnar16-10-grund.pdf
+    krav: Beställarens punkt 7.
+
+  - id: vl_k2
+    bfnar: "BFNAR 2016:10"
+    namn: "K2 — vägledning, konsoliderad"
+    monster: "^vl16-10-k2ar-kons"
+    krav: Beställarens punkt 7. Välj senaste konsolidering.
+
+  - id: bfnar_2006_1_grund
+    bfnar: "BFNAR 2006:1"
+    namn: "K1 — Enskilda näringsidkare som upprättar förenklat årsbokslut"
+    fil: bfnar06-1-grund.pdf
+    krav: >
+      Beställarens punkt 9. BFN anger att K1 måste läsas tillsammans med
+      reglerna om löpande bokföring och arkivering i BFNAR 2013:2.
+
+  - id: vl_k1_enskilda
+    bfnar: "BFNAR 2006:1"
+    namn: "K1 enskilda näringsidkare — vägledning, konsoliderad"
+    monster: "^vl06-1-k1enskilda-kons"
+    krav: Beställarens punkt 9. Välj senaste konsolidering.
+
+  - id: bfnar_2010_1_grund
+    bfnar: "BFNAR 2010:1"
+    namn: "K1 — Ideella föreningar och registrerade trossamfund"
+    fil: bfnar10-1-grund.pdf
+    krav: Beställarens punkt 9, föreningsvarianten.
+
+  - id: vl_k1_ideella
+    bfnar: "BFNAR 2010:1"
+    namn: "K1 ideella föreningar — vägledning, konsoliderad"
+    monster: "^vl10-1-k1ideella-kons"
+    krav: Beställarens punkt 9.
+
+  - id: bfnar_2017_3
+    bfnar: "BFNAR 2017:3"
+    namn: "Årsbokslut — allmänt råd"
+    fil: bfnar17-3.pdf
+    krav: >
+      Inte utpekad i beställningen men nödvändig: företag som inte upprättar
+      årsredovisning upprättar årsbokslut, och programmet måste kunna båda.
+
+  - id: vl_arsbokslut
+    bfnar: "BFNAR 2017:3"
+    namn: "Årsbokslut — vägledning, konsoliderad"
+    monster: "^vl17-3-ab-kons"
+    krav: Se ovan. Välj senaste konsolidering.
+
+  - id: bfnar_2023_1
+    bfnar: "BFNAR 2023:1"
+    namn: "Kompletterande upplysningar i bostadsrättsföreningars årsredovisning"
+    fil: bfnar2023-1-grund.pdf
+    krav: >
+      Behövs om programmet ska hantera bostadsrättsföreningar. Vägledningen
+      är vl23-1-brf.pdf.
+
+  - id: bfnar_2012_4
+    bfnar: "BFNAR 2012:4"
+    namn: "Byte mellan K-regelverk"
+    fil: bfnar12-4-grund.pdf
+    krav: >
+      Programmet måste kunna hantera att ett företag växer ur K2 och byter
+      till K3 — och vad som då händer med jämförelsetalen.
+
+  - id: bfnar_2006_11
+    bfnar: "BFNAR 2006:11"
+    namn: "Gränsvärden"
+    fil: bfnar06-11-grund.pdf
+    krav: >
+      Avgör om ett företag är mindre eller större, vilket i sin tur avgör
+      vilket K-regelverk som får tillämpas. Konsoliderad version:
+      bfnar06-11-kons3.pdf, vägledning: vl-2006-11-gransvarden.pdf.
+
+  - id: bfnar_2004_2
+    bfnar: "BFNAR 2004:2"
+    namn: "Bokföringsskyldighetens upphörande i enskild näringsverksamhet"
+    fil: bfnar04-2-grund.pdf
+    krav: Behövs för avslutsflödet i enskild firma.
+
+# ---------------------------------------------------------------------------
+# Skörderegler
+# ---------------------------------------------------------------------------
+
+skord:
+  # Sidor räknas upp via REST men hämtas som HTML (content.rendered är tomt).
+  sidor_via_rest: true
+  # Bilagor som ingen sida länkar till tas med ändå, kategoriserade via
+  # filmonster. Utan detta tappas de pdf:er som bara ligger i mediabiblioteket.
+  ta_med_foraldralosa_bilagor: true
+  filtyper: [".pdf"]
+  max_filstorlek_mb: 60
+
+  # Vilka nivåer som laddas ner som fil.
+  ladda_ner_nivaer: [karna, stod]
+
+  # Vilka nivåer som får hamna i chattens sökindex.
+  #
+  # Detta är den viktigaste raden i filen. BFN publicerar 898 dokument, varav
+  # 739 är remisser, remissvar och yttranden — alltså vad ANDRA tycker om ett
+  # regelförslag, inte vad som gäller. Ett remissvar från en intresseorganisation
+  # som hamnar i indexet blir förr eller senare citerat som om det vore god
+  # redovisningssed, och det med en korrekt källänk till bfn.se, vilket gör
+  # felet svårare att upptäcka och inte lättare.
+  #
+  # Raden ligger här och inte i ingest-koden av samma skäl som blocklistan
+  # ligger i källregistret: en spärr som går att glömma bort vid nästa
+  # refaktorering är ingen spärr.
+  indexera_nivaer: [karna, stod]

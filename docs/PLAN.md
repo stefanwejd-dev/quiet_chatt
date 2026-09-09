@@ -1689,3 +1689,322 @@ Vägen byggdes i stället. Se ARKITEKTUR §4 för schemat. Kort:
 263 prov gröna. Live-verifierat mot produktionsgatewayen samma dag: 15 fakta ur
 `/organisationer` (varav fyra nekanden), 1 ur `/dokumentlista`, 37 ur
 `/dokument/{id}`.
+
+---
+
+## Steg 23 — BFN-korpus: Bokföringsnämndens allmänna råd och vägledningar ✅ 2026-09-09
+
+Lagtexten säger vad som krävs. God redovisningssed säger hur kravet uppfylls.
+Chatten kunde det första och inte det andra, och de flesta bokföringsfrågor
+besvaras i praktiken i BFNAR — inte i BFL.
+
+### Val: egen skörd, inte lånad leverans
+
+Systerprojektets regelverksmodul har redan en färdig BFN-leverans på disk.
+Beställaren valde ändå att porta skördaren, så att chatten förblir en
+fristående produkt. Följden är dubbel kod men noll driftberoende: ingen del av
+det här systemet läser något ur `C:\bokforingsprogram`, och den nattliga
+färskhetskontrollen kan omfatta BFN på samma sätt som den redan omfattar SFS.
+
+**Verifieringen ärvdes inte.** Regelverksmodulens källregister har
+`verifierad: ja` för bfn.se per 2026-08-17. ARBETSORDER princip 1 säger att
+källan ska vara anropad live av det system som ska lita på den, så anropen
+gjordes om 2026-09-09 och skrevs in i `kallregister.yaml` med dagens datum.
+
+### Vad som byggdes
+
+| Fil | Roll |
+|-|-|
+| `kallor/bfnregister.yaml` | Skördedisciplinen som data: 28 kategoriregler, 6 filnamnsmönster, 16 nyckeldokument |
+| `src/quiet_oppen_data/bfnregister.py` | Typad läsning |
+| `index/bfn_skord.py` | Skörden: WP-REST-uppräkning, HTML-hämtning, nedladdning |
+| `index/bfn_parser.py` | Pdf → typade block |
+| `index/bfn_ingest.py` | Indexering och nattlig färskhetskontroll |
+| `adaptrar/bfn.py` | Verktyget `bokforingsnamnden` |
+| `index/korpus.py` | Delad skrivväg för textkorpus (används även av steg 24) |
+
+### 23.1 Blocktypen är hela poängen
+
+Ett **allmänt råd** är bindande normgivning. BFN:s **kommentar** till samma
+punkt är det inte. Parsern håller isär dem, `korpus_chunk.blocktyp` lagrar
+skillnaden, adaptern skickar den vidare i `dimensioner["blocktyp"]`, och
+etiketten skriver ut "(BFN:s kommentar, ej bindande)" i klartext — eftersom
+etiketten syns i svaret och dimensionerna inte gör det.
+
+Att slå ihop dem hade gett fel svar med rätt källänk, vilket är den svåraste
+sortens fel att upptäcka.
+
+### 23.2 Vad som INTE får indexeras
+
+BFN publicerar ~900 dokument. De flesta är remisser, remissvar och yttranden
+— vad andra **tycker** om ett regelförslag. `skord.indexera_nivaer` i
+`bfnregister.yaml` släpper bara igenom nivåerna `karna` och `stod`.
+
+Raden ligger i registret och inte i ingest-koden av samma skäl som blocklistan
+ligger i källregistret: en spärr som går att glömma bort vid nästa
+refaktorering är ingen spärr. Provet `test_remissvar_far_inte_indexeras`
+upprätthåller den som en invariant.
+
+### 23.3 Fel som rättades under portningen
+
+**Punktmönstret åt rådets första ord.** Källans mönster tillät ett valfritt
+mellanslag före bokstavstillägget. "12.7 I anskaffningsvärdet ingår ..." blev
+därför punkten `12.7I` med texten "anskaffningsvärdet ingår ..." — förstaordet
+försvann. Kontroll mot den befintliga leveransens 7 637 råd: **420 av 444
+bokstavspunkter är uppslukade förstaord** (`9.13I`, `2.1A`, `6.8I`).
+
+**Den första rättelsen var fel åt andra hållet, och rättades i sin tur.** Jag
+begränsade först mönstret till GEMENA tillägg, eftersom leveransens riktiga
+underpunkter såg gemena ut (`11.39a`, `28.14b`). Vid omparsningen av
+regelverksleveransen sjönk antalet råd från 7 637 till 7 448 — 189 färre — och
+den differensen gick inte att förklara bort. Orsaken: **BFN använder versala
+underpunkter på riktigt.** 228 rader bär `1.1A`, `1.1B`, `1.1C`, `2.1A`,
+`20.9A`, de flesta ur BFNAR 2025:2. En regel på skiftläge tappade dem.
+
+Den riktiga skiljelinjen är **mellanslaget, inte skiftläget**: en bokstav som
+sitter direkt mot numret är en äkta underpunkt, en bokstav efter mellanslag är
+textens första ord eller en hänvisning. De 28 raderna med bokstav efter
+mellanslag granskades en och en — samtliga är hänvisningar ("11.39 a omfattar
+ett sådant förfarande", "35.20 i Bokföringsnämndens allmänna råd"), ingen är
+en egen punkt. Regressionsprov för alla tre fallen:
+`test_punktmonstret_ater_inte_radets_forsta_ord`.
+
+Felet syns inte i någon räkning — antalet råd blir rätt, bara texten blir fel.
+Att det ändå gick att upptäcka den andra gången berodde på att omparsningen gav
+ett antal jag inte kunde förklara. Ett tal som inte stämmer är ett bättre larm
+än ett grönt prov.
+
+### 23.4 Vad bfn.se faktiskt gör (avläst 2026-09-09)
+
+* `/wp-json/wp/v2/pages` -> 200, `X-WP-Total: 131`.
+* `/wp-json/wp/v2/media` -> 200, `X-WP-Total: 950`, men full uppräkning ger
+  **942** poster. WordPress filtrerar efter att sidan skurits ut; `per_page=100`
+  ger 93 på första sidan. Därför läses sidantalet ur `X-WP-TotalPages` och
+  aldrig ur "färre än per_page = sista sidan". Differensen loggas vid varje
+  körning i stället för att tystna.
+* `content.rendered` är **tomt** (0 tecken) på samtliga stickprov — sidorna
+  måste hämtas som HTML.
+* 429 efter ett knappt tiotal snabba anrop. Takten är satt till ett anrop
+  varannan sekund; HTML-sidorna ger ändå enstaka 429, som transportlagrets
+  omförsök tar hand om.
+
+### 23.5 Kända luckor, redovisade
+
+Cirka en åttondel av pdf:erna saknar textlager (inskannade). De laddas ner,
+skrivs in i indexet med sin `anmarkning` och räknas i
+`GET /matning` -> `korpus.bfn.dokument_med_anmarkning`. **Systemet gör inte
+OCR.** Ett dokument som tyst faller bort är osynligt; ett med anmärkning är en
+känd lucka.
+
+Externa länkar (SOU:er hos Regeringskansliet, IFRS-utkast) hämtas inte. De
+omfattas inte av BFN:s PSI-villkor, och en fil hämtad via den här källan hade
+burit attributionen "Källa: Bokföringsnämnden" — vilket vore fel.
+
+### Acceptans
+
+- [x] Källan verifierad live av detta system, med datum i registret.
+- [x] `indexera_nivaer` spärrar remissvar, upprätthållet av prov.
+- [x] Allmänt råd och kommentar är skilda block med skilda typer.
+- [x] Inskannade pdf:er rapporteras, faller inte bort tyst.
+- [x] Nattlig färskhetskontroll jämför `modified` och därefter sha256.
+
+---
+
+## Steg 24 — EU-rättsakter ur EUR-Lex ✅ 2026-09-09
+
+ARKITEKTUR §10 skrev ut EU-rätten som en känd lucka i version 1. Den är nu en
+egen källa med eget register — aldrig insmugen i lagregistret som om
+rättsakterna vore svenska författningar.
+
+### 24.1 Lydelsevalet är hela steget
+
+CELEX-numret i registret (`32013L0034`) pekar på rättsaktens **ursprungliga**
+lydelse, den som publicerades i Officiella tidningen 2013. Den konsoliderade
+har ett annat nummer: `02013L0034-20260318`. Kontrollerat 2026-09-09:
+`02013L0034` **utan** datum ger 404, så datumet måste tas reda på.
+
+Att indexera ursprungslydelsen som om den vore gällande vore samma fel som att
+tillämpa en upphävd paragraf — och svårare att upptäcka, eftersom källänken
+skulle vara korrekt.
+
+Modulen frågar därför källan vilka konsolideringar som finns
+(`Accept: application/xml;notice=object`, ~1,6 MB mot 20 MB för hela
+RDF-grafen) och väljer **den senaste vars datum har infallit**.
+
+**Framtida konsolideringar förekommer.** 32013L0034 hade 2026-09-09 en
+konsolidering daterad 2027-01-30. Den väljs aldrig, men redovisas i
+dokumentets `anmarkning`: "Senare konsolidering beslutad men ej i kraft."
+Samma regel och samma skäl som `status: framtida` i systerprojektets
+regelverkskontrakt.
+
+Går förteckningen inte att läsa hämtas **ingenting** — inte ursprungslydelsen.
+Att falla tillbaka vore att gissa, och gissningen hade burit en korrekt
+källänk. Prov: `test_misslyckad_forteckning_hamtar_inte_ursprungslydelsen`.
+
+### 24.2 Parsern hänger på ELI, inte på klassnamn
+
+EUR-Lex levererar två markupvarianter för samma rättsakt med olika klassnamn
+(`oj-ti-art` i Officiella tidningen, `title-article-norm` i den konsoliderade).
+ELI-identifierarna — `eli-subdivision id="art_9"`, `id="cpt_3"`,
+`eli-title id="art_9.tit_1"` — är desamma i båda. Parsern använder dem, av
+samma skäl som BFN-parsern hänger på blockmarkörer och inte på typsnitt.
+
+**Ett fel rättat under bygget:** `id="cpt_3.tit_1"` är kapitlets *rubrik*, inte
+ett eget kapitel. Behandlad som indelning började den efter kapitlet, varvid
+varje artikel fick rubriken men tappade numret. Suffixet `.tit_N` undantas nu.
+Prov: `test_titelbehallare_raknas_inte_som_egen_indelning`.
+
+Momsdirektivet numrerar hierarkiskt (`tis_XI.cpt_1.sct_2`), så indelningens
+rubrik byggs med sina föräldrar: "AVDRAG — Proportionellt avdrag".
+
+### 24.3 Avvikelse mot systerprojektets anteckning
+
+Regelverksmodulens källregister varnar att språkkoden måste vara ISO 639-2
+(`swe`) och att `sv` ger fel. Vid kontroll 2026-09-09 gav **båda** 200 med
+identisk svensk text (737 730 byte för 32013L0034). `swe` skickas ändå — det är
+koden som är verifierad över tid — men påståendet att `sv` fallerar går inte
+att belägga i dag och står därför inte som ett krav i registret.
+
+Det som däremot bekräftades: `Accept: text/html` ger 404, och `Accept-Language`
+**måste** sättas — utan huvudet, och med en okänd kod, svarar tjänsten 400.
+Det är ett bra felläge: tjänsten kan inte tyst lämna ut engelska när svenska
+begärts.
+
+### 24.4 Kända luckor, redovisade
+
+* **EU-fördragen (FEU/FEUF).** Serveras inte av
+  `publications.europa.eu/resource/celex`. Åtta CELEX-former prövade
+  2026-09-09, samtliga 404 med 36 byte kropp: `12016M/TXT`, `12016E/TXT`,
+  `12016ME/TXT`, `12012M/TXT`, `12012E/TXT`, `12008E/TXT`, `11992M/TXT`,
+  `02016ME/TXT`. Kräver en annan resursväg — utreds separat enligt §0.
+* **OECD:s modellavtal.** Ligger hos OECD, är inte öppna data.
+
+Båda står i `eu/euregister.yaml` -> `luckor`, med de former som prövats, så att
+en framtida körning inte gissar om samma sak.
+
+### Acceptans
+
+- [x] Nio rättsakter hämtade och verifierade live, med byteantal i registret.
+- [x] Gällande konsolidering väljs; framtida väljs aldrig men redovisas.
+- [x] Maskinlänken pekar på den lydelse som faktiskt hämtades.
+- [x] Okonsoliderad rättsakt får "ursprunglig lydelse" utskrivet, inte tomt.
+- [x] Luckorna redovisade med prövade former och datum.
+
+---
+
+## Steg 23–24, rättelser efter första skarpa körningen — 2026-09-09
+
+Sex fel som bara en riktig körning kunde visa. Fem av sex hör till samma
+familj: **halvt lyckade utfall som rapporterade sig som lyckade.** De är
+farligare än rena fel, eftersom de lämnar ett svar som ser rätt ut och bär en
+korrekt källänk.
+
+### R1. Ersatta konsolideringar låg i sökindexet (BFN)
+
+BFN publicerar den konsoliderade vägledningen på nytt vid varje ändring och
+låter de gamla ligga kvar på webbplatsen. Efter skörden fanns därför båda
+lydelserna av tre nyckeldokument:
+
+| Familj | Ersatt | Gällande |
+|-|-|-|
+| K3 | `vl12-1-k3-kons2024` (2024-12-13) | `vl12-1-k3-kons20251215` (2025-12-15) |
+| K2 | `vl16-10-k2ar-kons2024` (2024-12-13) | `vl16-10-k2ar-kons2025` (2025-06-16) |
+| Årsbokslut | `vl17-3-ab-kons2024` (2024-12-13) | `vl17-3-ab-kons2026` (2026-05-18) |
+
+En fråga om K3 kunde alltså få 2024 års lydelse citerad som gällande — exakt
+samma fel som steg 24 lägger stor möda på att undvika på EU-sidan, men på
+svensk mark och oupptäckt.
+
+`markera_ersatta()` kör sist i ingesten, när alla lydelser är kända, och tar
+bort de ersatta ur sökningen. Valet görs på **källans egen uppgift** —
+titelsidans "Uppdaterad ÅÅÅÅ-MM-DD" — aldrig på filnamnet. Ett dokument utan
+sådant datum deltar inte i jämförelsen; att rangordna på filnamn vore att
+gissa, och gissningen skulle avgöra vilken lydelse som citeras som gällande.
+
+Dokumentraden ligger kvar med sin anmärkning. En medveten uteslutning ska
+synas i `/matning`, inte försvinna.
+
+### R2. Halvt lyckade parsningar rapporterades som "ok" (BFN)
+
+`vl17-3-ab-kons2024` gav **4 block ur 304 sidor**. `vl16-10-k2ar-kons2024` gav
+8 ur 373. Båda rapporterades som lyckade, eftersom parsern bara larmade vid
+noll block.
+
+Parsern flaggar nu dokument med minst 20 sidor och färre än 0,2 block per
+sida. Gränsen är mätt på de 132 hämtade dokumenten, inte gissad: de trasiga
+ligger på 0,01–0,17, de riktiga på 0,5 och uppåt. Den **flaggar, den utesluter
+inte** — ett tunt dokument kan vara äkta, och det är en människa som ska
+avgöra vilket.
+
+### R3. Fyra av nio EU-rättsakter gav noll artiklar
+
+EUR-Lex har en **tredje** markupvariant, inte två. De äldre konsolideringarna
+(kontrollerat på ATAD, moder/dotterbolags-, fusions- och
+ränte/royaltydirektiven) saknar `eli-subdivision` helt; strukturen bärs bara av
+styckets klass och id:na är slumpade UUID:n.
+
+Reservvägen läser klasserna (`title-article-norm`, `title-division-1/2`) men
+**bara när ELI-ankarna saknas** — klassnamn hör till presentationen och är en
+svagare grund än källans egna identifierare. Utfall: ATAD 15 artiklar,
+fusionsdirektivet 19, moder/dotter 11, ränte/royalty 11.
+
+Anmärkningen gjorde sitt jobb: felet stod utskrivet i körningens rapport i
+stället för att de fyra rättsakterna tyst blev tomma.
+
+### R4. En listad konsolidering som aldrig publicerats
+
+E-fakturadirektivet 32014L0055 listar konsolideringen `20140526` — direktivets
+ikraftträdande — men `02014L0055-20140526` svarar 404. Rättsakten har i själva
+verket aldrig konsoliderats.
+
+Kandidaterna prövas nu nyast först, med ursprungslydelsen sist. Det är **inte**
+att gissa: varje kandidat är antingen en punkt källan själv listat eller
+rättsaktens egen publikation, och den som svarar 200 är den som finns. Att
+reservvägen användes skrivs in i dokumentets anmärkning.
+
+### R5. Blockmarkörer som inleder texten i stället för att stå ensamma
+
+`vl20-5-redovisning-av-fusion` gav **6 block ur 113 sidor** — och texten
+innehöll 39 "Allmänt råd" och 31 "Kommentar". Parsern såg dem inte, eftersom
+den mallen skriver markören först på textens egen rad:
+
+    Kommentar Värderingen av övertagna tillgångar påverkar inte ...
+    Allmänt råd 3.1 Detta kapitel ska tillämpas vid nedströmsfusion ...
+
+Raden delas nu i två — markören för sig, resten för sig — så att den vanliga
+logiken tar vid och ett numrerat råd på samma rad ändå hittas av `_PUNKT`.
+Utfall: 6 block blev **116** (40 allmänna råd, 32 kommentarer, 34 exempel,
+9 lagtext). K3 gick från 1 647 till 1 654 block — samma fördelning, sju fler.
+
+**Två fällor på vägen, båda av samma slag som R1–R4.** Först krävde mönstret
+bara att något följde markören, varvid "Exempel på detta är ..." delades som
+om "Exempel" vore en blockmarkör och meningen tappade sitt första ord — exakt
+den textförlust som versalen i `_PUNKT` orsakade. Kravet är därför att resten
+inleds med versal eller siffra: ett block börjar med en ny mening eller med
+sitt punktnummer, löptext fortsätter med gemener.
+
+Rättelsen av rättelsen: `re.IGNORECASE` på hela mönstret gjorde även den
+teckenklassen skiftlägesokänslig, så gemener släpptes igenom ändå.
+Okänsligheten är nu begränsad till markören med `(?i:...)`. Provet
+`test_loptext_som_borjar_med_markorord_delas_inte` fångade det.
+
+### R6 (prestanda). Embedding-modellen laddades om per dokument
+
+`skriv_dokument` anropas en gång per dokument, och laddade KBLab-modellen
+(~500 MB) inne i funktionen. För en BFN-ingest med 132 dokument blev det 132
+modelladdningar — mätt till tiotals sekunder styck, alltså timmar för en
+vektorisering som tar minuter. Modellen cachas nu på modulnivå, samma mönster
+som `sok._model`.
+
+### Utfall
+
+Nio EU-rättsakter indexerade utan fel (868 stycken). BFN-korpuset: 132 dokument
+och 8 062 stycken, rensat från ersatta lydelser och från stycken utan
+sakinnehåll. Index, embeddings och FTS-rader i takt i båda korpusen.
+47 prov för steg 23–24; hela sviten 310 gröna, `ruff check .` rent.
+
+**Samma två fel fanns i systerprojektets regelverksleverans och rättades där
+2026-09-09** — punktmönstret och de omärkta ersatta konsolideringarna. Se
+`C:okforingsprogram` → `LOGGBOK.md` och `regelverk/KONTRAKT.md` §5 b.
+Leveransen är omparsad (7 637 råd, 189 äkta versala underpunkter, noll
+uppslukade förstaord) och bär nu `ersatt_av` på fyra dokument.

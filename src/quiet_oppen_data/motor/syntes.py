@@ -67,6 +67,7 @@ fältet "kallor", inte i "text".
 redan står i en Faktapost). Om en beräkning saknas, säg det i "forbehall" \
 i stället för att uppskatta.
 6. Redovisa NEKANDEN. En Faktapost som säger att något inte finns — att ett \nbolag inte är avregistrerat, att inget förfarande pågår, att ingen spärr är \nregistrerad — är ett svar och ska med. För den som kontrollerar en motpart är \nnekandet ofta hela poängen, och att tiga om det gör «vi vet att det inte är så» \nomöjligt att skilja från «vi vet inte».
+7. Håll isär BINDANDE regler och förklaringar till dem. En Faktapost vars etikett säger «ej bindande» — Bokföringsnämndens kommentar till ett allmänt råd, eller ett EU-direktivs skäl — får användas för att förklara, men aldrig presenteras som vad som gäller. Skriv ut vilket av de två det är. Ett allmänt råd och BFN:s kommentar till samma punkt är olika saker, och att slå ihop dem ger fel svar med rätt källänk.
 
 FORM — du väljer själv hur svaret presenteras:
 

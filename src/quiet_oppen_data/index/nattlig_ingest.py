@@ -85,6 +85,56 @@ def kör_nattlig_lagkontroll(db_sökväg: Path | None = None) -> dict:
     return resultat
 
 
+def kör_nattlig_korpuskontroll(db_sökväg: Path | None = None) -> dict:
+    """Kör färskhetskontrollen för BFN- och EU-korpusen (steg 23-24).
+
+    Egen funktion och eget fel-omfång, av samma skäl som lagkontrollen: ett
+    fel här får aldrig hindra katalogingesten eller frågeraderingen. De två
+    korpusen hålls dessutom isär inbördes — att EUR-Lex inte svarar ska inte
+    göra BFN-kontrollen osynlig.
+    """
+    from quiet_oppen_data.index import bfn_ingest, eu_ingest
+    from quiet_oppen_data.index.db import oppna_db
+
+    if db_sökväg is None:
+        try:
+            from quiet_oppen_data.konfig import las as las_konfig
+            db_sökväg = Path(las_konfig().index.db)
+        except Exception:
+            db_sökväg = Path("data/index.sqlite")
+
+    resultat: dict = {}
+    conn = oppna_db(db_sökväg)
+    try:
+        try:
+            resultat["bfn"] = bfn_ingest.nattlig_bfnkontroll(db_conn=conn)
+        except FileNotFoundError as e:
+            # Skörden har aldrig körts. Det är ett giltigt driftläge (korpuset
+            # är valfritt), men det ska synas som att kontrollen inte kunde
+            # göras — inte som att allt var i sin ordning.
+            logger.info("BFN-kontroll hoppades över: %s", e)
+            resultat["bfn"] = {"status": "ej_skordad", "skal": str(e)}
+        except Exception as e:
+            logger.error("Nattlig BFN-kontroll misslyckades helt", exc_info=True)
+            resultat["bfn"] = {"status": "fel", "fel": str(e)}
+
+        try:
+            resultat["eu"] = eu_ingest.nattlig_eukontroll(db_conn=conn)
+        except Exception as e:
+            logger.error("Nattlig EU-kontroll misslyckades helt", exc_info=True)
+            resultat["eu"] = {"status": "fel", "fel": str(e)}
+    finally:
+        conn.close()
+
+    for korpus, r in resultat.items():
+        print(f"  Korpus {korpus:<4} status={r.get('status')}  "
+              f"kontrollerade {r.get('kontrollerade', '-')}  "
+              f"omindexerade {r.get('omindexerade', '-')}  "
+              f"fel {r.get('fel', '-')}")
+
+    return resultat
+
+
 def kör_nattlig_ingest(db_sökväg: Path | None = None) -> dict:
     """Kör ingesten, beräknar deltat mot föregående körning och loggar resultatet.
 
@@ -172,6 +222,14 @@ def kör_nattlig_ingest(db_sökväg: Path | None = None) -> dict:
     except Exception:
         logger.error("Nattlig lagkontroll misslyckades helt", exc_info=True)
         resultat["lag_kontroll"] = {"status": "fel"}
+
+    # Textkorpusen: BFN och EUR-Lex (steg 23-24). Samma fel-omfång och samma
+    # skäl som raden ovan.
+    try:
+        resultat["korpus_kontroll"] = kör_nattlig_korpuskontroll(db_sökväg=db_sökväg)
+    except Exception:
+        logger.error("Nattlig korpuskontroll misslyckades helt", exc_info=True)
+        resultat["korpus_kontroll"] = {"status": "fel"}
 
     # Skriv deltarapport till stdout
     print("=" * 60)

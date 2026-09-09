@@ -14,6 +14,8 @@ from quiet_oppen_data.adaptrar.skatteverket_rattsligaregler import (
     SkatteverketRattsligaReglerAdapter,
 )
 from quiet_oppen_data.adaptrar.bolagsverket import BolagsverketAdapter
+from quiet_oppen_data.adaptrar.bfn import BfnAdapter
+from quiet_oppen_data.adaptrar.eurlex import EurlexAdapter
 
 __all__ = [
     "Adapter",
@@ -30,5 +32,7 @@ __all__ = [
     "SkatteverketVagledningAdapter",
     "SkatteverketRattsligaReglerAdapter",
     "BolagsverketAdapter",
+    "BfnAdapter",
+    "EurlexAdapter",
 ]
 

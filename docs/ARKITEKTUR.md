@@ -503,6 +503,7 @@ registret som `licens: okänd`.
 |---|---|---|
 | Backend | Python 3.11+, FastAPI, uvicorn | Beställarens stack; `anthropic`-SDK:t är förstklassigt i Python |
 | Lagring | SQLite (WAL) + FTS5 | Ingen infrastruktur att drifta; 23k datamängder är litet |
+| Textkorpus | Delade tabeller `korpus_*` med kolumnen `korpus` | BFN och EUR-Lex har samma form (dokument + numrerade stycken); två nästan identiska tabellpar hade gett två sökfunktioner att hålla i synk, och den som glider isär är den som slutar rättas |
 | Vektorer | `sqlite-vec`, fallback numpy-minnesindex | Undviker separat vektordatabas |
 | HTTP ut | `httpx` med per-källa-klient | Timeout och retry per källa |
 | Frontend | Fristående JS, ingen byggkedja | Ska kunna klistras in på quiet.nu med en `<script>`-tagg |
@@ -523,9 +524,17 @@ klientcertifikat; den anslutningen får aldrig ske från webbläsaren.
 * Egen adapter per myndighet på nivå 2; katalogen plus generiska adaptrar räcker
 * Egen konsolidering av lagtext ur ändringsförfattningar — Riksdagen gör det åt oss
   (§3.2b), och att bygga om det vore att införa en felkälla utan motsvarande vinst
-* EU-rätt och OECD-material. Sju dokument i beställarens lagförteckning ligger hos
-  EUR-Lex respektive OECD och saknas i Riksdagens SFS-data. De är en känd lucka, inte
-  något som ska smygas in i lagregistret som om de vore svenska författningar
+* ~~EU-rätt och OECD-material.~~ **Delvis upphävt i steg 24.** EU-rätten är nu en
+  egen källa (`eurlex`) med eget register (`eu/euregister.yaml`) och egen korpus —
+  aldrig insmugen i lagregistret som om rättsakterna vore svenska författningar.
+  Nio rättsakter hämtas i gällande konsoliderad lydelse. Kvar som redovisade
+  luckor: EU-fördragen, som inte serveras av den resurs rättsakterna ligger på
+  (åtta CELEX-former prövade 2026-09-09, samtliga 404), och OECD:s modellavtal,
+  som inte är öppna data. Se `eu/euregister.yaml` → `luckor`
+* OCR. Cirka en åttondel av Bokföringsnämndens pdf:er saknar textlager. De hämtas
+  och registreras med sin anmärkning, men texten utvinns inte — ett dokument som
+  ligger i indexet med en synlig lucka är bättre än ett som tyst försvinner, och
+  bättre än ett som OCR:as till text ingen kontrollerat
 
 **Förhållandet till sie-mcp.** Detta system är fristående. Det delar ingen kod, ingen
 process och ingen datamodell med sie-mcp. Skälet är att sie-mcp arbetar i användarens

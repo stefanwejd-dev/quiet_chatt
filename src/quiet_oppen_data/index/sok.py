@@ -20,7 +20,7 @@ from sentence_transformers import SentenceTransformer
 from quiet_oppen_data.index.db import oppna_db
 from quiet_oppen_data.konfig import Konfig, las
 
-from quiet_oppen_data.modeller import LagSokresultat, Sokresultat
+from quiet_oppen_data.modeller import KorpusSokresultat, LagSokresultat, Sokresultat
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +32,11 @@ _vec_matrix: np.ndarray | None = None
 # Global cache för lagindex
 _lag_vec_ids: list[str] = []
 _lag_vec_matrix: np.ndarray | None = None
+
+# Global cache för textkorpusen (BFN, EU). Nyckeln är korpusnamnet — de
+# laddas var för sig, så att en fråga mot BFN inte betalar för EU-vektorerna.
+_korpus_vec_ids: dict[str, list[str]] = {}
+_korpus_vec_matrix: dict[str, np.ndarray] = {}
 
 
 
@@ -434,3 +439,201 @@ def sok_lag(
     logger.info("Lag-sökning '%s' klar på %.1f ms (%d träffar)", fraga, tid, len(resultat))
     return resultat
 
+
+
+# ---------------------------------------------------------------------------
+# Textkorpusen: BFN och EUR-Lex (steg 23-24)
+# ---------------------------------------------------------------------------
+
+
+def _initiera_korpus(
+    konfig: Konfig, korpus: str, db_conn: sqlite3.Connection | None = None
+) -> tuple[SentenceTransformer, sqlite3.Connection]:
+    """Initierar embedding-modell och laddar korpusens inbäddningar till minnet."""
+    global _model
+
+    from pathlib import Path
+    conn = db_conn or oppna_db(Path(konfig.index.db))
+
+    if _model is None:
+        logger.info("Laddar embedding-modell %s...", konfig.index.embedding_modell)
+        _model = SentenceTransformer(konfig.index.embedding_modell)
+
+    antal_db = conn.execute(
+        "SELECT COUNT(*) FROM korpus_embedding e "
+        "JOIN korpus_chunk c ON c.id = e.chunk_id WHERE c.korpus = ?",
+        (korpus,),
+    ).fetchone()[0]
+
+    if korpus not in _korpus_vec_matrix or len(_korpus_vec_ids.get(korpus, [])) != antal_db:
+        logger.info("Laddar %d inbäddningar för korpus %s till minnet...", antal_db, korpus)
+        rader = conn.execute(
+            "SELECT e.chunk_id, e.vektor FROM korpus_embedding e "
+            "JOIN korpus_chunk c ON c.id = e.chunk_id WHERE c.korpus = ?",
+            (korpus,),
+        ).fetchall()
+        dim = konfig.index.embedding_dim
+        matrix: list[tuple[float, ...]] = []
+        ids: list[str] = []
+        for c_id, blob in rader:
+            if blob:
+                matrix.append(struct.unpack(f"{dim}f", blob))
+                ids.append(c_id)
+        _korpus_vec_ids[korpus] = ids
+        if matrix:
+            arr = np.array(matrix, dtype=np.float32)
+            norm = np.linalg.norm(arr, axis=1, keepdims=True)
+            norm[norm == 0] = 1
+            _korpus_vec_matrix[korpus] = arr / norm
+        else:
+            _korpus_vec_matrix[korpus] = np.empty((0, dim), dtype=np.float32)
+
+    return _model, conn
+
+
+_KORPUS_KOLUMNER = """
+    c.id, c.korpus, c.dokument_id, d.dok_id, d.titel, d.kortnamn, d.utgivare,
+    c.blocktyp, c.beteckning, c.kapitel_nr, c.kapitel_rubrik, c.avsnitt,
+    c.text, c.sida, d.lydelse, d.hamtad, d.lank_manniska, d.lank_maskin,
+    d.licens, d.attribution, c.full_text
+"""
+
+
+def _till_korpusresultat(r: tuple, relevans: float) -> KorpusSokresultat:
+    return KorpusSokresultat(
+        chunk_id=r[0], korpus=r[1], dokument_id=r[2], dok_id=r[3], titel=r[4],
+        kortnamn=r[5], utgivare=r[6], blocktyp=r[7], beteckning=r[8],
+        kapitel_nr=r[9], kapitel_rubrik=r[10], avsnitt=r[11], text=r[12],
+        sida=r[13], lydelse=r[14] or "", hamtad=r[15], lank_manniska=r[16],
+        lank_maskin=r[17], licens=r[18] or "okänd", attribution=r[19],
+        relevans=relevans, full_text=r[20],
+    )
+
+
+def sok_korpus(
+    fraga: str,
+    korpus: str,
+    max_antal: int = 5,
+    dokument_filter: str | None = None,
+    blocktyp_filter: str | None = None,
+    beteckning_filter: str | None = None,
+    db_conn: sqlite3.Connection | None = None,
+) -> list[KorpusSokresultat]:
+    """Hybridsökning i ett textkorpus (BM25 + vektor + RRF).
+
+    Args:
+        fraga: Sökfråga (fritext).
+        korpus: "bfn" eller "eu".
+        max_antal: Max antal resultat.
+        dokument_filter: Dokument-id eller kortnamn, t.ex. "BFNAR 2012:1" eller "32006L0112".
+        blocktyp_filter: "allmant_rad", "kommentar", "lagtext", "exempel", "artikel".
+            Det är den här filtreringen som låter en fråga be om vad som är
+            BINDANDE och slippa BFN:s kommentar till det.
+        beteckning_filter: Exakt punkt eller artikel, t.ex. "12.7" eller "Artikel 168".
+    """
+    start_t = time.perf_counter()
+    konfig = las()
+
+    def _filtrera(sql: str, params: list[Any]) -> tuple[str, list[Any]]:
+        if dokument_filter:
+            sql += " AND (d.dok_id = ? OR d.kortnamn = ? OR d.titel = ?)"
+            params.extend([dokument_filter, dokument_filter, dokument_filter])
+        if blocktyp_filter:
+            sql += " AND c.blocktyp = ?"
+            params.append(blocktyp_filter)
+        if beteckning_filter:
+            sql += " AND c.beteckning = ?"
+            params.append(beteckning_filter)
+        return sql, params
+
+    # Exakt uppslag utan fritextfråga: "vad står i K3 punkt 12.7?"
+    #
+    # Ligger FÖRE _initiera_korpus med flit. Ett uppslag på beteckning behöver
+    # varken embedding-modellen (~500 MB att ladda) eller vektormatrisen —
+    # det är en nyckelsökning. Att initiera ändå gjorde det billigaste
+    # anropet till det dyraste.
+    if beteckning_filter and not fraga.strip():
+        from pathlib import Path
+        conn = db_conn or oppna_db(Path(konfig.index.db))
+        sql = f"""
+            SELECT {_KORPUS_KOLUMNER}
+            FROM korpus_chunk c
+            JOIN korpus_dokument d ON d.id = c.dokument_id
+            WHERE c.korpus = ?
+        """
+        params: list[Any] = [korpus]
+        sql, params = _filtrera(sql, params)
+        sql += f" LIMIT {max_antal}"
+        return [_till_korpusresultat(r, 1.0) for r in conn.execute(sql, params).fetchall()]
+
+    modell, conn = _initiera_korpus(konfig, korpus, db_conn)
+
+    # 1. Vektorsökning
+    vec_rank: dict[str, int] = {}
+    matris = _korpus_vec_matrix.get(korpus)
+    ids = _korpus_vec_ids.get(korpus, [])
+    if matris is not None and len(matris) > 0:
+        q_vec = modell.encode([fraga], convert_to_numpy=True)[0]
+        q_norm = np.linalg.norm(q_vec)
+        if q_norm > 0:
+            q_vec = q_vec / q_norm
+        scores = np.dot(matris, q_vec)
+        top_k_vec = min(100, len(scores))
+        if len(scores) > top_k_vec:
+            topp_idx = np.argpartition(scores, -top_k_vec)[-top_k_vec:]
+            topp_idx = topp_idx[np.argsort(scores[topp_idx])[::-1]]
+        else:
+            topp_idx = np.argsort(scores)[::-1]
+        for rank, idx in enumerate(topp_idx, start=1):
+            vec_rank[ids[idx]] = rank
+
+    # 2. FTS5 / BM25
+    fts_fraga = fts5_escape(fraga)
+    bm25_rank: dict[str, int] = {}
+    if fts_fraga:
+        cur = conn.execute(
+            "SELECT id FROM korpus_chunk_fts WHERE korpus_chunk_fts MATCH ? "
+            "AND korpus = ? ORDER BY rank LIMIT 100",
+            (fts_fraga, korpus),
+        )
+        for rank, (c_id,) in enumerate(cur.fetchall(), start=1):
+            bm25_rank[c_id] = rank
+
+    # 3. RRF — samma k=60 som lag- och katalogsökningen.
+    k = 60
+    rrf_scores: dict[str, float] = {}
+    for c_id in set(vec_rank) | set(bm25_rank):
+        score = 0.0
+        if c_id in vec_rank:
+            score += 1.0 / (k + vec_rank[c_id])
+        if c_id in bm25_rank:
+            score += 1.0 / (k + bm25_rank[c_id])
+        rrf_scores[c_id] = score
+
+    topp = sorted(rrf_scores, key=lambda x: rrf_scores[x], reverse=True)[: max_antal * 3]
+    if not topp:
+        return []
+
+    platshallare = ",".join("?" for _ in topp)
+    sql = f"""
+        SELECT {_KORPUS_KOLUMNER}
+        FROM korpus_chunk c
+        JOIN korpus_dokument d ON d.id = c.dokument_id
+        WHERE c.id IN ({platshallare}) AND c.korpus = ?
+    """
+    params = [*topp, korpus]
+    sql, params = _filtrera(sql, params)
+
+    rad_dict = {r[0]: r for r in conn.execute(sql, params).fetchall()}
+    resultat: list[KorpusSokresultat] = []
+    for c_id in topp:
+        if c_id not in rad_dict:
+            continue
+        resultat.append(_till_korpusresultat(rad_dict[c_id], rrf_scores[c_id]))
+        if len(resultat) >= max_antal:
+            break
+
+    tid = (time.perf_counter() - start_t) * 1000
+    logger.info("Korpussökning (%s) '%s' klar på %.1f ms (%d träffar)",
+                korpus, fraga, tid, len(resultat))
+    return resultat

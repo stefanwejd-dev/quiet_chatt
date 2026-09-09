@@ -4,6 +4,7 @@ import logging
 import sqlite3
 import threading
 import time
+from dataclasses import dataclass
 from datetime import datetime, UTC
 from pathlib import Path
 from typing import Any
@@ -232,7 +233,15 @@ def _anropa_med_omforsok(method: str, url: str, return_json: bool, **kwargs) -> 
 
 
 
-def _hamta_generisk(kalla_id: str, method: str, url: str, return_json: bool, **kwargs) -> Any:
+def _grindar(kalla_id: str, url: str) -> Kalla:
+    """Spärr, aktivering och värdkontroll — grindarna varje utgående anrop passerar.
+
+    Ligger i en egen funktion därför att det finns två vägar ut ur modulen:
+    den cachade (hamta_json/hamta_text) och den ocachade (hamta_ocachat, för
+    binärer och för svar vars HUVUDEN behövs). Två uppsättningar kontroller
+    hade förr eller senare glidit isär, och den grind som glider isär är den
+    som inte längre spärrar något.
+    """
     # 1. Kontrollera blockering (Sparrad)
     k = hamta(kalla_id)
     if isinstance(k, Sparrad):
@@ -255,6 +264,12 @@ def _hamta_generisk(kalla_id: str, method: str, url: str, return_json: bool, **k
     #    oavsett protokoll när URL:en kommer från modellen.
     if k.generisk and not _ar_tillaten_vard(url):
         raise ValueError(f"Värden i {url} är inte tillåten för generiska anrop.")
+
+    return k
+
+
+def _hamta_generisk(kalla_id: str, method: str, url: str, return_json: bool, **kwargs) -> Any:
+    k = _grindar(kalla_id, url)
 
     # 3. Cache nyckel
     params = kwargs.get("params")
@@ -317,3 +332,89 @@ def hamta_text(kalla_id: str, method: str, url: str, **kwargs) -> str:
     return _hamta_generisk(kalla_id, method, url, False, **kwargs)
 
 
+
+
+@dataclass(frozen=True)
+class RaSvar:
+    """Ett ocachat svar: kroppen som bytes plus svarshuvudena."""
+
+    innehall: bytes
+    huvuden: dict[str, str]
+    url: str
+
+    def text(self, kodning: str = "utf-8") -> str:
+        return self.innehall.decode(kodning, "replace")
+
+
+def _ra_anrop_med_omforsok(method: str, url: str, **kwargs) -> httpx.Response:
+    """Som _anropa_med_omforsok, men lämnar tillbaka hela svaret."""
+    sista: Exception | None = None
+    for forsok in range(_MAX_OMFORSOK):
+        try:
+            with httpx.Client(timeout=TIMEOUT, follow_redirects=True) as client:
+                res = client.request(method, url, **kwargs)
+            if res.status_code not in _OMFORSOK_STATUS:
+                res.raise_for_status()
+                return res
+            sista = httpx.HTTPStatusError(
+                f"{res.status_code} från {url}", request=res.request, response=res
+            )
+        except (httpx.TransportError, OSError) as exc:
+            sista = exc
+            logger.info("Nätverksfel %s mot %s — försök %d/%d", exc, url, forsok + 1, _MAX_OMFORSOK)
+
+        if forsok == _MAX_OMFORSOK - 1:
+            break
+
+        svar = getattr(sista, "response", None)
+        retry_val = svar.headers.get("Retry-After") if svar is not None else None
+        try:
+            vanta = float(retry_val) if retry_val else 2.0 ** forsok
+        except ValueError:
+            vanta = 2.0 ** forsok
+        vanta = min(vanta, 30.0)
+        logger.info("Tillfälligt fel mot %s — väntar %.1f s före försök %d/%d",
+                    url, vanta, forsok + 2, _MAX_OMFORSOK)
+        time.sleep(vanta)
+
+    assert sista is not None
+    raise sista
+
+
+def hamta_ocachat(kalla_id: str, method: str, url: str, **kwargs) -> RaSvar:
+    """Ett anrop som passerar grindarna och kön men INTE HTTP-cachen.
+
+    Finns för två slag av svar som den cachade vägen inte kan bära:
+
+      * **Binärer.** Cachen lagrar kroppen som JSON-text i SQLite. En pdf
+        eller zip som tvingas in där kommer inte ut hel igen. Samma skäl som
+        BolagsverketAdapter._hamta_dokument redan går förbi transporten av.
+      * **Svar vars huvuden behövs.** WordPress paginering (bfn.se) räknas ur
+        `X-WP-TotalPages`, och cachen sparar bara kroppen. Utan sidhuvudet
+        blir uppräkningen ofullständig utan att något ser fel ut — det
+        felet kostade regelverksmodulen nio tiondelar av BFN:s material vid
+        första provkörningen.
+
+    Kön och takten gäller ändå: `_get_bucket(k).consume(1)` körs precis som i
+    den cachade vägen, så en källas anropstak går inte att kringgå genom att
+    välja den här funktionen.
+    """
+    k = _grindar(kalla_id, url)
+    _get_bucket(k).consume(1)
+    res = _ra_anrop_med_omforsok(method, url, **kwargs)
+
+    # Hälsostatistiken ska räkna det här anropet som en riktig träff mot
+    # källan, inte som en cacheträff — annars ser en tung skörd ut som
+    # om den aldrig rört nätet.
+    conn = _get_cache_db()
+    try:
+        _uppdatera_halsa(conn, kalla_id, cache_traff=False)
+        conn.commit()
+    finally:
+        conn.close()
+
+    return RaSvar(
+        innehall=res.content,
+        huvuden={n: v for n, v in res.headers.items()},
+        url=str(res.url),
+    )
