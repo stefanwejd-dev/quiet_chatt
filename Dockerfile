@@ -31,6 +31,11 @@ RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTr
 COPY config.toml ./
 COPY kallor ./kallor
 COPY lagar ./lagar
+# eu/euregister.yaml läses av euregister.py vid EU-ingest och av den nattliga
+# korpuskontrollen. Utan den här raden saknas registret i avbilden och den
+# nattliga EU-kontrollen faller med FileNotFoundError — kallor och lagar räcker
+# inte sedan steg 24.
+COPY eu ./eu
 
 # data/ (index.sqlite, cache.sqlite, kvoter.sqlite) monteras som volym i
 # Coolify så att index och cache överlever omdeploy — se README.md.

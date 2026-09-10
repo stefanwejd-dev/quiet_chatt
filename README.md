@@ -156,6 +156,22 @@ python -m quiet_oppen_data.index.eu_ingest
 ```
 
 Båda är valfria: saknas de svarar chatten som förut, utan BFN och EU-rätt.
+
+**Vid driftsättning måste de byggas på servern.** `data/` är både gitignorerad
+och en Docker-volym, så korpusen följer **inte** med en git-push eller en ny
+avbild. En omdeploy ger alltså de nya verktygen men ett index utan BFN- och
+EU-dokument, och då svarar de verktygen tomt. Kör de tre kommandona ovan i
+containern en gång efter första omdeployen:
+
+```bash
+docker compose exec quiet-oppen-data python -m quiet_oppen_data.index.bfn_skord
+docker compose exec quiet-oppen-data python -m quiet_oppen_data.index.bfn_ingest
+docker compose exec quiet-oppen-data python -m quiet_oppen_data.index.eu_ingest
+```
+
+BFN-skörden tar ungefär en timme: bfn.se svarar 429 vid snabbare takt än ett
+anrop varannan sekund, och 131 sidor plus 132 pdf:er ska hämtas. Den nattliga
+körningen håller dem färska därefter.
 `GET /matning` → `korpus` visar dokumentantal, ålder och de dokument som
 hämtats men inte kunnat läsas.
 
