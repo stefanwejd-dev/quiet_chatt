@@ -163,15 +163,39 @@ avbild. En omdeploy ger alltså de nya verktygen men ett index utan BFN- och
 EU-dokument, och då svarar de verktygen tomt. Kör de tre kommandona ovan i
 containern en gång efter första omdeployen:
 
+**Från ett värdskal** (din egen dator, eller VPS:en via ssh) — `docker compose`
+finns bara där:
+
 ```bash
 docker compose exec quiet-oppen-data python -m quiet_oppen_data.index.bfn_skord
 docker compose exec quiet-oppen-data python -m quiet_oppen_data.index.bfn_ingest
 docker compose exec quiet-oppen-data python -m quiet_oppen_data.index.eu_ingest
 ```
 
-BFN-skörden tar ungefär en timme: bfn.se svarar 429 vid snabbare takt än ett
-anrop varannan sekund, och 131 sidor plus 132 pdf:er ska hämtas. Den nattliga
-körningen håller dem färska därefter.
+**I Coolifys terminal** är du redan inne i containern, och det finns ingen
+docker-binär där (`sh: 1: docker: not found`). Kör modulerna direkt — välj
+containern `quiet-oppen-data`, inte frontenden:
+
+```bash
+cd /app
+nohup sh -c 'python -u -m quiet_oppen_data.index.bfn_skord   && python -u -m quiet_oppen_data.index.bfn_ingest   && python -u -m quiet_oppen_data.index.eu_ingest' > /app/data/korpus.log 2>&1 &
+```
+
+`nohup ... &` behövs därför att skörden tar ungefär en timme medan terminalen
+är en websocket som dör när fliken stängs — utan den dör körningen med den.
+Loggen skrivs på volymen och överlever, så du kan koppla upp igen och läsa
+`tail -f /app/data/korpus.log`.
+
+Tiden går åt till att bfn.se svarar 429 vid snabbare takt än ett anrop
+varannan sekund; 131 sidor och 132 pdf:er ska hämtas. Räkna med **~600 MB** på
+volymen när allt ligger på plats (74 MB pdf:er, resten index och embeddings).
+Den nattliga körningen håller korpusen färsk därefter.
+
+Kontrollera utfallet med `GET /matning` → `korpus`, eller i containern:
+
+```bash
+python -c "from quiet_oppen_data.index.korpus import statistik; print(statistik())"
+```
 `GET /matning` → `korpus` visar dokumentantal, ålder och de dokument som
 hämtats men inte kunnat läsas.
 
