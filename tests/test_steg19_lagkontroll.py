@@ -16,7 +16,7 @@ from __future__ import annotations
 from quiet_oppen_data.index.db import oppna_db
 from quiet_oppen_data.index.lag_ingest import las_lagkorpus_alder, nattlig_lagkontroll
 
-_LAGREGISTER_ANTAL = 62  # se lagar/lagregister.yaml
+_LAGREGISTER_ANTAL = 63  # se lagar/lagregister.yaml
 
 _MINIMAL_LAGTEXT = """Testlag (2020:1) t.o.m. SFS 2020:1
 
