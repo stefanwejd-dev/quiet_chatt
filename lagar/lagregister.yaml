@@ -1,8 +1,11 @@
 # Lagregister för Quiet Öppen Data (SFS-korpus)
-# Steg 16 — 62 skatte- och redovisningsförfattningar
+# Steg 16 — 63 skatte- och redovisningsförfattningar
+# 2026-09-11: 2005:59 distansavtalslagen tillagd. Ångerrätten och
+# avbokningsregeln saknades i korpusen, och de är de vanligaste frågorna
+# från tjänsteföretagare som säljer genom nätbokning.
 
 version: "1.1"
-uppdaterad: "2026-08-14"
+uppdaterad: "2026-09-11"
 
 lagar:
   # ===========================================================================
@@ -337,6 +340,11 @@ lagar:
   # ===========================================================================
   # Redovisning och bolag
   # ===========================================================================
+  - sfs: "2005:59"
+    namn: "Lag om distansavtal och avtal utanför affärslokaler"
+    kortnamn: "distansavtalslagen"
+    beskrivning: "Konsumentens ångerrätt och informationskrav vid avtal som ingås på distans eller utanför affärslokal, med undantag bland annat för tjänster som ska utföras vid en bestämd tidpunkt."
+
   - sfs: "2005:551"
     namn: "Aktiebolagslag"
     kortnamn: "ABL"

@@ -1,4 +1,4 @@
-"""Acceptanstester för Steg 16B — Lagkorpus, samtliga 62 författningar.
+"""Acceptanstester för Steg 16B — Lagkorpus, samtliga 63 författningar.
 
 Acceptanskriterier (PLAN.md §16B):
 1. Alla författningar i listan är hämtade, parsade och indexerade.
@@ -18,13 +18,13 @@ from quiet_oppen_data.index.sok import sok_lag
 from quiet_oppen_data.konfig import las as las_konfig
 
 
-def test_alla_62_forfattningar_finns_i_registret():
-    """Samtliga 62 författningar finns deklarerade i lagar/lagregister.yaml."""
+def test_alla_63_forfattningar_finns_i_registret():
+    """Samtliga 63 författningar finns deklarerade i lagar/lagregister.yaml."""
     lagar = lagregister.las()
-    assert len(lagar) == 62, f"Förväntade 62 författningar, fann {len(lagar)}"
+    assert len(lagar) == 63, f"Förväntade 63 författningar, fann {len(lagar)}"
 
 
-def test_alla_62_forfattningar_har_chunks_och_inte_noll():
+def test_alla_63_forfattningar_har_chunks_och_inte_noll():
     """Ingen författning har noll paragrafer/chunks i indexet."""
     konfig = las_konfig()
     conn = oppna_db(Path(konfig.index.db))
@@ -75,7 +75,7 @@ def test_andringskontroll_hela_registret(monkeypatch):
     """Ändringskontrollen täcker hela registret och rapporterar per lag."""
     from quiet_oppen_data.adaptrar import transport
 
-    # Mocka snabbt för alla 62 lagar
+    # Mocka snabbt för alla 63 lagar
     def mock_hamta_json(kalla_id, method, url, **kwargs):
         return {
             "dokumentstatus": {
@@ -94,7 +94,7 @@ def test_andringskontroll_hela_registret(monkeypatch):
     rapporter = kontrollera_andringar(db_conn=conn)
     conn.close()
 
-    assert len(rapporter) == 62, f"Förväntade 62 rapporter, fick {len(rapporter)}"
+    assert len(rapporter) == 63, f"Förväntade 63 rapporter, fick {len(rapporter)}"
     for r in rapporter:
         assert "sfs" in r
         assert "kortnamn" in r
@@ -105,14 +105,14 @@ def test_andringskontroll_hela_registret(monkeypatch):
 
 @pytest.mark.live
 def test_andringskontroll_hela_registret_live():
-    """Live-test mot Riksdagen för samtliga 62 författningar."""
+    """Live-test mot Riksdagen för samtliga 63 författningar."""
     konfig = las_konfig()
     conn = oppna_db(Path(konfig.index.db))
 
     rapporter = kontrollera_andringar(db_conn=conn)
     conn.close()
 
-    assert len(rapporter) == 62, f"Förväntade 62 rapporter, fick {len(rapporter)}"
+    assert len(rapporter) == 63, f"Förväntade 63 rapporter, fick {len(rapporter)}"
     for r in rapporter:
         assert "sfs" in r
         assert "kortnamn" in r
