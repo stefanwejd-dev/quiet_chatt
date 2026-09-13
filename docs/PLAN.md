@@ -2008,3 +2008,98 @@ sakinnehåll. Index, embeddings och FTS-rader i takt i båda korpusen.
 `C:okforingsprogram` → `LOGGBOK.md` och `regelverk/KONTRAKT.md` §5 b.
 Leveransen är omparsad (7 637 råd, 189 äkta versala underpunkter, noll
 uppslukade förstaord) och bär nu `ersatt_av` på fyra dokument.
+
+---
+
+## Driftstopp 2026-09-13 — SDK-pinning och felklassificering
+
+Chatten på quiet.nu/juridik svarade `"Ett tekniskt fel inträffade. Försök
+igen."` på varje fråga. `POST /fraga` mot produktion föll på **0,63 sekunder** —
+fas A:s första Anthropic-anrop kastade undantag direkt, innan något modellsvar
+hunnit komma. Enligt `/halsa` hade ingen chattdriven adapter lyckats sedan
+~29 augusti. Ingen hade märkt något.
+
+Felsökningen gav två fynd och en rättelse för vardera.
+
+### D1. Alla fel såg likadana ut i loggen
+
+`_strom_svar` (`api.py`) fångade `Exception` brett och lät nätverksglapp,
+kodfel, avvisad nyckel och slut på kredit kollapsa till samma generiska
+SSE-händelse och samma `logger.warning`.
+
+Det gjorde det troligaste felet osynligt. Kontot är avsiktligt förskottsbetalt
+utan auto-reload (ARKITEKTUR.md §6a) — **slut på kredit är alltså inte ett
+haveri utan designens avsedda utfall**, men det utfallet syntes ingenstans.
+Ett drifttillstånd som konstruktionen själv skapar måste vara avläsbart, annars
+är kostnadstaket en fälla i stället för ett skydd.
+
+Undantaget klassificeras nu i `motor/felklass.py` →
+`klassificera_anthropic_fel(exc) -> str`:
+
+| Felklass | Undantag | Loggnivå |
+|-|-|-|
+| `auth` | `AuthenticationError` (401) | `error`, prefix `DRIFTSTOPP:` |
+| `billing` | `BadRequestError`/`PermissionDeniedError` vars text bär `credit balance` eller `billing` | `error`, prefix `DRIFTSTOPP:` |
+| `rate_limit` | `RateLimitError` (429) | `warning` |
+| `overloaded` | `APIStatusError` med status 529, eller `InternalServerError` | `warning` |
+| `natverk` | `APIConnectionError` (inkl. timeout) | `warning` |
+| `api_ovrigt` | övriga `APIError` | `warning` |
+| `internt` | allt annat — kodfel, adapterfel utanför anthropic | `warning` |
+
+Två saker som bara avläsningen av SDK:n kunde visa, och som en gissning hade
+fått fel (princip 1 i anda):
+
+* **Slut på kredit har ingen egen undantagsklass.** Det är ett HTTP 400 som är
+  oskiljaktigt från ett formatfel utom i svarskroppens text. Därför
+  strängmatchningen — och därför ett prov som visar att ett vanligt 400
+  (`max_tokens: must be >= 1`) *inte* larmar som driftstopp.
+* **`OverloadedError` ärver `APIStatusError`, inte `InternalServerError`.**
+  Beställningen antog det omvända. `overloaded` matchar på statuskod *eller*
+  `InternalServerError`, vilket fångar båda.
+
+Klientens meddelande är **oförändrat, ord för ord**. Skillnaden ligger i loggen
+och i mätningen: varje fel skrivs som `(tidpunkt, felklass)` i nya tabellen
+`driftfel_logg` och summeras i `GET /matning` → `driftfel`
+(`las_driftfel(30)` → `totalt`, `per_felklass`, `senaste`). Ingen frågetext
+lagras där.
+
+`felklass.py` är en ren funktion utan klient och utan nyckelkrav, så den får
+importeras på modulnivå i `api.py` utan att bryta invarianten att `/kallor` och
+`/halsa` fungerar utan `ANTHROPIC_API_KEY`. Invarianten har fått ett eget prov
+som kör importen i en **egen process** med tom nyckel — i testprocessen är
+nyckeln redan inläst och skulle dölja ett brott. Ett syskonprov nollar
+`load_dotenv`, eftersom `konfig.las()` annars läser tillbaka nyckeln ur en
+lokal `.env` och provet då mäter utvecklarmaskinen i stället för koden.
+
+### D2. `anthropic` var pinnad utan tak
+
+`pyproject.toml` sa `anthropic>=0.40`. Servern byggdes om 2026-09-10 och fick
+då SDK **1.5.0** — en ny majorversion, medan koden är verifierad mot 0.112.0.
+Anropsformen i `hamtning.py` accepterades av båda, så just den gången gick det
+bra, men varje ombyggnad var ett lotteri.
+
+Pinningen är nu `anthropic>=0.112,<2`.
+
+**Öppen punkt, redovisad:** `<2` stoppar bara 2.x. Senaste anthropic är 1.5.0,
+så nästa Coolify-bygge installerar 1.5.0 igen — taket förhindrar alltså inte
+den glidning som faktiskt inträffade, bara ett framtida majorhopp. Vill man att
+avbilden får den version koden är verifierad mot krävs `<0.113` eller `==0.112.0`.
+Det är ett beställarbeslut, inte ett implementationsbeslut.
+
+Som motvikt är felklassificeringen körd mot **båda ändarna av pinningen**: ett
+isolerat venv med anthropic 1.5.0 gav samma svar som 0.112.0 i samtliga 14 fall.
+1.x har bytt HTTP-klient (`httpx` → `httpx2`), men undantagshierarkin och
+attributnamnen är identiska, och klassificeringen läser bara `status_code`,
+`body` och `str()`.
+
+### Utfall
+
+22 nya prov i `tests/test_felklass.py` — varje felklass i tabellen, tre för
+`billing`-strängmatchningen, båda `/fraga`-vägarna (SSE-meddelandet är exakt
+det generiska *och* raden hamnar i `driftfel_logg`), `/matning` → `driftfel`,
+och de två invariantproven för `/halsa` utan nyckel. Hela sviten **332 gröna**
+(310 före), `ruff check .` rent, `pip check` utan brutna beroenden.
+
+**Kvar för människan:** fylla på krediten hos Anthropic — koden lagar inte det —
+och bygga om avbilden i Coolify. Pinningen och felklassificeringen får effekt
+i produktion först vid nästa image-bygge.

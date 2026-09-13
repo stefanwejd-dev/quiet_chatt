@@ -476,3 +476,89 @@ def las_senaste_ingest() -> dict | None:
     except Exception:
         logger.warning("Mätning: kunde inte läsa senaste ingest", exc_info=True)
         return None
+
+
+# ---------------------------------------------------------------------------
+# Driftfel-logg — felklasser från Anthropic-anropen (2026-09-13)
+# ---------------------------------------------------------------------------
+#
+# Bakgrund: ett driftstopp på quiet.nu/juridik varade i veckor utan att synas,
+# eftersom varje fel — nätverk, kodfel, slut på kredit — kollapsade till samma
+# generiska "tekniskt fel" i loggen. Tabellen gör felklassen räknebar så att
+# `auth` och `billing` (driftstopp tills en människa agerar) kan skiljas från
+# övergående fel i GET /matning.
+#
+# Ingen frågetext lagras här — bara tidpunkt och felklass. 30-dagarsraderingen
+# i §11 gäller frågetexter och berörs inte.
+
+_DRIFTFEL_SCHEMA = """
+    CREATE TABLE IF NOT EXISTS driftfel_logg (
+        id        INTEGER PRIMARY KEY AUTOINCREMENT,
+        tidpunkt  TEXT NOT NULL,   -- ISO-8601 UTC
+        felklass  TEXT NOT NULL    -- se motor/felklass.py
+    )
+"""
+
+
+def logga_driftfel(felklass: str) -> None:
+    """Loggar ett klassificerat driftfel från fas A/B/C.
+
+    Anropas av api.py när kedjan kastar. Som övriga logg-funktioner här är
+    mätfel icke-fatala: svaret till klienten får aldrig blockeras av att
+    statistiken inte gick att skriva.
+    """
+    try:
+        with _anslut() as kon:
+            kon.execute(_DRIFTFEL_SCHEMA)
+            kon.execute(
+                "INSERT INTO driftfel_logg (tidpunkt, felklass) VALUES (?,?)",
+                (datetime.now(UTC).isoformat(), felklass),
+            )
+            kon.commit()
+    except Exception:
+        logger.warning("Mätning: kunde inte logga driftfel", exc_info=True)
+
+
+def las_driftfel(dygn: int = 30) -> dict:
+    """Returnerar driftfel-statistik för de senaste `dygn` dagarna.
+
+    Fält som returneras:
+      * period_dagar: dygn som ingår i statistiken
+      * totalt: antal loggade driftfel i perioden
+      * per_felklass: {"billing": N, ...} — bara klasser som förekommit
+      * senaste: {"tidpunkt": ..., "felklass": ...} eller None
+    """
+    gräns = (datetime.now(UTC) - timedelta(days=dygn)).isoformat()
+    try:
+        with _anslut() as kon:
+            kon.execute(_DRIFTFEL_SCHEMA)
+
+            per_felklass = {
+                felklass: antal
+                for felklass, antal in kon.execute(
+                    """SELECT felklass, COUNT(*) FROM driftfel_logg
+                       WHERE tidpunkt >= ? GROUP BY felklass
+                       ORDER BY COUNT(*) DESC""",
+                    (gräns,),
+                ).fetchall()
+            }
+
+            senaste_rad = kon.execute(
+                """SELECT tidpunkt, felklass FROM driftfel_logg
+                   WHERE tidpunkt >= ? ORDER BY id DESC LIMIT 1""",
+                (gräns,),
+            ).fetchone()
+
+            return {
+                "period_dagar": dygn,
+                "totalt": sum(per_felklass.values()),
+                "per_felklass": per_felklass,
+                "senaste": (
+                    {"tidpunkt": senaste_rad[0], "felklass": senaste_rad[1]}
+                    if senaste_rad
+                    else None
+                ),
+            }
+    except Exception:
+        logger.warning("Mätning: kunde inte läsa driftfel", exc_info=True)
+        return {"fel": "Kunde inte läsa driftfel."}

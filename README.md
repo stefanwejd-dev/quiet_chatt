@@ -135,7 +135,12 @@ Systemet besvarar sakfrågor mot öppna data och författningar med full källsp
 |23|BFN-korpus — Bokföringsnämndens allmänna råd och vägledningar|✅|
 |24|EU-rättsakter ur EUR-Lex i gällande konsoliderad lydelse|✅|
 
-**Hela testsviten: 310 passerade**, `ruff check .` rent (2026-09-09). Prestandatester som beror på hårdvaruladdningstid är markerade `@pytest.mark.slow` och körs separat med `pytest -m slow`; livetester mot Anthropic och externa API:er är markerade `@pytest.mark.live` och körs separat med `pytest -m live`.
+Utanför stegräkningen: **drift 2026-09-13** — anthropic-SDK:n har fått ett
+versionstak och fel från Anthropic klassificeras nu i stället för att
+kollapsa till ett generiskt "tekniskt fel" (`motor/felklass.py`,
+`GET /matning` → `driftfel`). Se [`docs/PLAN.md`](docs/PLAN.md).
+
+**Hela testsviten: 332 passerade**, `ruff check .` rent (2026-09-13). Prestandatester som beror på hårdvaruladdningstid är markerade `@pytest.mark.slow` och körs separat med `pytest -m slow`; livetester mot Anthropic och externa API:er är markerade `@pytest.mark.live` och körs separat med `pytest -m live`.
 
 Lagindexet i `data/index.sqlite`: 62 dokument, 9 792 chunkar, 9 792 embeddings.
 Katalogindexet: 23 289 datamängder, 32 518 distributioner.
@@ -197,7 +202,9 @@ Kontrollera utfallet med `GET /matning` → `korpus`, eller i containern:
 python -c "from quiet_oppen_data.index.korpus import statistik; print(statistik())"
 ```
 `GET /matning` → `korpus` visar dokumentantal, ålder och de dokument som
-hämtats men inte kunnat läsas.
+hämtats men inte kunnat läsas. `GET /matning` → `driftfel` räknar de senaste
+30 dygnens fel i fas A/B/C per felklass, där `billing` och `auth` betyder
+driftstopp tills krediten fyllts på eller nyckeln bytts.
 
 ## Nattlig ingest
 

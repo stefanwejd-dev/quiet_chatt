@@ -1,5 +1,7 @@
 # Genererade och lokala filer
 .env
+# Lokala beställningsdokument — ingår aldrig i en commit och pushas aldrig
+uppdrag/
 data/
 __pycache__/
 *.py[cod]

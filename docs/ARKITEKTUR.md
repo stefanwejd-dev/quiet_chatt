@@ -417,7 +417,7 @@ en i dag, och det är avsiktligt.
 | Strömning | Ja, båda faserna | `max_tokens` över ~16 000 kräver det; fas B strömmas till frontend. |
 | Struktur | `output_config.format` med json_schema i fas B | Se §4. |
 | Cache | Breakpoint efter systemprompt + verktygsdefinitioner | Stabil prefix. Minsta cachebara prefix på Opus 5 är 512 token. |
-| SDK | `anthropic` (Python) | Rå HTTP är förbjudet — använd SDK:t. |
+| SDK | `anthropic` (Python), pinnad `>=0.112,<2` | Rå HTTP är förbjudet — använd SDK:t. Taket kom till 2026-09-13: `>=0.40` utan övre gräns lät ombyggnaden 2026-09-10 dra in SDK 1.5.0 utan att någon valt det. Undre gränsen är versionen anropsformen nedan är verifierad mot. |
 
 **Anropsformen, verifierad mot API:t 2026-08-13.** Tre fällor har redan kostat
 en hel omskrivning av fas A — de ger alla HTTP 400 på Opus 5:
@@ -458,6 +458,27 @@ Beställarens hårda tak är 1 000 SEK/månad. Det upprätthålls i tre lager:
 Implementatören ska inte förvänta sig att lager 2 och 3 ensamma räcker som finansiellt
 skydd — lager 1 är den faktiska garantin och ligger utanför koden, i kontoinställningarna
 hos Anthropic.
+
+**Lager 1 har en baksida, upptäckt 2026-09-13.** Slut på kredit är inte ett fel —
+det är designens avsedda utfall. Men i koden såg det likadant ut som ett
+nätverksglapp: `_strom_svar` fångade `Exception` brett och loggade allt som
+samma `warning`. Chatten svarade "Ett tekniskt fel inträffade" på varje fråga,
+och driftstoppet pågick i veckor utan att någon märkte det.
+
+Undantaget från fas A/B/C klassificeras därför i
+`motor/felklass.py` → `klassificera_anthropic_fel()`, som returnerar exakt en av
+`auth`, `billing`, `rate_limit`, `overloaded`, `natverk`, `api_ovrigt`, `internt`:
+
+* `auth` och `billing` är **driftstopp** — varje fråga kommer att falla tills en
+  människa fyller på krediten eller byter nyckel. De loggas som `logger.error`
+  med det grep-vänliga prefixet `DRIFTSTOPP:`.
+* Övriga klasser är övergående och behåller `warning`.
+
+Klientens meddelande är **oförändrat generiskt** i samtliga fall — ingen felklass,
+statuskod eller API-detalj läcker i SSE-strömmen. Skillnaden ligger i loggen och i
+`GET /matning` → `driftfel` (§11). Modulen är en ren funktion utan klient och utan
+nyckelkrav; den får därför importeras på modulnivå i `api.py` utan att bryta
+invarianten att `/kallor` och `/halsa` fungerar utan `ANTHROPIC_API_KEY`.
 
 ---
 
@@ -558,6 +579,12 @@ Loggas per fråga, i SQLite, utan att spara frågetexten längre än 30 dagar:
 * lagkorpusets ålder — dygn sedan senaste lyckade `lag_ingest`, per författning,
   och vilka som ligger efter (steg 19, `GET /matning` → `lagkorpus_alder`; se
   §5 regel 8)
+* driftfel per felklass — varje fel i fas A/B/C skrivs som `(tidpunkt, felklass)`
+  i tabellen `driftfel_logg` och summeras i `GET /matning` → `driftfel`
+  (2026-09-13; felklasserna definieras i §6a). Ingen frågetext lagras i den
+  tabellen — 30-dagarsraderingen ovan gäller frågetexter och berörs inte.
+  `billing` eller `auth` med ett färskt `senaste` betyder att chatten ligger
+  nere just nu.
 
 Den viktigaste siffran är **andelen frågor som besvaras på nivå 3** (katalogsvar i
 stället för exekverat svar). Den siffran talar om vilken adapter som ska byggas härnäst,

@@ -13,7 +13,10 @@ Designbeslut:
   * Fas A och fas C instansieras lat och en gång per process (samma
     motivering som i motor/hamtning.py och motor/syntes.py: prompt-cachen
     kräver återanvändning). De skapas INTE vid import — /kallor och /halsa
-    ska fungera även utan ANTHROPIC_API_KEY i miljön.
+    ska fungera även utan ANTHROPIC_API_KEY i miljön. Undantaget är
+    motor/felklass.py, som bara läser anthropics undantagshierarki — den
+    instansierar ingen klient och rör aldrig nyckeln, och importeras därför
+    på modulnivå.
   * Kvoten kontrolleras och räknas upp INNAN någon modell anropas —
     fail-closed. Ett avvisat anrop kostar ingenting.
   * CORS-allowlisten byggs ur `config.toml → site.domain` (ARKITEKTUR.md §0).
@@ -47,6 +50,7 @@ from quiet_oppen_data import kvot, matning
 from quiet_oppen_data.adaptrar.transport import halsostatistik
 from quiet_oppen_data.konfig import las as las_konfig
 from quiet_oppen_data.modeller import Faktapost, Faktaregister
+from quiet_oppen_data.motor.felklass import klassificera_anthropic_fel
 from quiet_oppen_data.register import Kalla, Sparrad, las as las_register
 
 logger = logging.getLogger(__name__)
@@ -201,6 +205,10 @@ async def matning_endpoint(request: Request) -> dict[str, Any]:
     `dokument_med_anmarkning` räknar de dokument som hämtats men inte kunnat
     läsas — inskannade pdf:er utan textlager hos BFN. De är en känd lucka och
     ska synas som en sådan, inte försvinna ur statistiken.
+
+    `driftfel` räknar fel i fas A/B/C per felklass (se motor/felklass.py).
+    `billing` och `auth` där betyder driftstopp: varje fråga faller tills en
+    människa fyller på krediten eller byter nyckel.
     """
     _kontrollera_matningsnyckel(request)
 
@@ -244,12 +252,22 @@ async def matning_endpoint(request: Request) -> dict[str, Any]:
         logger.warning("Kunde inte läsa textkorpusens tillstånd", exc_info=True)
         korpus = {"fel": "Kunde inte läsa textkorpusens tillstånd."}
 
+    # Driftfel per felklass. `billing` och `auth` här betyder att varje fråga
+    # faller tills en människa agerar — det är siffran som ska upptäckas
+    # inom minuter, inte veckor.
+    try:
+        driftfel = await run_in_threadpool(matning.las_driftfel, 30)
+    except Exception:
+        logger.warning("Kunde inte läsa driftfel", exc_info=True)
+        driftfel = {"fel": "Kunde inte läsa driftfel."}
+
     return {
         "matpunkter": punkter,
         "senaste_ingest": senaste_ingest,
         "lagkorpus_alder": lagkorpus_alder,
         "senaste_lagkontroll": senaste_lagkontroll,
         "korpus": korpus,
+        "driftfel": driftfel,
     }
 
 
@@ -338,8 +356,24 @@ async def _strom_svar(fraga: str) -> AsyncIterator[str]:
     try:
         hamtningsresultat = await run_in_threadpool(fas_a.hamta, fraga)
         svar = await run_in_threadpool(fas_c.kor, fraga, hamtningsresultat.register)
-    except Exception:
-        logger.warning("Fas A/B/C misslyckades för en fråga", exc_info=True)
+    except Exception as exc:
+        # Felklassen skiljer ett driftstopp (slut på kredit, avvisad nyckel)
+        # från ett övergående fel. Klienten får oförändrat samma generiska
+        # meddelande — inga felklasser, statuskoder eller API-detaljer läcker
+        # i SSE-strömmen.
+        felklass = klassificera_anthropic_fel(exc)
+        if felklass in ("auth", "billing"):
+            logger.error(
+                "DRIFTSTOPP: Anthropic-anropet avvisades (felklass=%s)",
+                felklass,
+                exc_info=True,
+            )
+        else:
+            logger.warning("Fas A/B/C misslyckades (felklass=%s)", felklass, exc_info=True)
+        try:
+            await run_in_threadpool(matning.logga_driftfel, felklass)
+        except Exception:
+            logger.warning("Mätning: logga_driftfel misslyckades", exc_info=True)
         yield _sse("fel", {"meddelande": "Ett tekniskt fel inträffade. Försök igen."})
         return
 
