@@ -248,6 +248,36 @@ mer. Loopen avslutas när modellen slutar kalla verktyg, eller vid `max_iteratio
 
 **Fas A:s textutgång kastas.** Det enda som förs vidare är Faktaregistret.
 
+**Statushändelser (tillagt 2026-09-13).** Fas A kan ta 30–90 sekunder, och kördes
+tidigare som ett enda anrop som inte släppte ifrån sig något förrän det var klart —
+besökaren såg en stilla "Tänker …" hela tiden. Loopen rapporterar nu varje
+verktygsanrop som en SSE-händelse innan verktyget körs:
+
+```
+event: status
+data: {"text": "Söker hos Sveriges riksbank …", "kalla_id": "riksbanken"}
+```
+
+`hamta()` tar en valfri `status_callback`; utan den är beteendet exakt som förut.
+Callbacken körs i arbetstråden och lägger händelsen på en `asyncio.Queue` via
+`loop.call_soon_threadsafe` — `api.py` tömmer kön medan den väntar, utan att
+blockera event-loopen. En trasig statuskanal sväljs med `logger.warning`:
+statusen är presentation, hämtningen är uppdraget.
+
+**Innehållsregeln är ovillkorlig.** `text` byggs **enbart** ur källregistrets
+`myndighet`-fält eller ur en fast frasordlista i `motor/hamtning.py`
+(`statustext_for_verktyg`). Aldrig ur frågan, aldrig ur verktygens indata eller
+utdata. Kanalen ser systemgenererad ut för besökaren och måste därför också vara
+det — samma disciplin som resten av api.py håller. Beräkningsverktygen rapporteras
+som `"Beräknar …"` utan detaljer, och ett okänt verktyg eller en källa utan
+myndighetsnamn ger den generiska frasen `"Söker i myndighetskällorna …"`: hellre
+trubbig än fel. Signaturen vaktas av ett prov — funktionen tar inte ens emot
+frågan.
+
+När fas A är klar och fas B/C tar vid sänds `"Sammanställer svaret …"`.
+Statushändelser loggas inte i `matning.sqlite`; de är flyktig presentation, inte
+mätdata.
+
 ### Fas B — Syntes (isolerad)
 
 Ett **nytt** anrop med ett rent sammanhang. Kontexten består av exakt två saker:
@@ -533,6 +563,46 @@ registret som `licens: okänd`.
 
 **Nycklar ligger alltid i backend.** Bolagsverkets avtalsbundna API:er kräver
 klientcertifikat; den anslutningen får aldrig ske från webbläsaren.
+
+### 9a. Gemensam formgivning i Quiet-familjen, beslutad 2026-09-13
+
+Familjen har tre produkter med tre olika grader av formgivning: quiet.nu:s varma
+skinn (cream/terra), den här widgeten, och sie-mcp:s Streamlit-app. De unifieras
+**inte** pixel för pixel — quiet.nu behåller sin palett, och Quiet Bookkeepings
+kulörregister betyder saker som bara är sanna där. Det som delas är två
+semantiska detaljer, båda hämtade ur Bookkeepings designsystem:
+
+**Dokumentrösten.** Det som är hämtat och fastställt — källans etikett, källraden,
+myndighetsuppgifterna — sätts i serif (`--font-dokument` på quiet.nu,
+`--qw-font-dokument` i widgeten, IBM Plex Serif självhostad). Gränssnittet och
+modellens syntes talar sans. Serifen är alltså en upplysning om var texten kommer
+ifrån, inte en smaksak: läsaren ska kunna se skillnad på vad systemet hämtat och
+vad det formulerat, utan att läsa finstilt.
+
+**Källraden.** En källa presenteras likadant oavsett vilken produkt som visar den:
+
+```
+{myndighet} · {dataset} · {period} · hämtad {ÅÅÅÅ-MM-DD}
+```
+
+Fält som saknas utelämnas tillsammans med sin avdelare — raden slutar aldrig med
+ett ensamt `·`. `hamtad` är en ISO-tidsstämpel som kortas till datum vid visning;
+hela tidsstämpeln ligger kvar i elementets `title`.
+
+**Tabulära siffror.** Tal som står i kolumn eller jämförs bär
+`font-variant-numeric: tabular-nums lining-nums` — samma bredd och samma höjd på
+varje siffra. Klassen heter `.tal` på quiet.nu och `.qw-tal` i widgeten.
+
+Inga externa typsnittsvärdar någonstans: Plex hostas bredvid Jost och Work Sans
+(SIL OFL 1.1, licensfilen ligger med i `tillgangar/typsnitt/`). Widgeten ärver
+sajtens tokens när den körs på quiet.nu och faller tillbaka på Georgia i
+fristående bruk — `frontend/test.html` visar det fallet.
+
+**Texterna hör till inbäddningen, inte till widgeten.** Samma kod sitter på en
+statistiksida och på juridiksidan, så etikett, platshållare, tom-statens rad och
+exempelfrågorna läses ur `data-`-attribut på containern med widgetens egna
+reservtexter som fallback. Juridiksidan bad tidigare om "offentlig statistik" på
+en sida som heter Juridik & skatt.
 
 ---
 

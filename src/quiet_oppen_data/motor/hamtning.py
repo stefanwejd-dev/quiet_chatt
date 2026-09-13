@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import json
 import logging
+from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
@@ -48,6 +49,7 @@ from quiet_oppen_data.adaptrar import (
 from quiet_oppen_data.konfig import las as las_konfig
 from quiet_oppen_data.modeller import Faktapost, Faktaregister, Faktautkast, Fragplan
 from quiet_oppen_data.motor import berakningar
+from quiet_oppen_data.register import las as las_register
 
 logger = logging.getLogger(__name__)
 
@@ -152,6 +154,82 @@ def _bygg_dispatcher(adaptrar: dict[str, Any]) -> dict[str, Any]:
             # som tappas här försvinner annars spårlöst ur verktygslistan.
             logger.warning("beskriv() misslyckades för '%s'", kalla_id, exc_info=True)
     return dispatcher
+
+
+def _bygg_verktygskallor(adaptrar: dict[str, Any]) -> dict[str, str]:
+    """Bygg ett {verktygsnamn → kalla_id}-index för statustexterna.
+
+    Sambandet finns redan implicit i dispatchern ({verktygsnamn → adapter}) —
+    det här gör det uttryckligt, i stället för att låta statustexterna gissa
+    källa ur verktygsnamnets prefix.
+    """
+    index: dict[str, str] = {}
+    for kalla_id, adapter in adaptrar.items():
+        try:
+            for spec in adapter.beskriv():
+                namn = spec.get("name", "")
+                if namn:
+                    index[namn] = kalla_id
+        except Exception:
+            logger.warning("beskriv() misslyckades för '%s'", kalla_id, exc_info=True)
+    return index
+
+
+def _bygg_myndighetsnamn() -> dict[str, str]:
+    """Bygg ett {kalla_id → myndighet}-index ur källregistret.
+
+    Läses en gång per process (i FasALopp.__init__), inte en gång per fråga:
+    registret är en YAML-fil på disk och ändras inte under drift.
+    """
+    namn: dict[str, str] = {}
+    try:
+        for post in las_register():
+            myndighet = getattr(post, "myndighet", None)
+            if myndighet:
+                namn[post.id] = myndighet
+    except Exception:
+        logger.warning("Kunde inte läsa källregistret för statustexter", exc_info=True)
+    return namn
+
+
+# ---------------------------------------------------------------------------
+# Statustexter — vad loopen berättar för besökaren medan den arbetar
+# ---------------------------------------------------------------------------
+#
+# Ovillkorlig regel: texten byggs ENBART ur källregistrets myndighetsnamn
+# eller ur frasordlistan nedan. Aldrig ur frågan, aldrig ur verktygens indata
+# eller utdata. Kanalen ser systemgenererad ut för besökaren, och då måste den
+# också vara det — samma disciplin som resten av api.py håller.
+
+STATUS_SOKER_GENERISKT = "Söker i myndighetskällorna …"
+STATUS_BERAKNAR = "Beräknar …"
+STATUS_SAMMANSTALLER = "Sammanställer svaret …"
+
+
+def statustext_for_verktyg(
+    verktygsnamn: str,
+    verktygskallor: dict[str, str],
+    myndighetsnamn: dict[str, str],
+) -> tuple[str, str | None]:
+    """Översätter ett verktygsanrop till (text, kalla_id) för SSE-strömmen.
+
+    Beräkningsverktygen rapporteras utan detaljer — vilken beräkning som görs
+    är en del av svaret, inte av väntan. Okänt verktyg eller en källa som
+    saknar myndighetsnamn i registret ger den generiska frasen: hellre trubbig
+    än fel.
+    """
+    if verktygsnamn in berakningar.VERKTYGSNAMN:
+        return STATUS_BERAKNAR, None
+
+    kalla_id = verktygskallor.get(verktygsnamn)
+    if kalla_id is None:
+        return STATUS_SOKER_GENERISKT, None
+
+    myndighet = myndighetsnamn.get(kalla_id)
+    if not myndighet:
+        return STATUS_SOKER_GENERISKT, kalla_id
+
+    return f"Söker hos {myndighet} …", kalla_id
 
 
 # ---------------------------------------------------------------------------
@@ -261,6 +339,9 @@ class FasALopp:
         self._adaptrar = _bygg_adaptrar()
         self._dispatcher = _bygg_dispatcher(self._adaptrar)
         self._verktygsspecar = _bygg_verktygsspecar(self._adaptrar)
+        # Uppslagen för statustexterna byggs här, en gång per process.
+        self._verktygskallor = _bygg_verktygskallor(self._adaptrar)
+        self._myndighetsnamn = _bygg_myndighetsnamn()
 
         logger.info(
             "FasALopp initierad: %d adaptrar, %d verktyg",
@@ -268,11 +349,19 @@ class FasALopp:
             len(self._verktygsspecar),
         )
 
-    def hamta(self, fraga: str) -> HamtningsResultat:
+    def hamta(
+        self,
+        fraga: str,
+        status_callback: Callable[[str, str | None], None] | None = None,
+    ) -> HamtningsResultat:
         """Kör planeringsloopen för en fråga och returnerar Faktaregistret.
 
         Args:
             fraga: Användarens frihandsfråga på svenska.
+            status_callback: valfri krok som anropas med (text, kalla_id) en
+                gång per verktygsanrop, innan verktyget körs. Utan den är
+                beteendet exakt som förut. Se _rapportera_status för varför
+                den aldrig kan fälla en hämtning.
 
         Returns:
             HamtningsResultat med Faktaregister och tokenräkning.
@@ -373,6 +462,7 @@ class FasALopp:
             verktygssvar: list[dict[str, Any]] = []
             for vb in verktygsblock:
                 logger.debug("Kör verktyg '%s' med indata: %s", vb.name, vb.input)
+                self._rapportera_status(status_callback, vb.name)
                 resultat_json = _kör_verktyg(kontext, vb.name, dict(vb.input or {}))
                 verktygssvar.append({
                     "type": "tool_result",
@@ -404,3 +494,24 @@ class FasALopp:
             output_tokens=tot_ut,
             iterationer=iterationer,
         )
+
+    def _rapportera_status(
+        self,
+        status_callback: Callable[[str, str | None], None] | None,
+        verktygsnamn: str,
+    ) -> None:
+        """Berättar vad loopen gör just nu. Sväljer allt.
+
+        En trasig statuskanal — en stängd klient, en full kö, en buggig
+        callback — får aldrig fälla en hämtning. Statusen är presentation;
+        hämtningen är uppdraget.
+        """
+        if status_callback is None:
+            return
+        try:
+            text, kalla_id = statustext_for_verktyg(
+                verktygsnamn, self._verktygskallor, self._myndighetsnamn
+            )
+            status_callback(text, kalla_id)
+        except Exception:
+            logger.warning("Statuskanalen kastade undantag — ignoreras", exc_info=True)

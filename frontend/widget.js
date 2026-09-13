@@ -7,7 +7,20 @@
  * Kräver inga externa beroenden — CSP-tåligt, inga CDN, inga externa typsnitt.
  * Ljus/mörk tema via prefers-color-scheme.
  *
+ * Dokumentrösten: serifen i källpanelen är semantik, inte smak. Det som är
+ * hämtat och fastställt — källans etikett och källraden under den — sätts i
+ * --qw-font-dokument; gränssnittet och modellens syntes talar sans. Samma
+ * uppdelning som i Quiet Bookkeepings designsystem (§5, §7). Tal som står i
+ * kolumn eller jämförs bär klassen .qw-tal (tabulära siffror).
+ *
+ * Texter som kan skrivas över per inbäddning (data-attribut på containern):
+ *   data-etikett      skärmläsaretiketten över frågefältet
+ *   data-placeholder  frågefältets platshållartext
+ *   data-tom-text     tom-statens huvudrad
+ *   data-exempel      JSON-array med exempelfrågor (chips i tom-staten)
+ *
  * SSE-händelser från /fraga:
+ *   status    {text, kalla_id}                 (valfri; äldre API sänder ingen)
  *   stycke    {text, kallor: ["F1","F2"]}
  *   kallor    {kallor: [{id, etikett, myndighet, dataset, period, dimensioner,
  *              hamtad, lank_manniska, lank_maskin, licens, attribution,
@@ -34,6 +47,11 @@
      samma paletts ljusa läge. Se motsvarande mörka reservvärden nedan. */
   --qw-font:        var(--font-brod, ui-sans-serif, system-ui, sans-serif);
   --qw-font-rubrik: var(--font-rubrik, var(--qw-font));
+  /* Dokumentets röst. Det som är hämtat och fastställt — källor,
+     myndighetsuppgifter, lagrum — sätts i serif; gränssnittet och syntesen i
+     sans. Ärver sajtens --font-dokument på quiet.nu och faller tillbaka på
+     Georgia i fristående bruk (test.html), där Plex-filerna inte finns. */
+  --qw-font-dokument: var(--font-dokument, "IBM Plex Serif", Georgia, serif);
   --qw-mono: ui-monospace, "SF Mono", "Fira Code", monospace;
 
   --qw-radius:    20px;
@@ -317,7 +335,11 @@
   white-space: nowrap;
   width: 1%;
 }
-.qw-tabell .qw-varde { font-variant-numeric: tabular-nums; }
+/* Tal som står i kolumn eller jämförs: belopp, procent, SFS-nummer, datum.
+   Tabulära siffror ger alla siffror samma bredd, lining-nums samma höjd —
+   tillsammans är det det som gör en kolumn läsbar. Klassen sätts i JS på
+   tabellvärden, fotnotsmarkörer och källradernas dataset/period/datum. */
+.qw-tal { font-variant-numeric: tabular-nums lining-nums; }
 
 /* Vänsterkant bär tonen — färg som tillägg, aldrig som enda signal.
    Den som inte skiljer färger ska kunna läsa svaret lika bra. */
@@ -559,12 +581,27 @@
   background: var(--qw-accent);
 }
 
+/* Etiketten är hämtad ur källan, inte skriven av gränssnittet — därför
+   dokumentrösten och inte rubriktypsnittet. */
 .qw-kallkort-etikett {
-  font-family: var(--qw-font-rubrik);
-  font-weight: 500;
+  font-family: var(--qw-font-dokument);
+  font-weight: 600;
   font-size: 15px;
   flex: 1 1 0;
   min-width: 0;
+  word-break: break-word;
+}
+
+/* Källraden: {myndighet} · {dataset} · {period} · hämtad {ÅÅÅÅ-MM-DD}.
+   Samma form som i Quiet Bookkeepings designsystem (§7), så att en källa ser
+   likadan ut oavsett vilken av produkterna som visar den. Fält som saknas
+   utelämnas tillsammans med sin avdelare. */
+.qw-kallkort-kallrad {
+  font-family: var(--qw-font-dokument);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--qw-text-muted);
+  padding: 0 16px 12px;
   word-break: break-word;
 }
 
@@ -691,6 +728,41 @@
 
 .qw-tom-ikon svg { width: 26px; height: 26px; }
 
+/* Exempelfrågor: en tom ruta säger inte vad den kan. Chipsen bär samma
+   formgivning som resten — inga nya kulörer, ingen accentfyllning. */
+.qw-exempel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.qw-exempel-chip {
+  font-family: var(--qw-font);
+  font-size: 13px;
+  line-height: 1.4;
+  text-align: left;
+  color: var(--qw-text);
+  background: var(--qw-surface);
+  border: 1px solid var(--qw-border);
+  border-radius: var(--qw-radius-sm);
+  padding: 8px 13px;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+
+.qw-exempel-chip:hover {
+  border-color: var(--qw-accent-soft);
+  color: var(--qw-accent);
+}
+
+/* Avbrutet av besökaren: ett stillsamt besked, inte ett fel. */
+.qw-avbrutet {
+  margin-top: var(--qw-gap-sm);
+  color: var(--qw-text-muted);
+  font-size: 14px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   #quiet-widget,
   .qw-backdrop {
@@ -758,6 +830,61 @@
     'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
     '<path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg>';
 
+  /** Stopp-ikonen: samma knappyta som pilen, fyrkant i stället för pil. */
+  const STOPP_SVG =
+    '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
+    '<rect x="7" y="7" width="10" height="10" rx="2"/></svg>';
+
+  /**
+   * Eskalerande väntetext. Fas A kan ta 30–90 sekunder, och en statisk
+   * "Tänker …" hela tiden är inte ärlig mot den väntan. Servern kan sända
+   * status-händelser som säger vad den faktiskt gör (se _visaStatus) — det
+   * här är reservbeteendet för när inga sådana anländer: äldre API i drift,
+   * eller tystnad mellan två händelser.
+   *
+   * Inga sekundräknare: en tickande siffra gör väntan längre, inte kortare.
+   */
+  const VANTETEXT = "Tänker …";
+  const VANTESTEG = [
+    { efter: 4000, text: "Söker i myndighetskällorna …" },
+    {
+      efter: 15000,
+      text: "Söker i myndighetskällorna … Grundliga svar kan ta upp emot en minut.",
+    },
+  ];
+
+  /**
+   * Reservtexter. Varje inbäddning kan säga något annat — juridiksidan heter
+   * "Juridik & skatt" och ska inte be om "offentlig statistik". Se
+   * data-attributen i huvudkommentaren.
+   */
+  const TEXTER = {
+    etikett: "Ställ en fråga om offentlig statistik",
+    placeholder: "T.ex. ”Vad är Riksbankens referensränta?” …",
+    tomText: "Ställ en fråga om offentlig statistik, myndighetsdata eller lagtext.",
+    exempel: [
+      "Vad är Riksbankens referensränta?",
+      "Hur stor är kommunalskatten i Malmö?",
+      "Vad säger bokföringslagen om arkivering av räkenskapsinformation?",
+    ],
+  };
+
+  /** Läser data-exempel (JSON-array) med reservfrågorna som fallback. */
+  function lasExempel(container) {
+    const ravarde = container.dataset.exempel;
+    if (!ravarde) return TEXTER.exempel;
+    try {
+      const lista = JSON.parse(ravarde);
+      const rensad = Array.isArray(lista)
+        ? lista.filter((f) => typeof f === "string" && f.trim()).map((f) => f.trim())
+        : [];
+      return rensad.length ? rensad : TEXTER.exempel;
+    } catch {
+      console.warn("[quiet-widget] data-exempel är inte giltig JSON — använder reservfrågorna.");
+      return TEXTER.exempel;
+    }
+  }
+
   /** Skapar ett DOM-element med valfria attribut och barn. */
   function el(tag, attrs, ...children) {
     const e = document.createElement(tag);
@@ -790,6 +917,47 @@
     }
   }
 
+  /** Kortar en ISO-tidsstämpel till ÅÅÅÅ-MM-DD för källraden. */
+  function formateraDatumKort(iso) {
+    if (!iso) return null;
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return String(iso).slice(0, 10);
+    return d.toLocaleDateString("sv-SE", { year: "numeric", month: "2-digit", day: "2-digit" });
+  }
+
+  /**
+   * Bygger källraden: {myndighet} · {dataset} · {period} · hämtad {ÅÅÅÅ-MM-DD}.
+   *
+   * Fält som saknas utelämnas tillsammans med sin avdelare — raden ska aldrig
+   * innehålla ett tomt led. dataset och period bär ofta tal (SFS-nummer,
+   * perioder som 2026M07) och får därför .qw-tal. Hela tidsstämpeln, inte bara
+   * datumet, ligger kvar i title så att den inte går förlorad.
+   */
+  function byggKallrad(post) {
+    const bitar = [];
+    if (post.myndighet) bitar.push(document.createTextNode(post.myndighet));
+    if (post.dataset) bitar.push(el("span", { className: "qw-tal" }, String(post.dataset)));
+    if (post.period) bitar.push(el("span", { className: "qw-tal" }, String(post.period)));
+
+    const datum = formateraDatumKort(post.hamtad);
+    if (datum) {
+      const del = el("span", {});
+      del.appendChild(document.createTextNode("hämtad "));
+      del.appendChild(el("span", { className: "qw-tal" }, datum));
+      bitar.push(del);
+    }
+
+    if (bitar.length === 0) return null;
+
+    const rad = el("div", { className: "qw-kallkort-kallrad" });
+    if (post.hamtad) rad.title = `Hämtad ${formateraDatum(post.hamtad)}`;
+    bitar.forEach((bit, i) => {
+      if (i > 0) rad.appendChild(document.createTextNode(" · "));
+      rad.appendChild(bit);
+    });
+    return rad;
+  }
+
   /**
    * Sätter in fotnot-knappar i en textsträng.
    * Returnerar ett DocumentFragment.
@@ -812,7 +980,7 @@
     // Lägg fotnoterna som inline-knappar efter texten
     for (const { id, nr } of nummerdIds) {
       const btn = el("button", {
-        className: "qw-fn",
+        className: "qw-fn qw-tal",
         title: `Källa ${id}`,
         "aria-label": `Visa källa ${id}`,
         "data-kallid": id,
@@ -839,7 +1007,11 @@
     }
     kort.appendChild(huvud);
 
-    // Kropp — metadata
+    // Källraden — direkt under etiketten, samma form i hela Quiet-familjen.
+    const kallrad = byggKallrad(post);
+    if (kallrad) kort.appendChild(kallrad);
+
+    // Kropp — den metadata källraden inte bär
     const kropp = el("div", { className: "qw-kallkort-kropp" });
 
     function rad(nyck, vard) {
@@ -848,13 +1020,8 @@
       kropp.appendChild(el("span", { className: "qw-kallkort-vard" }, vard));
     }
 
-    rad("Myndighet", post.myndighet);
-    rad("Dataset", post.dataset);
-    rad("Period", post.period);
-
-    if (post.hamtad) {
-      rad("Hämtad", formateraDatum(post.hamtad));
-    }
+    // Myndighet, dataset, period och hämtningsdatum står i källraden ovan och
+    // upprepas inte här — de fyra raderna låg tidigare i den här grid:en.
 
     if (ar_harledd && post.harledd_av && post.harledd_av.length > 0) {
       rad("Beräknad ur", post.harledd_av.join(", "));
@@ -872,7 +1039,9 @@
 
     rad("Licens", post.licens);
 
-    kort.appendChild(kropp);
+    // Kroppen kan vara tom nu när källraden bär de fyra vanligaste fälten —
+    // en tom grid med padding hade lagt in ett oförklarligt luftrum.
+    if (kropp.childElementCount > 0) kort.appendChild(kropp);
 
     // Länkar
     const lankar = el("div", { className: "qw-kallkort-lankar" });
@@ -927,7 +1096,20 @@
       this._container = container;
       this._apiUrl = apiUrl.replace(/\/$/, "");
       this._aktivtAnrop = null; // AbortController för pågående SSE
+      this._avbrytAktuell = null; // stopp-knappens krok in i pågående anrop
+      this._hamtar = false;
       this._expanderad = false;
+
+      // Texterna hör till inbäddningen, inte till widgeten: samma kod sitter
+      // på en statistiksida och på juridiksidan. Saknas attributen gäller
+      // TEXTER ovan.
+      const d = container.dataset;
+      this._texter = {
+        etikett: d.etikett || TEXTER.etikett,
+        placeholder: d.placeholder || TEXTER.placeholder,
+        tomText: d.tomText || TEXTER.tomText,
+      };
+      this._exempel = lasExempel(container);
 
       this._inject_css();
       this._bygg_ui();
@@ -997,11 +1179,11 @@
       const label = el("label", {
         className: "qw-label",
         for: "qw-input",
-      }, "Ställ en fråga om offentlig statistik");
+      }, this._texter.etikett);
       this._input = el("textarea", {
         className: "qw-input",
         id: "qw-input",
-        placeholder: "T.ex. ”Vad är Riksbankens referensränta?” …",
+        placeholder: this._texter.placeholder,
         rows: "1",
         "aria-label": "Din fråga",
         onkeydown: (e) => {
@@ -1021,6 +1203,14 @@
         id: "qw-submit",
         "aria-label": "Skicka frågan",
         title: "Skicka frågan",
+        // Under en pågående hämtning är samma knappyta en stopp-knapp.
+        // Klicket fångas här, före formulärets submit.
+        onclick: (e) => {
+          if (this._hamtar) {
+            e.preventDefault();
+            this._avbryt();
+          }
+        },
       });
       this._knapp.innerHTML = PIL_UPP_SVG;
 
@@ -1043,12 +1233,29 @@
         '<path d="M4 10h16"/><path d="M6 10V21"/><path d="M18 10V21"/>' +
         '<path d="M10 10V21"/><path d="M14 10V21"/><path d="M3 10l9-6 9 6"/></svg>';
       this._tomDiv.appendChild(tomIkon);
-      this._tomDiv.appendChild(
-        el("p", {}, "Ställ en fråga om offentlig statistik, myndighetsdata eller lagtext.")
-      );
+      this._tomDiv.appendChild(el("p", {}, this._texter.tomText));
       this._tomDiv.appendChild(
         el("p", { style: "font-size:12px;margin-top:6px;" }, "Alla svar är belagda med källhänvisningar till myndighets-API:er.")
       );
+
+      // Exempelfrågor: en tom ruta säger inte vad den kan svara på. Chipsen
+      // lever inuti tom-staten och försvinner med den vid första frågan.
+      if (this._exempel.length > 0) {
+        const exempelDiv = el("div", { className: "qw-exempel" });
+        for (const exempelfraga of this._exempel) {
+          exempelDiv.appendChild(
+            el("button", {
+              type: "button",
+              className: "qw-exempel-chip",
+              onclick: () => {
+                this._input.value = exempelfraga;
+                this._skicka();
+              },
+            }, exempelfraga)
+          );
+        }
+        this._tomDiv.appendChild(exempelDiv);
+      }
 
       // Rullbart område: allt utom formuläret. Formuläret ligger kvar längst
       // ner (som i Claude/ChatGPT/Gemini) medan samtalet växer och rullar
@@ -1068,16 +1275,20 @@
     }
 
     _lås_ui(las) {
+      this._hamtar = las;
       this._input.disabled = las;
-      this._knapp.disabled = las;
-      this._knapp.title = las ? "Hämtar svar…" : "Skicka frågan";
-      this._knapp.setAttribute("aria-label", las ? "Hämtar svar…" : "Skicka frågan");
-      if (las) {
-        this._knapp.innerHTML = "";
-        this._knapp.appendChild(el("span", { className: "qw-spinner" }));
-      } else {
-        this._knapp.innerHTML = PIL_UPP_SVG;
-      }
+      // Knappen förblir klickbar under hämtningen — den är stopp-knapp då.
+      // Väntan kan bli en minut lång, och en besökare som ångrar sig ska
+      // kunna ta sig ur den utan att ladda om sidan.
+      this._knapp.disabled = false;
+      this._knapp.title = las ? "Avbryt" : "Skicka frågan";
+      this._knapp.setAttribute("aria-label", las ? "Avbryt" : "Skicka frågan");
+      this._knapp.innerHTML = las ? STOPP_SVG : PIL_UPP_SVG;
+    }
+
+    /** Avbryter en pågående hämtning på besökarens begäran. */
+    _avbryt() {
+      if (this._avbrytAktuell) this._avbrytAktuell();
     }
 
     async _skicka() {
@@ -1118,13 +1329,36 @@
         '<rect class="qw-marke-accent" x="54" y="54" width="40" height="40" rx="6"/>' +
         "</svg>";
       cursorEl.appendChild(markeSvg);
-      cursorEl.appendChild(el("span", {}, "Tänker …"));
+      const tankerText = el("span", {}, VANTETEXT);
+      cursorEl.appendChild(tankerText);
       const aktivtStycke = el("p", { className: "qw-stycke" });
       aktivtStycke.appendChild(cursorEl);
       styckenDiv.appendChild(aktivtStycke);
       svarRad.appendChild(styckenDiv);
       this._konvDiv.appendChild(svarRad);
       svarRad.scrollIntoView({ behavior: "smooth", block: "nearest" });
+
+      // --- Väntetext ---
+      // Reservbeteende när servern inte säger något (se VANTESTEG). En
+      // status-händelse vinner över eskaleringen och nollställer dess klocka:
+      // servern vet vad den gör, gissningen är bara till för tystnaden.
+      let vantetimers = [];
+      const _rensaVantan = () => {
+        for (const id of vantetimers) clearTimeout(id);
+        vantetimers = [];
+      };
+      const _startaVantan = () => {
+        _rensaVantan();
+        for (const steg of VANTESTEG) {
+          vantetimers.push(setTimeout(() => { tankerText.textContent = steg.text; }, steg.efter));
+        }
+      };
+      const _visaStatus = (text) => {
+        if (typeof text !== "string" || !text.trim()) return;
+        tankerText.textContent = text;
+        _startaVantan();
+      };
+      _startaVantan();
 
       // --- SSE-state per svar ---
       const fotnummerFranId = new Map(); // id → sekvensnr
@@ -1321,6 +1555,15 @@
       const controller = new AbortController();
       this._aktivtAnrop = controller;
 
+      // Två skäl till AbortError, två olika svar i gränssnittet: besökaren
+      // tryckte stopp (då ska raden stå kvar med ett besked), eller så ersatte
+      // en ny fråga den gamla (då ska raden bort, som tidigare).
+      let avbrutetAvBesokaren = false;
+      this._avbrytAktuell = () => {
+        avbrutetAvBesokaren = true;
+        controller.abort();
+      };
+
       try {
         const resp = await fetch(`${this._apiUrl}/fraga`, {
           method: "POST",
@@ -1361,7 +1604,7 @@
               this._behandlaSSEHandelse(
                 aktuelltHandelseTyp,
                 handelse_rader,
-                { _laggTillStycke, _visaKallor, _visaAttribution, _visaForbehall, _visaFel, _visaIngetSvar }
+                { _laggTillStycke, _visaKallor, _visaAttribution, _visaForbehall, _visaFel, _visaIngetSvar, _visaStatus }
               );
               handelse_rader = [];
               aktuelltHandelseTyp = "message";
@@ -1380,17 +1623,25 @@
       } catch (err) {
         if (err.name !== "AbortError") {
           _visaFel("Anslutningen avbröts. Kontrollera din uppkoppling och försök igen.");
+        } else if (avbrutetAvBesokaren) {
+          // Stillsamt besked, inte felstil: ingenting gick sönder.
+          const gc = styckenDiv.querySelector(".qw-tanker");
+          if (gc) gc.remove();
+          svarRad.appendChild(el("p", { className: "qw-avbrutet" }, "Avbrutet."));
         } else {
-          // Manuellt avbrott — rensa rad
+          // Ersatt av en ny fråga — rensa rad
           svarRad.remove();
         }
       } finally {
+        _rensaVantan();
+
         // Ta bort cursor om den finns kvar
         const gc = styckenDiv.querySelector(".qw-tanker");
         if (gc) gc.remove();
 
         this._lås_ui(false);
         this._aktivtAnrop = null;
+        this._avbrytAktuell = null;
         this._input.focus();
       }
     }
@@ -1405,9 +1656,17 @@
         return;
       }
 
-      const { _laggTillStycke, _visaKallor, _visaAttribution, _visaForbehall, _visaFel, _visaIngetSvar } = fns;
+      const { _laggTillStycke, _visaKallor, _visaAttribution, _visaForbehall, _visaFel, _visaIngetSvar, _visaStatus } = fns;
 
       switch (typ) {
+        case "status":
+          // Serverns besked om vad den gör just nu. Texten byggs på servern
+          // ur källregistrets myndighetsnamn — aldrig ur frågan eller ur
+          // verktygens data. Ett äldre API sänder den inte alls; då gäller
+          // widgetens egen eskalerande väntetext.
+          _visaStatus(data.text);
+          break;
+
         case "stycke":
           // Arkitekturkrav: rendera inte ett stycke utan källhänvisningar
           if (!data.kallor || data.kallor.length === 0) break;

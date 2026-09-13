@@ -47,6 +47,10 @@ docker compose run --rm hamta-demo
 > **Obs om Docker-imagen:** Imagen är ~1.5 GB eftersom den svenska språkmodellen KBLab Sentence-BERT (~500 MB) förladdas direkt under byggsteget i `Dockerfile`. Det gör att första sökningen svarar omedelbart utan nedladdningsfördröjning.
 
 Öppna `frontend/test.html` i webbläsaren för att testa widgeten utan en riktig fråga.
+Scenarierna *Statusflöde* och *Långsam* i testpanelen visar väntetexten: den första
+sänder serverns `status`-händelser, den andra tiger i 20 sekunder så att widgetens
+egen eskalerande reservtext och stopp-knappen går att prova. Knappen
+*Juridik-texter* laddar om sidan med juridiksidans uppsättning `data-`-attribut.
 
 `MATNING_NYCKEL` skyddar `GET /matning` — driftdata, till skillnad från `/kallor`
 och `/halsa` som är avsiktligt öppna. Saknas variabeln svarar endpointen 503 i
@@ -135,12 +139,20 @@ Systemet besvarar sakfrågor mot öppna data och författningar med full källsp
 |23|BFN-korpus — Bokföringsnämndens allmänna råd och vägledningar|✅|
 |24|EU-rättsakter ur EUR-Lex i gällande konsoliderad lydelse|✅|
 
-Utanför stegräkningen: **drift 2026-09-13** — anthropic-SDK:n har fått ett
-versionstak och fel från Anthropic klassificeras nu i stället för att
-kollapsa till ett generiskt "tekniskt fel" (`motor/felklass.py`,
-`GET /matning` → `driftfel`). Se [`docs/PLAN.md`](docs/PLAN.md).
+Utanför stegräkningen, båda 2026-09-13:
 
-**Hela testsviten: 332 passerade**, `ruff check .` rent (2026-09-13). Prestandatester som beror på hårdvaruladdningstid är markerade `@pytest.mark.slow` och körs separat med `pytest -m slow`; livetester mot Anthropic och externa API:er är markerade `@pytest.mark.live` och körs separat med `pytest -m live`.
+* **Drift** — anthropic-SDK:n har fått ett versionstak, och fel från Anthropic
+  klassificeras nu i stället för att kollapsa till ett generiskt "tekniskt fel"
+  (`motor/felklass.py`, `GET /matning` → `driftfel`).
+* **Designjustering och väntan** — källpanelen talar dokumentröst med en enhetlig
+  källrad, tal står i tabulära kolumner, och fas A berättar vad den gör medan den
+  arbetar (`event: status`, se [`docs/ARKITEKTUR.md`](docs/ARKITEKTUR.md) §4 och
+  §9a). Widgeten har fått exempelfrågor, en stopp-knapp och texter som sätts per
+  inbäddning.
+
+Se [`docs/PLAN.md`](docs/PLAN.md) för båda.
+
+**Hela testsviten: 348 passerade**, `ruff check .` rent (2026-09-13). Prestandatester som beror på hårdvaruladdningstid är markerade `@pytest.mark.slow` och körs separat med `pytest -m slow`; livetester mot Anthropic och externa API:er är markerade `@pytest.mark.live` och körs separat med `pytest -m live`.
 
 Lagindexet i `data/index.sqlite`: 62 dokument, 9 792 chunkar, 9 792 embeddings.
 Katalogindexet: 23 289 datamängder, 32 518 distributioner.

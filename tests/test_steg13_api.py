@@ -68,7 +68,11 @@ def client(isolerad_konfig):
 
 
 def _sla_in_falska_motorer(monkeypatch, register: Faktaregister, svar: SyntesSvar):
-    fas_a = SimpleNamespace(hamta=lambda fraga: SimpleNamespace(register=register))
+    # status_callback kom med uppdrag F (statushandelser). api.py skickar den
+    # alltid; attrapperna tar emot och ignorerar den.
+    fas_a = SimpleNamespace(
+        hamta=lambda fraga, status_callback=None: SimpleNamespace(register=register)
+    )
     fas_c = SimpleNamespace(kor=lambda fraga, reg: svar)
     monkeypatch.setattr(api_module, "_fas_a", fas_a)
     monkeypatch.setattr(api_module, "_fas_c", fas_c)

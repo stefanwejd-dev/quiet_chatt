@@ -232,7 +232,7 @@ def test_fraga_med_authfel_loggar_driftfel_och_svarar_generiskt(
         body=None,
     )
 
-    def fas_a_kastar(fraga):
+    def fas_a_kastar(fraga, status_callback=None):
         raise fel
 
     monkeypatch.setattr(api_module, "_fas_a", SimpleNamespace(hamta=fas_a_kastar))
@@ -270,7 +270,9 @@ def test_fraga_med_kodfel_loggar_internt(isolerad_konfig, tmp_matning_db, monkey
     monkeypatch.setattr(
         api_module,
         "_fas_a",
-        SimpleNamespace(hamta=lambda f: SimpleNamespace(register=Faktaregister())),
+        SimpleNamespace(
+            hamta=lambda f, status_callback=None: SimpleNamespace(register=Faktaregister())
+        ),
     )
     monkeypatch.setattr(api_module, "_fas_c", SimpleNamespace(kor=fas_c_kastar))
 

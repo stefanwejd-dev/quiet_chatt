@@ -2103,3 +2103,123 @@ och de två invariantproven för `/halsa` utan nyckel. Hela sviten **332 gröna*
 **Kvar för människan:** fylla på krediten hos Anthropic — koden lagar inte det —
 och bygga om avbilden i Coolify. Pinningen och felklassificeringen får effekt
 i produktion först vid nästa image-bygge.
+
+
+---
+
+## Designjustering och väntan — 2026-09-13
+
+Två beställningar samma dag, den här är den andra. Den första (SDK-pinning och
+felklassificering) gjorde ett driftstopp synligt; den här gör väntan ärlig och
+källorna läsbara. Uppdraget spände över tre repon — quiet.nu, det här, och
+sie-mcp — men bara två delar rör quiet_chatts kod: widgeten och fas A:s
+statushändelser.
+
+### D1. Väntan utan besked
+
+Fas A kan ta 30–90 sekunder. Widgeten visade en statisk "Tänker …" hela tiden,
+och `api.py` körde hämtningen som ett enda `run_in_threadpool` som inte släppte
+ifrån sig något förrän den var klar. Två lager av åtgärd, och de fungerar var
+för sig:
+
+**Servern berättar.** `FasALopp.hamta()` tar en valfri
+`status_callback: Callable[[str, str | None], None]` som anropas en gång per
+verktygsanrop, innan verktyget körs. Callbacken körs i arbetstråden och lägger
+`(text, kalla_id)` på en `asyncio.Queue` via `loop.call_soon_threadsafe`;
+generatorn i `_strom_svar` tömmer kön medan den väntar på att tråden ska bli
+klar. Kön är obegränsad, så en skur av händelser tappas inte, och event-loopen
+blockeras aldrig. Utan callback är beteendet bit för bit som förut — det har ett
+eget prov.
+
+**Widgeten gissar när servern tiger.** En äldre API-version i drift sänder inga
+statushändelser alls, och även ett nytt API kan tystna mellan två verktygsanrop.
+Widgeten eskalerar därför sin egen text: `Tänker …` → efter 4 s
+`Söker i myndighetskällorna …` → efter 15 s samma text plus
+`Grundliga svar kan ta upp emot en minut.` En `status`-händelse vinner över
+gissningen och nollställer klockan. Inga sekundräknare — en tickande siffra gör
+väntan längre, inte kortare.
+
+**Innehållsregeln är det som gör kanalen försvarbar.** `text` byggs enbart ur
+källregistrets `myndighet`-fält eller ur en fast frasordlista
+(`statustext_for_verktyg` i `motor/hamtning.py`). Aldrig ur frågan, aldrig ur
+verktygens indata eller utdata. En kanal som ser systemgenererad ut måste också
+vara det. Funktionen tar inte ens emot frågan, och ett prov låser signaturen så
+att en framtida "hjälpsam" utökning syns direkt i stället för att smyga in.
+
+Två saker som bara avläsningen av koden kunde visa:
+
+* **Beräkningsverktygen får inte detaljeras.** Vilken beräkning som görs är en
+  del av svaret, inte av väntan — de rapporteras som `"Beräknar …"` med
+  `kalla_id: null`.
+* **Sambandet verktyg → källa fanns bara implicit** i dispatchern
+  (`{verktygsnamn → adapter}`). Ett nytt index `_bygg_verktygskallor` gör det
+  uttryckligt, i stället för att låta statustexterna gissa källa ur
+  verktygsnamnets prefix. Myndighetsnamnen läses ur registret **en gång per
+  process**, i `FasALopp.__init__`, inte en gång per fråga.
+
+### D2. Källorna såg inte ut som källor
+
+Widgetens källkort listade `Myndighet`, `Dataset`, `Period` och `Hämtad` som
+fyra rader i en etikett/värde-grid, med etiketten i rubriktypsnittet. Det som är
+hämtat och det som är gränssnitt såg likadant ut.
+
+Nu talar etiketten och källraden **dokumentröst** (serif, `--qw-font-dokument`),
+och under etiketten står källraden i familjens gemensamma form:
+`{myndighet} · {dataset} · {period} · hämtad {ÅÅÅÅ-MM-DD}`. Se ARKITEKTUR.md
+§9a för varför serifen är semantik och inte smak.
+
+**Avvikelse mot beställningen, medveten:** de fyra raderna är borttagna ur
+grid:en. Med källraden ovanför hade varje kort sagt samma sak två gånger, vilket
+hade sett ut som en bugg. `Urval`, `Licens` och `Beräknad ur` står kvar, och
+hela tidsstämpeln — med klockslag — finns kvar som `title` på källraden, så
+ingen uppgift har gått förlorad.
+
+**Ingen fotnots-popover finns.** Beställningen bad om samma källrad i "vyn som
+öppnas från `[1]`-markörerna". Någon sådan vy finns inte: ett klick på en fotnot
+öppnar källpanelen, markerar rätt kort och rullar dit (`_markeraKall`). Fotnot
+och panel visar alltså samma kort, och kravet uppfylls utan egen kod.
+
+### D3. Widgeten talade fel språk på juridiksidan
+
+Etikett, platshållare och tom-statens rad bad om "offentlig statistik" på en
+sida som heter Juridik & skatt, och en tom ruta sa ingenting om vad den kunde
+svara på. Texterna läses nu ur `data-etikett`, `data-placeholder`,
+`data-tom-text` och `data-exempel` (JSON-array) på containern, med widgetens
+egna texter som reserv. Tom-staten visar exempelfrågorna som klickbara chips
+som skickar frågan direkt och försvinner med tom-staten.
+
+Samtidigt fick knappen ett andra läge: under en pågående hämtning är den en
+**stopp-knapp**. Ett avbrott ger ett stillsamt `Avbrutet.` i svarsraden — muted,
+inte felstil, för ingenting gick sönder. Det befintliga beteendet att en ny
+fråga avbryter den gamla är kvar; de två skiljs åt på en flagga, så att den ena
+lämnar ett besked och den andra rensar raden som förut.
+
+### D4. Testmiljön ljög om avbrott
+
+`frontend/test.html`:s fetch-attrapp struntade i `AbortSignal` — strömmen rullade
+vidare på sina egna timers efter `abort()`. Stopp-knappen gick alltså inte att
+prova där, trots att den fungerade mot en riktig `fetch`. Attrappen lyder nu
+signalen. Två nya scenarier tillkom: *Statusflöde* (sänder `status`-händelser)
+och *Långsam* (tiger i 20 sekunder, så att eskaleringen syns).
+
+### Utfall
+
+16 nya prov i `tests/test_statushandelser.py` — statustexten per gren, att
+frågetexten inte kan läcka in, callbacken per verktygsanrop, att ett undantag i
+callbacken inte fäller hämtningen, att direktanrop utan callback beter sig som
+förut, och att SSE-strömmen bär `status` före första `stycke` och
+`"Sammanställer svaret …"` före `kallor`. Tre attrapper i befintliga api-prov
+fick ta emot den nya parametern.
+
+Hela sviten **348 gröna** (332 före), `ruff check .` rent.
+
+Utöver sviten kördes widgeten i riktig webbläsare (Chrome via Playwright): 34
+kontroller av dokumentröst, källradens form, tabulära siffror, chips,
+`data`-attributen, eskaleringen vid 4 och 15 sekunder, statushändelser,
+stopp-knappen och mörkt läge — plus 6 kontroller av att sajtens tokens når in i
+widgeten och att IBM Plex Serif faktiskt laddas. Sifferkontrollerna är inte en
+del av testsviten; de prövar CSS-rendering, vilket pytest inte kan göra.
+
+**Kvar för människan:** widgeten serveras från HostUp, inte från Coolify —
+designen kräver en filuppladdning, statushändelserna en omdeploy. Aktiverings-
+listan ligger i `uppdrag/LEVERANS_designjustering.md` (gitignorerad).

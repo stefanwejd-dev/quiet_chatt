@@ -66,11 +66,23 @@
 <h1>Quiet Widget — Testmiljö</h1>
 
 <div class="info">
-  <strong>Steg 14 — testmiljö utan backend.</strong>
+  <strong>Testmiljö utan backend.</strong>
   Widgeten nedan använder en interceptad <code>fetch</code> som simulerar SSE-svar.
   Klicka på scenarierna nedan för att byta testfall, eller ange en riktig
   <code>ANTHROPIC_API_KEY</code>-backend i <code>data-api</code>-attributet på
   widgetens container-element.
+  <br><br>
+  <strong>Scenarierna <em>Statusflöde</em> och <em>Långsam</em></strong> är till för
+  väntetexten: <em>Långsam</em> tiger i 20 sekunder, så att widgetens egen
+  eskalering syns (<code>Tänker …</code> → efter 4 s → efter 15 s), och
+  <em>Statusflöde</em> sänder <code>event: status</code> som servern gör efter
+  uppdrag F — då vinner serverns besked och eskaleringsklockan nollställs.
+  Båda är också det enklaste sättet att prova <strong>stopp-knappen</strong>.
+  <br><br>
+  <strong>Texterna</strong> (etikett, platshållare, tom-statens rad och
+  exempelfrågorna) läses ur <code>data-*</code> på containern. Utan parametrar
+  nedan gäller widgetens reservtexter; knappen <em>Juridik-texter</em> laddar om
+  sidan med juridiksidans uppsättning, så att båda fallen går att se.
 </div>
 
 <div class="mock-panel">
@@ -81,6 +93,11 @@
   <button onclick="setScenario('inget_svar')">Tomt register (kan ej besvaras)</button>
   <button onclick="setScenario('fel')">Serverfel</button>
   <button onclick="setScenario('forbehall')">Svar + förbehåll</button>
+  <button onclick="setScenario('statusflode')">Statusflöde (uppdrag F)</button>
+  <button onclick="setScenario('langsam')">Långsam (20 s tystnad)</button>
+  <br>
+  <button onclick="laddaTexter('juridik')">Juridik-texter</button>
+  <button onclick="laddaTexter('reserv')">Reservtexter</button>
   <label>
     <input type="checkbox" id="mockEnable" checked onchange="toggleMock(this.checked)" />
     Använd mock-backend (avmarkera för riktig backend)
@@ -220,6 +237,59 @@ const SCENARIER = {
     { event: "klart", data: {} },
   ],
 
+  // Serverns statushändelser (uppdrag F). Texterna byggs där ur
+  // källregistrets myndighetsnamn — aldrig ur frågan.
+  statusflode: [
+    { event: "status", data: { text: "Söker i myndighetskällorna …", kalla_id: null }, vantaEfter: 2500 },
+    { event: "status", data: { text: "Söker hos Skatteverket …", kalla_id: "skatteverket_rowstore" }, vantaEfter: 3000 },
+    { event: "status", data: { text: "Söker hos Sveriges riksbank …", kalla_id: "riksbanken" }, vantaEfter: 2500 },
+    { event: "status", data: { text: "Beräknar …", kalla_id: null }, vantaEfter: 2000 },
+    { event: "status", data: { text: "Sammanställer svaret …", kalla_id: null }, vantaEfter: 2500 },
+    { event: "stycke", data: { text: "Riksbankens referensränta är 2,0 procent sedan den 8 maj 2025.", kallor: ["F1"] } },
+    { event: "kallor", data: { kallor: [
+      {
+        id: "F1",
+        etikett: "Riksbanken: Reference rate (SECBREFEFF)",
+        myndighet: "Riksbanken",
+        dataset: "SECBREFEFF",
+        period: "2025-05-08",
+        dimensioner: {},
+        hamtad: new Date().toISOString(),
+        lank_manniska: "https://www.riksbank.se/sv/statistik/",
+        lank_maskin: "https://api.riksbank.se/swea/v1/observations/SECBREFEFF/latest",
+        licens: "CC0",
+        attribution: null,
+        harledd: false,
+        harledd_av: [],
+      },
+    ] } },
+    { event: "klart", data: {} },
+  ],
+
+  // Tystnad tills svaret kommer — widgetens egen eskalering ska synas vid
+  // 4 och 15 sekunder, och stopp-knappen ska gå att prova under tiden.
+  langsam: [
+    { event: "stycke", data: { text: "Svaret kom till slut.", kallor: ["F1"] }, vantaFore: 20000 },
+    { event: "kallor", data: { kallor: [
+      {
+        id: "F1",
+        etikett: "Bokföringslag (1999:1078) 7 kap. 2 §",
+        myndighet: "Sveriges riksdag",
+        dataset: "1999:1078",
+        period: "2024:1013",
+        dimensioner: {},
+        hamtad: new Date().toISOString(),
+        lank_manniska: "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/bokforingslag-19991078_sfs-1999-1078/",
+        lank_maskin: "https://data.riksdagen.se/dokument/sfs-1999-1078",
+        licens: "CC0",
+        attribution: null,
+        harledd: false,
+        harledd_av: [],
+      },
+    ] } },
+    { event: "klart", data: {} },
+  ],
+
   fel: [
     { event: "fel", data: { meddelande: "Ett tekniskt fel inträffade. Försök igen." } },
     { event: "klart", data: {} },
@@ -255,16 +325,33 @@ window.fetch = async function(url, opts) {
   if (mockAktiv && typeof url === "string" && url.includes("/fraga")) {
     const handelser = SCENARIER[aktivtScenario] || SCENARIER.referensranta;
 
+    // Attrappen måste lyda AbortSignal precis som en riktig fetch — annars
+    // går stopp-knappen (och "en ny fråga avbryter den gamla") inte att prova
+    // här: strömmen skulle rulla vidare på sina egna timers.
+    const signal = opts && opts.signal;
+    if (signal && signal.aborted) throw new DOMException("Aborted", "AbortError");
+
     // Bygg en ReadableStream som skickar SSE-events med fördröjning
     const stream = new ReadableStream({
       async start(controller) {
         const enc = new TextEncoder();
+        let avbruten = false;
+        const paAvbrott = () => {
+          avbruten = true;
+          try { controller.error(new DOMException("Aborted", "AbortError")); } catch (e) { /* redan stängd */ }
+        };
+        if (signal) signal.addEventListener("abort", paAvbrott, { once: true });
         await new Promise(r => setTimeout(r, 400)); // simulera nätverksfördröjning
         for (const h of handelser) {
+          // vantaFore: tystnad innan händelsen (för väntetextens eskalering).
+          if (h.vantaFore) await new Promise(r => setTimeout(r, h.vantaFore));
+          if (avbruten) return;
           const rad = `event: ${h.event}\ndata: ${JSON.stringify(h.data)}\n\n`;
           controller.enqueue(enc.encode(rad));
-          await new Promise(r => setTimeout(r, h.event === "stycke" ? 600 : 200));
+          await new Promise(r => setTimeout(r, h.vantaEfter ?? (h.event === "stycke" ? 600 : 200)));
+          if (avbruten) return;
         }
+        if (signal) signal.removeEventListener("abort", paAvbrott);
         controller.close();
       },
     });
@@ -276,6 +363,39 @@ window.fetch = async function(url, opts) {
   }
   return origFetch(url, opts);
 };
+</script>
+
+<script>
+// ---------------------------------------------------------------------------
+// Texter ur query-strängen — sätts på containern INNAN widget.js laddas, så
+// att data-attributen går att prova utan att redigera filen. Utan parametrar
+// gäller widgetens egna reservtexter (TEXTER i widget.js).
+// ---------------------------------------------------------------------------
+const JURIDIKTEXTER = {
+  etikett: "Ställ en fråga om skatt, bokföring eller lagtext",
+  placeholder: "T.ex. ”Vad är gränsen för skattefri julgåva?” …",
+  "tom-text": "Ställ en fråga om svensk skatterätt, bokföringsregler eller lagtext.",
+  exempel: JSON.stringify([
+    "Vad är gränsen för en skattefri julgåva till anställda?",
+    "Vad ska en verifikation innehålla enligt bokföringslagen?",
+    "När får moms dras av enligt momsdirektivet?",
+  ]),
+};
+
+function laddaTexter(vilka) {
+  if (vilka === "reserv") { location.search = ""; return; }
+  const p = new URLSearchParams(JURIDIKTEXTER);
+  location.search = p.toString();
+}
+
+(function () {
+  const p = new URLSearchParams(location.search);
+  const c = document.getElementById("quiet-widget");
+  for (const nyckel of ["etikett", "placeholder", "tom-text", "exempel"]) {
+    const varde = p.get(nyckel);
+    if (varde) c.setAttribute("data-" + nyckel, varde);
+  }
+})();
 </script>
 
 <!-- Widgeten -->

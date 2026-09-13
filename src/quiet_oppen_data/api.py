@@ -28,10 +28,15 @@ Designbeslut:
   * API-nyckeln läses ur miljön via konfig.py — den skickas aldrig till
     klienten och loggas aldrig (samma disciplin som motor/hamtning.py och
     motor/syntes.py håller redan).
+  * SSE-händelsen `status` berättar vad fas A gör medan besökaren väntar.
+    Texten byggs på servern ur källregistrets myndighetsnamn eller ur fas A:s
+    fasta frasordlista — aldrig ur frågan och aldrig ur verktygens data. Se
+    motor/hamtning.py: statustext_for_verktyg.
 """
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import os
@@ -352,9 +357,46 @@ def _kallpanel(register: Faktaregister, citerade_id: set[str]) -> list[dict[str,
 
 async def _strom_svar(fraga: str) -> AsyncIterator[str]:
     fas_a, fas_c = _motorer()
+    # Frasordlistan hör till fas A. Importen ligger här och inte i toppen av
+    # filen av samma skäl som i _motorer(): modulen drar in hela adapterlagret.
+    from quiet_oppen_data.motor.hamtning import STATUS_SAMMANSTALLER
 
     try:
-        hamtningsresultat = await run_in_threadpool(fas_a.hamta, fraga)
+        # Fas A kan ta en halv till en och en halv minut, och kördes tidigare
+        # som ett enda run_in_threadpool som inte släppte ifrån sig något
+        # förrän den var klar. Bron: callbacken körs i arbetstråden och lägger
+        # (text, kalla_id) på en asyncio-kö via call_soon_threadsafe; den här
+        # generatorn tömmer kön medan den väntar. Kön är obegränsad, så en
+        # skur av händelser tappas inte, och event-loopen blockeras aldrig.
+        loop = asyncio.get_running_loop()
+        statuskö: asyncio.Queue[tuple[str, str | None]] = asyncio.Queue()
+
+        def _status_fran_arbetstrad(text: str, kalla_id: str | None) -> None:
+            loop.call_soon_threadsafe(statuskö.put_nowait, (text, kalla_id))
+
+        fas_a_uppgift = asyncio.ensure_future(
+            run_in_threadpool(fas_a.hamta, fraga, status_callback=_status_fran_arbetstrad)
+        )
+
+        while not fas_a_uppgift.done():
+            nasta_status = asyncio.ensure_future(statuskö.get())
+            klara, _ = await asyncio.wait(
+                {fas_a_uppgift, nasta_status}, return_when=asyncio.FIRST_COMPLETED
+            )
+            if nasta_status in klara:
+                text, kalla_id = nasta_status.result()
+                yield _sse("status", {"text": text, "kalla_id": kalla_id})
+            else:
+                nasta_status.cancel()
+
+        # Det som hann läggas i kön precis innan fas A blev klar.
+        while not statuskö.empty():
+            text, kalla_id = statuskö.get_nowait()
+            yield _sse("status", {"text": text, "kalla_id": kalla_id})
+
+        hamtningsresultat = await fas_a_uppgift
+
+        yield _sse("status", {"text": STATUS_SAMMANSTALLER, "kalla_id": None})
         svar = await run_in_threadpool(fas_c.kor, fraga, hamtningsresultat.register)
     except Exception as exc:
         # Felklassen skiljer ett driftstopp (slut på kredit, avvisad nyckel)
